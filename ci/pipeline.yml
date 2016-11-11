@@ -1,0 +1,94 @@
+---
+jobs:
+  - name: update-terraform
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - get: deployments-src
+        - put: terraform
+          params:
+            env_name: bosh-cpi-concourse
+            terraform_source: deployments-src/terraform/
+
+  - name: update-director
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: stemcell
+          - get: bosh-release
+          - get: cpi-release
+          - get: bosh-cli
+          - get: terraform
+            trigger: true
+            passed: [update-terraform]
+        - task: update-director
+          file: deployments-src/ci/tasks/deploy-director.yml
+          output_mapping: {output-src: updated-deployments-src}
+          params:
+            BOSH_DIRECTOR_SECRETS: {{bosh_director_secrets}}
+            SSH_PRIVATE_KEY: {{ssh_private_key}}
+          ensure:
+            do:
+            - task: commit-state-file
+              file: deployments-src/ci/tasks/git-commit.yml
+              input_mapping: {input-src: updated-deployments-src}
+              output_mapping: {output-src: committed-deployments-src}
+              params:
+                GIT_ADD_ARGS: ./bosh/director-state.json
+                GIT_COMMIT_MSG: ":airplane: Auto-commit: Updating Director deployment state"
+                GIT_COMMIT_USERNAME: bosh-ci
+                GIT_COMMIT_EMAIL: cf-bosh-eng+bosh-ci@pivotal.io
+                GIT_SUCCEED_ON_NO_CHANGES: true
+            - put: deployments-src
+              params:
+                repository: committed-deployments-src/
+                rebase: true
+
+resource_types:
+  - name: terraform
+    type: docker-image
+    source:
+      repository: ljfranklin/terraform-resource
+
+resources:
+  - &concourse-config
+    name: deployments-src
+    type: git
+    source:
+      uri: git@github.com:pivotal-cf/bosh-concourse-deployments.git
+      private_key: {{deployments_github_deploy_key}}
+      branch: master
+  - name: terraform
+    type: terraform
+    source:
+      storage:
+        bucket: {{deployments_bucket_name}}
+        bucket_path: terraform/
+        access_key_id: {{storage_access_key}}
+        secret_access_key: {{storage_secret_key}}
+        endpoint: https://storage.googleapis.com
+      vars:
+        project_id: {{gce_project_id}}
+        gcp_credentials_json: {{gce_credentials_json}}
+        trusted_cidr: 10.0.0.0/24
+        deployments_bucket_name: {{deployments_bucket_name}}
+  - name: bosh-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/bosh
+  - name: stemcell
+    type: s3
+    source:
+      bucket: bosh-gce-light-stemcells
+      regexp: light-bosh-stemcell-([0-9\.]+)-google-kvm-ubuntu-trusty-go_agent.tgz
+  - name: cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry-incubator/bosh-google-cpi-release
+  - name: bosh-cli
+    type: s3
+    source:
+      bucket: bosh-cli-artifacts
+      regexp: bosh-cli-(\d+\.\d+\.\d+)-linux-amd64

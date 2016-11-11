@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: ljfranklin/deployments
+
+inputs:
+  - name: terraform
+  - name: deployments-src
+  - name: bosh-release
+  - name: cpi-release
+  - name: stemcell
+  - name: bosh-cli
+
+outputs:
+  - name: output-src
+
+params:
+  BOSH_DIRECTOR_SECRETS: ""
+  SSH_PRIVATE_KEY: ""
+
+run:
+  path: deployments-src/ci/setup-env/tasks/deploy-director

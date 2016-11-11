@@ -1,0 +1,53 @@
+azs:
+- name: z1
+  cloud_properties: {zone: us-central1-c}
+
+vm_types:
+- name: concourse
+  cloud_properties:
+    cpu: 1
+    ram: 4096
+    root_disk_size_gb: 100
+    root_disk_type: pd-standard
+- name: compilation
+  cloud_properties:
+    machine_type: n1-highcpu-4
+    root_disk_size_gb: 15
+    root_disk_type: pd-standard
+    preemptible: true
+
+compilation:
+  workers: 3
+  network: private
+  reuse_compilation_vms: true
+  vm_type: compilation
+  az: z1
+
+networks:
+  - name: public-concourse
+    type: dynamic
+    subnets:
+    - az: z1
+      cloud_properties:
+        network_name: bosh
+        subnetwork_name: bosh
+        tags:
+          - bosh-internal
+          - concourse-external
+  - name: private
+    type: dynamic
+    subnets:
+    - az: z1
+      cloud_properties:
+        network_name: bosh
+        subnetwork_name: bosh
+        tags:
+          - bosh-internal
+  - name: floating
+    type: vip
+
+disk_types:
+  - name: 10GB
+    disk_size: 10_240
+    cloud_properties:
+      type: pd-standard
