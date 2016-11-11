@@ -21,4 +21,4 @@ params:
   GIT_SUCCEED_ON_NO_CHANGES: false
 
 run:
-  path: deployments-src/ci/setup-env/tasks/git-commit
+  path: deployments-src/ci/tasks/git-commit

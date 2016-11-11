@@ -22,4 +22,4 @@ params:
   SSH_PRIVATE_KEY: ""
 
 run:
-  path: deployments-src/ci/setup-env/tasks/deploy-director
+  path: deployments-src/ci/tasks/deploy-director
