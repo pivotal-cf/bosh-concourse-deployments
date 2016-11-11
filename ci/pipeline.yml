@@ -72,7 +72,7 @@ resources:
       vars:
         project_id: {{gce_project_id}}
         gcp_credentials_json: {{gce_credentials_json}}
-        trusted_cidr: 10.0.0.0/24
+        trusted_cidr: {{pivotal_trusted_cidr}}
         deployments_bucket_name: {{deployments_bucket_name}}
   - name: bosh-release
     type: bosh-io-release
