@@ -47,8 +47,6 @@ pushd "${working_dir}" > /dev/null
   ${bosh_cli} -n create-env \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -l "${terraform_config}/metadata" \
-    # -v ssl_cert="${SSL_CERT}" \
-    # -v ssl_key="${SSL_KEY}" \
     ./director.yml
 
   echo "Updating cloud config..."
