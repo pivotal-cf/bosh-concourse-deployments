@@ -140,7 +140,7 @@ cloud_provider:
     host: ((bosh_external_ip))
     port: 22
     user: vcap
-    private_key: ((ssh_private_key))
+    private_key: /tmp/bosh.pem
 
   mbus: ((cloud_provider_mbus))
 
