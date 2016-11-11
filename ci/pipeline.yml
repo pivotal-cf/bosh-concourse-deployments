@@ -28,7 +28,6 @@ jobs:
           output_mapping: {output-src: updated-deployments-src}
           params:
             BOSH_DIRECTOR_SECRETS: {{bosh_director_secrets}}
-            SSH_PRIVATE_KEY: {{ssh_private_key}}
           ensure:
             do:
             - task: commit-state-file

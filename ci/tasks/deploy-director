@@ -7,11 +7,6 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # env
 : ${BOSH_DIRECTOR_SECRETS:?}
-: ${SSH_PRIVATE_KEY:?}
-
-if [ -n "$SSH_PRIVATE_KEY" ]; then
-  echo "$SSH_PRIVATE_KEY" > /tmp/bosh.pem
-fi
 
 read_with_escaped_newlines() {
   perl -pe 's|\n|\\n|' "$1"

@@ -19,7 +19,6 @@ outputs:
 
 params:
   BOSH_DIRECTOR_SECRETS: ""
-  SSH_PRIVATE_KEY: ""
 
 run:
   path: deployments-src/ci/tasks/deploy-director
