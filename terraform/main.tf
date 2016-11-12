@@ -33,7 +33,7 @@ resource "google_compute_firewall" "bosh-external" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "8443", "25555"]
+    ports    = ["22", "6868", "8443", "25555"]
   }
 
   source_ranges = ["${var.trusted_cidr}"]
