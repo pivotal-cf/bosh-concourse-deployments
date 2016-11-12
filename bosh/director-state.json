@@ -1,12 +1,24 @@
 {
     "director_id": "8c4bfaa6-45b4-418e-4a6f-614d49bda280",
     "installation_id": "2370b65f-7d40-4945-48db-2e45c6d878d8",
-    "current_vm_cid": "vm-c2766bb9-18e3-433c-74fb-f2279d051e77",
+    "current_vm_cid": "vm-45ab7503-7a7a-4bac-44c5-ae3a45f58e74",
     "current_stemcell_id": "93cd6d5e-4f64-48b2-57d8-2b1824969924",
-    "current_disk_id": "",
-    "current_release_ids": [],
-    "current_manifest_sha": "",
-    "disks": null,
+    "current_disk_id": "efc66abd-3c0b-47ca-69c8-13893f396b51",
+    "current_release_ids": [
+        "7d7e24d8-15f2-4d83-62e3-0a453306d4af",
+        "57446c08-6878-4ac4-4944-9d72758f0782"
+    ],
+    "current_manifest_sha": "84ca04b6bce48f22ce4190b1934262cf38249fb1d3ea0de191ea4aa202e54b50c87a41f8b29201b53bbcdbc20261e47420bf2eec97c5f39ef344bbfacb93b7a8",
+    "disks": [
+        {
+            "id": "efc66abd-3c0b-47ca-69c8-13893f396b51",
+            "cid": "disk-a3220a0b-1b47-4a60-5635-46f689e25aad",
+            "size": 20000,
+            "cloud_properties": {
+                "type": "pd-standard"
+            }
+        }
+    ],
     "stemcells": [
         {
             "id": "93cd6d5e-4f64-48b2-57d8-2b1824969924",
@@ -15,5 +27,16 @@
             "cid": "stemcell-d6c66a99-cf59-401a-7c64-39bae2e3f5e2"
         }
     ],
-    "releases": []
+    "releases": [
+        {
+            "id": "7d7e24d8-15f2-4d83-62e3-0a453306d4af",
+            "name": "bosh",
+            "version": "260"
+        },
+        {
+            "id": "57446c08-6878-4ac4-4944-9d72758f0782",
+            "name": "bosh-google-cpi",
+            "version": "25.6.1"
+        }
+    ]
 }
