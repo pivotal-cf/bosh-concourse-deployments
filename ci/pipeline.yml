@@ -69,10 +69,9 @@ resources:
         secret_access_key: {{storage_secret_key}}
         endpoint: https://storage.googleapis.com
       vars:
-        project_id: {{gce_project_id}}
-        gcp_credentials_json: {{gce_credentials_json}}
-        trusted_cidr: {{pivotal_trusted_cidr}}
-        deployments_bucket_name: {{deployments_bucket_name}}
+        google_project_id: {{google_project_id}}
+        google_credentials_json: {{google_credentials_json}}
+        trusted_cidr: {{trusted_cidr}}
   - name: bosh-release
     type: bosh-io-release
     source:
