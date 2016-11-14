@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: ljfranklin/deployments
+
+inputs:
+  - name: deployments-src
+  - name: terraform
+  - name: concourse-and-garden
+  - name: stemcell
+  - name: bosh-cli
+
+params:
+  DEPLOYMENT_NAME:        ""
+  DEPLOYMENT_CONFIG_PATH: ""
+  CONCOURSE_SECRETS:      ""
+  BOSH_ENVIRONMENT:       ""
+  BOSH_USER:              ""
+  BOSH_PASSWORD:          ""
+
+run:
+  path: deployments-src/ci/tasks/deploy-concourse

@@ -1,0 +1,79 @@
+---
+# post-install addition of CPI GitHub Team for auth, only needed for fresh install:
+# fly -t upgrader set-team -n bosh-cpi --github-auth-client-id $(lpass show --username "BOSH Concourse Upgrader GitHub Auth") --github-auth-client-secret $(lpass show --password "BOSH Concourse Upgrader GitHub Auth") --github-auth-team "cloudfoundry/CF BOSH CPI"
+name: concourse-cpi
+
+releases:
+- name: concourse
+  version: latest
+- name: garden-runc
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 8
+  canary_watch_time: 30000 - 90000
+  update_watch_time: 30000 - 90000
+
+instance_groups:
+- name: concourse_cpi
+  instances: 1
+  vm_type: concourse_cpi
+  stemcell: default
+  azs: [z1]
+  persistent_disk_pool: persistent
+  networks:
+    - name: dynamic
+    - name: vip
+      static_ips: [((concourse_public_ip))]
+  jobs:
+    - name: atc
+      release: concourse
+      properties:
+        external_url: ((concourse_external_url))
+        publicly_viewable: true
+        postgresql_database: &atc_db atc
+        github_auth:
+          client_id: ((github_client_id))
+          client_secret: ((github_client_secret))
+          # these users will have access to the `main` team
+          authorize: ((github_authorized_teams))
+
+    - name: tsa
+      release: concourse
+      properties:
+        authorized_keys: ((tsa_authorized_keys))
+        host_key: ((tsa_private_key))
+    - name: postgresql
+      release: concourse
+      properties:
+        databases:
+          - name: *atc_db
+            role: atc
+            password: ((concourse_db_password))
+
+- name: worker_cpi
+  instances: 3
+  vm_type: worker_cpi
+  stemcell: default
+  azs: [z1]
+  networks:
+    - name: dynamic
+  jobs:
+    - name: groundcrew
+      release: concourse
+      properties: {}
+    - name: garden
+      release: garden-runc
+      properties:
+        garden:
+          listen_network: tcp
+          listen_address: 0.0.0.0:7777
+    - name: baggageclaim
+      release: concourse
+      properties: {}

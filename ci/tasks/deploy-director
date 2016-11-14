@@ -7,12 +7,9 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # env
 : ${BOSH_DIRECTOR_SECRETS:?}
-
-yaml_to_json() {
-  echo "$1" | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))'
-}
-
-secrets_json="$(yaml_to_json "${BOSH_DIRECTOR_SECRETS}")"
+: ${BOSH_ENVIRONMENT:?}
+: ${BOSH_USER:?}
+: ${BOSH_PASSWORD:?}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
@@ -37,8 +34,15 @@ pushd "${working_dir}" > /dev/null
   echo "Updating director..."
   ${bosh_cli} -n create-env \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
+    -v "bosh_admin_user=${BOSH_USER}" \
+    -v "bosh_admin_password=${BOSH_PASSWORD}" \
     -l "${terraform_config}/metadata" \
     ./director.yml
+
+  echo "Updating cloud config..."
+  ${bosh_cli} -n update-cloud-config \
+    -l "${terraform_config}/metadata" \
+    ./cloud-config.yml
 popd > /dev/null
 
 echo "Successfully updated director!"

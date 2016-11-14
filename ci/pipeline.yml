@@ -28,6 +28,9 @@ jobs:
           output_mapping: {output-src: updated-deployments-src}
           params:
             BOSH_DIRECTOR_SECRETS: {{bosh_director_secrets}}
+            BOSH_ENVIRONMENT:      {{director_url}}
+            BOSH_USER:             {{director_admin_username}}
+            BOSH_PASSWORD:         {{director_admin_password}}
           ensure:
             do:
             - task: commit-state-file
@@ -45,6 +48,24 @@ jobs:
                 repository: committed-deployments-src/
                 rebase: true
 
+  - name: deploy-concourse
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: stemcell
+          - get: bosh-cli
+          - get: terraform
+          - get: concourse-and-garden
+        - task: deploy-concourse
+          file: deployments-src/ci/tasks/deploy-concourse.yml
+          params:
+            CONCOURSE_SECRETS: {{concourse_secrets}}
+            BOSH_ENVIRONMENT:  {{director_url}}
+            BOSH_USER:         {{director_admin_username}}
+            BOSH_PASSWORD:     {{director_admin_password}}
+
 resource_types:
   - name: terraform
     type: docker-image
@@ -52,8 +73,7 @@ resource_types:
       repository: ljfranklin/terraform-resource
 
 resources:
-  - &concourse-config
-    name: deployments-src
+  - name: deployments-src
     type: git
     source:
       uri: git@github.com:pivotal-cf/bosh-concourse-deployments.git
@@ -77,10 +97,9 @@ resources:
     source:
       repository: cloudfoundry/bosh
   - name: stemcell
-    type: s3
+    type: bosh-io-stemcell
     source:
-      bucket: bosh-gce-light-stemcells
-      regexp: light-bosh-stemcell-([0-9\.]+)-google-kvm-ubuntu-trusty-go_agent.tgz
+      name: bosh-google-kvm-ubuntu-trusty-go_agent
   - name: cpi-release
     type: bosh-io-release
     source:
@@ -90,3 +109,9 @@ resources:
     source:
       bucket: bosh-cli-artifacts
       regexp: bosh-cli-(\d+\.\d+\.\d+)-linux-amd64
+  - name: concourse-and-garden
+    type: github-release
+    source:
+      repository: concourse
+      user: concourse
+      access_token: {{concourse-config-access-token}}

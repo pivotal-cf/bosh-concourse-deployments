@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -eu
+
+: ${DEPLOYMENT_NAME:?}
+: ${DEPLOYMENT_CONFIG_PATH:?}
+: ${CONCOURSE_SECRETS:?}
+: ${BOSH_ENVIRONMENT:?}
+: ${BOSH_USER:?}
+: ${BOSH_PASSWORD:?}
+
+deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
+workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
+
+# inputs
+terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
+release_dir="$( cd "${workspace_dir}/concourse-and-garden" && pwd )"
+stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
+bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
+chmod +x "${bosh_cli}"
+
+${bosh_cli} -n upload-release ${release_dir}/concourse-*.tgz
+${bosh_cli} -n upload-release ${release_dir}/garden-runc-*.tgz
+${bosh_cli} -n upload-stemcell ${stemcell_dir}/*.tgz
+
+${bosh_cli} -n deploy \
+  -l <(echo "${CONCOURSE_SECRETS}") \
+  -l "${terraform_config}/metadata" \
+  -d "${DEPLOYMENT_NAME}" \
+  "${DEPLOYMENT_CONFIG_PATH}"

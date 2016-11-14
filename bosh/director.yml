@@ -108,7 +108,7 @@ jobs:
           provider: local
           local:
             users:
-              - name: admin
+              - name: ((director_admin_user))
                 password: ((director_admin_password))
               - name: hm
                 password: ((director_hm_password))

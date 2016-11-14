@@ -18,6 +18,10 @@ resource "google_compute_address" "director" {
   name = "bosh-director-ip"
 }
 
+resource "google_compute_address" "concourse" {
+  name = "concourse-ip"
+}
+
 // allow SSH, UAA, and BOSH traffic from `trusted_cidr` to Director
 resource "google_compute_firewall" "bosh-external" {
   name    = "bosh-external"
@@ -34,6 +38,20 @@ resource "google_compute_firewall" "bosh-external" {
 
   source_ranges = ["${var.trusted_cidr}"]
   target_tags = ["${var.bosh_external_tag}"]
+}
+
+// Allow Concourse access
+resource "google_compute_firewall" "concourse-external" {
+  name    = "concourse-external"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443", "2222"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags = ["${var.concourse_external_tag}"]
 }
 
 // Allow all traffic within subnet

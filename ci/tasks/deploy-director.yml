@@ -19,6 +19,9 @@ outputs:
 
 params:
   BOSH_DIRECTOR_SECRETS: ""
+  BOSH_ENVIRONMENT:      ""
+  BOSH_USER:             ""
+  BOSH_PASSWORD:         ""
 
 run:
   path: deployments-src/ci/tasks/deploy-director
