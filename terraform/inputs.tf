@@ -21,7 +21,7 @@ variable "bosh_external_tag" {
     default = "bosh-external"
 }
 
-variable "bosh_concourse_tag" {
+variable "concourse_external_tag" {
     type = "string"
     default = "concourse-external"
 }
