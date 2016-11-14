@@ -34,8 +34,8 @@ pushd "${working_dir}" > /dev/null
   echo "Updating director..."
   ${bosh_cli} -n create-env \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
-    -v "bosh_admin_user=${BOSH_USER}" \
-    -v "bosh_admin_password=${BOSH_PASSWORD}" \
+    -v "director_admin_user=${BOSH_USER}" \
+    -v "director_admin_password=${BOSH_PASSWORD}" \
     -l "${terraform_config}/metadata" \
     ./director.yml
 
