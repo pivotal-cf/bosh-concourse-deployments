@@ -18,7 +18,7 @@ resource_pools:
       root_disk_size_gb: 40
       root_disk_type: pd-standard
       tags:
-        - bosh-external
+        - ((bosh_external_tag))
       service_scopes:
         - compute
         - devstorage.full_control
@@ -35,14 +35,14 @@ networks:
   - name: private
     type: manual
     subnets:
-    - range: 10.0.0.0/24
-      gateway: 10.0.0.1
-      static: [10.0.0.3-10.0.0.7]
+    - range: ((director_cidr))
+      gateway: ((director_gateway))
+      static: [((director_private_ip))]
       cloud_properties:
-        network_name: bosh
-        subnetwork_name: bosh
+        network_name: ((network_name))
+        subnetwork_name: ((subnetwork_name))
         tags:
-          - bosh-internal
+          - ((bosh_internal_tag))
 
 jobs:
   - name: bosh
@@ -67,12 +67,12 @@ jobs:
 
     networks:
       - name: private
-        static_ips: [10.0.0.6]
+        static_ips: [((director_private_ip))]
         default:
           - dns
           - gateway
       - name: public
-        static_ips: [((bosh_external_ip))]
+        static_ips: [((director_public_ip))]
 
     properties:
       nats:
@@ -89,7 +89,7 @@ jobs:
         adapter: postgres
 
       blobstore:
-        address: 10.0.0.6
+        address: ((director_private_ip))
         port: 25250
         provider: dav
         director:
@@ -123,10 +123,10 @@ jobs:
 
       google: &google_properties
         project: ((google_project_id))
-        json_key: ((gce_credentials_json))
+        json_key: ((google_credentials_json))
 
       agent:
-        mbus: ((agent_nats))
+        mbus: "nats://nats:((nats_password))@((director_private_ip)):4222"
 
       ntp: &ntp
         - 169.254.169.254
@@ -136,10 +136,11 @@ cloud_provider:
     name: google_cpi
     release: bosh-google-cpi
 
-  mbus: ((cloud_provider_mbus))
+  mbus: "https://mbus:((mbus_password))@((director_public_ip)):6868"
 
   properties:
     google: *google_properties
-    agent: {mbus: ((cloud_provider_agent_mbus)) }
+    agent:
+      mbus: https://mbus:((mbus_password))@0.0.0.0:6868
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp

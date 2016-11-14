@@ -8,10 +8,6 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 # env
 : ${BOSH_DIRECTOR_SECRETS:?}
 
-read_with_escaped_newlines() {
-  perl -pe 's|\n|\\n|' "$1"
-}
-
 yaml_to_json() {
   echo "$1" | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))'
 }
@@ -43,16 +39,6 @@ pushd "${working_dir}" > /dev/null
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -l "${terraform_config}/metadata" \
     ./director.yml
-
-  echo "Updating cloud config..."
-  director_endpoint="$( jq -e -r .bosh_hostname "${terraform_config}/metadata" )"
-  director_username="$( echo "${secrets_json}" | jq -e -r .director_admin_username )"
-  director_password="$( echo "${secrets_json}" | jq -e -r .director_admin_password )"
-  ${bosh_cli} -n update-cloud-config \
-    --environment "${director_endpoint}" \
-    --user "${director_username}" \
-    --password "${director_password}" \
-    ./cloud-config.yml
 popd > /dev/null
 
 echo "Successfully updated director!"
