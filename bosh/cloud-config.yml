@@ -16,6 +16,7 @@ vm_types:
     ram: 16_384
     root_disk_size_gb: 164
     root_disk_type: pd-standard
+    ephemeral_external_ip: true
 - name: compilation
   cloud_properties:
     machine_type: n1-highcpu-4
