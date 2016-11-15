@@ -57,7 +57,7 @@ jobs:
             BOSH_USER:             {{director_admin_username}}
             BOSH_PASSWORD:         {{director_admin_password}}
 
-  - name: deploy-concourse
+  - name: update-concourse
     serial_groups: [deploy]
     plan:
       - do:
