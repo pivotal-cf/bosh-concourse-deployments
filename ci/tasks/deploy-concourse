@@ -19,14 +19,19 @@ stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
 
-${bosh_cli} -n upload-release ${release_dir}/concourse-*.tgz
-${bosh_cli} -n upload-release ${release_dir}/garden-runc-*.tgz
-${bosh_cli} -n upload-stemcell ${stemcell_dir}/*.tgz
+echo "Uploading Concourse release..."
+${bosh_cli} -n --tty upload-release ${release_dir}/concourse-*.tgz
+echo "Uploading Garden release..."
+${bosh_cli} -n --tty upload-release ${release_dir}/garden-runc-*.tgz
+echo "Uploading stemcell..."
+${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
 
 pushd "${deployments_dir}" > /dev/null
-  ${bosh_cli} -n deploy \
+  echo "Deploying Concourse..."
+  ${bosh_cli} -n --tty deploy \
     -l <(echo "${CONCOURSE_SECRETS}") \
     -l "${terraform_config}/metadata" \
     -d "${DEPLOYMENT_NAME}" \
     "${DEPLOYMENT_CONFIG_PATH}"
+  echo "Successfully deployed Concourse!"
 popd > /dev/null
