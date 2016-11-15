@@ -58,6 +58,8 @@ jobs:
           - get: bosh-cli
           - get: terraform
           - get: concourse-and-garden
+            params:
+              globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - task: deploy-concourse
           file: deployments-src/ci/tasks/deploy-concourse.yml
           params:
