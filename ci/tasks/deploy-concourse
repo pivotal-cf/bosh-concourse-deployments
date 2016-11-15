@@ -23,8 +23,10 @@ ${bosh_cli} -n upload-release ${release_dir}/concourse-*.tgz
 ${bosh_cli} -n upload-release ${release_dir}/garden-runc-*.tgz
 ${bosh_cli} -n upload-stemcell ${stemcell_dir}/*.tgz
 
-${bosh_cli} -n deploy \
-  -l <(echo "${CONCOURSE_SECRETS}") \
-  -l "${terraform_config}/metadata" \
-  -d "${DEPLOYMENT_NAME}" \
-  "${DEPLOYMENT_CONFIG_PATH}"
+pushd "${deployments_dir}" > /dev/null
+  ${bosh_cli} -n deploy \
+    -l <(echo "${CONCOURSE_SECRETS}") \
+    -l "${terraform_config}/metadata" \
+    -d "${DEPLOYMENT_NAME}" \
+    "${DEPLOYMENT_CONFIG_PATH}"
+popd > /dev/null

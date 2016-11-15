@@ -63,10 +63,12 @@ jobs:
         - task: deploy-concourse
           file: deployments-src/ci/tasks/deploy-concourse.yml
           params:
-            CONCOURSE_SECRETS: {{concourse_secrets}}
-            BOSH_ENVIRONMENT:  {{director_url}}
-            BOSH_USER:         {{director_admin_username}}
-            BOSH_PASSWORD:     {{director_admin_password}}
+            DEPLOYMENT_NAME:        concourse-cpi
+            DEPLOYMENT_CONFIG_PATH: concourse/concourse-cpi.yml
+            CONCOURSE_SECRETS:      {{concourse_secrets}}
+            BOSH_ENVIRONMENT:       {{director_url}}
+            BOSH_USER:              {{director_admin_username}}
+            BOSH_PASSWORD:          {{director_admin_password}}
 
 resource_types:
   - name: terraform
