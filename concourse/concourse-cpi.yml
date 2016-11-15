@@ -29,6 +29,7 @@ instance_groups:
   persistent_disk_pool: persistent
   networks:
     - name: concourse
+      default: [dns, gateway]
     - name: vip
       static_ips: [((concourse_public_ip))]
   jobs:
