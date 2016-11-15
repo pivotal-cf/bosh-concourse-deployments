@@ -12,6 +12,7 @@ jobs:
           - get: bosh-cli
         - put: terraform
           params:
+            env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
@@ -47,6 +48,7 @@ jobs:
           - get: bosh-cli
         - put: terraform
           params:
+            env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
         - task: update-cloud-config
           file: deployments-src/ci/tasks/update-cloud-config.yml
@@ -68,6 +70,7 @@ jobs:
               globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - put: terraform
           params:
+            env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
         - task: deploy-concourse
           file: deployments-src/ci/tasks/deploy-concourse.yml
@@ -95,7 +98,6 @@ resources:
   - name: terraform
     type: terraform
     source:
-      env_name: bosh-cpi-concourse
       storage:
         bucket: {{deployments_bucket_name}}
         bucket_path: terraform/
