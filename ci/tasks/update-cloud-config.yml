@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: ljfranklin/deployments
+
+inputs:
+  - name: terraform
+  - name: deployments-src
+  - name: bosh-cli
+
+params:
+  BOSH_ENVIRONMENT:      ""
+  BOSH_USER:             ""
+  BOSH_PASSWORD:         ""
+
+run:
+  path: deployments-src/ci/tasks/update-cloud-config

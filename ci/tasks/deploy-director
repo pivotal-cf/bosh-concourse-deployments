@@ -38,11 +38,6 @@ pushd "${working_dir}" > /dev/null
     -v "director_admin_password=${BOSH_PASSWORD}" \
     -l "${terraform_config}/metadata" \
     ./director.yml
-
-  echo "Updating cloud config..."
-  ${bosh_cli} -n update-cloud-config \
-    -l "${terraform_config}/metadata" \
-    ./cloud-config.yml
 popd > /dev/null
 
 echo "Successfully updated director!"

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -eu
+
+deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
+workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
+
+# env
+: ${BOSH_ENVIRONMENT:?}
+: ${BOSH_USER:?}
+: ${BOSH_PASSWORD:?}
+
+# inputs
+terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
+bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
+chmod +x "${bosh_cli}"
+
+echo "Updating cloud config..."
+${bosh_cli} -n update-cloud-config \
+  -l "${terraform_config}/metadata" \
+  ${deployments_dir}/bosh/cloud-config.yml
+
+echo "Successfully updated cloud-config!"

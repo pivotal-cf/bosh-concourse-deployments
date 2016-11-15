@@ -1,15 +1,5 @@
 ---
 jobs:
-  - name: update-terraform
-    serial_groups: [deploy]
-    plan:
-      - do:
-        - get: deployments-src
-        - put: terraform
-          params:
-            env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/
-
   - name: update-director
     serial_groups: [deploy]
     plan:
@@ -20,9 +10,9 @@ jobs:
           - get: bosh-release
           - get: cpi-release
           - get: bosh-cli
-          - get: terraform
-            trigger: true
-            passed: [update-terraform]
+        - put: terraform
+          params:
+            terraform_source: deployments-src/terraform/
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
           output_mapping: {output-src: updated-deployments-src}
@@ -48,6 +38,23 @@ jobs:
                 repository: committed-deployments-src/
                 rebase: true
 
+  - name: update-cloud-config
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+        - put: terraform
+          params:
+            terraform_source: deployments-src/terraform/
+        - task: update-cloud-config
+          file: deployments-src/ci/tasks/update-cloud-config.yml
+          params:
+            BOSH_ENVIRONMENT:      {{director_url}}
+            BOSH_USER:             {{director_admin_username}}
+            BOSH_PASSWORD:         {{director_admin_password}}
+
   - name: deploy-concourse
     serial_groups: [deploy]
     plan:
@@ -56,10 +63,12 @@ jobs:
           - get: deployments-src
           - get: stemcell
           - get: bosh-cli
-          - get: terraform
           - get: concourse-and-garden
             params:
               globs: ['concourse-*.tgz','garden-runc-*.tgz']
+        - put: terraform
+          params:
+            terraform_source: deployments-src/terraform/
         - task: deploy-concourse
           file: deployments-src/ci/tasks/deploy-concourse.yml
           params:
@@ -86,6 +95,7 @@ resources:
   - name: terraform
     type: terraform
     source:
+      env_name: bosh-cpi-concourse
       storage:
         bucket: {{deployments_bucket_name}}
         bucket_path: terraform/
