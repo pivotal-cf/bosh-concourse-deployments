@@ -28,7 +28,7 @@ instance_groups:
   azs: [z1]
   persistent_disk_pool: persistent
   networks:
-    - name: dynamic
+    - name: concourse
     - name: vip
       static_ips: [((concourse_public_ip))]
   jobs:
@@ -63,7 +63,7 @@ instance_groups:
   stemcell: default
   azs: [z1]
   networks:
-    - name: dynamic
+    - name: concourse
   jobs:
     - name: groundcrew
       release: concourse
