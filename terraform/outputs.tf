@@ -23,12 +23,16 @@ output "concourse_public_ip" {
     value = "${google_compute_address.concourse.address}"
 }
 
-output "bosh_external_tag" {
-    value = "${var.bosh_external_tag}"
+output "bosh_director_tag" {
+    value = "${var.bosh_director_tag}"
 }
 
-output "concourse_external_tag" {
-    value = "${var.concourse_external_tag}"
+output "concourse_atc_tag" {
+    value = "${var.concourse_atc_tag}"
+}
+
+output "concourse_db_tag" {
+    value = "${var.concourse_db_tag}"
 }
 
 output "bosh_internal_tag" {

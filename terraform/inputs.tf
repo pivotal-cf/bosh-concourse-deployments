@@ -16,14 +16,19 @@ variable "director_cidr" {
     default = "10.0.0.0/24"
 }
 
-variable "bosh_external_tag" {
+variable "bosh_director_tag" {
     type = "string"
     default = "bosh-external"
 }
 
-variable "concourse_external_tag" {
+variable "concourse_atc_tag" {
     type = "string"
-    default = "concourse-external"
+    default = "concourse-atc"
+}
+
+variable "concourse_db_tag" {
+    type = "string"
+    default = "concourse-db"
 }
 
 variable "bosh_internal_tag" {
@@ -68,4 +73,9 @@ variable "region" {
 variable "concourse_target_pool" {
     type = "string"
     default = "concourse-target-pool"
+}
+
+variable "concourse_upgrader_tag" {
+    type = "string"
+    default = "concourse-upgrader"
 }

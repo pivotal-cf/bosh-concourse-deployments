@@ -9,7 +9,7 @@ vm_types:
     root_disk_size_gb: 100
     root_disk_type: pd-standard
     tags:
-      - ((concourse_external_tag))
+      - ((concourse_atc_tag))
 - name: worker_cpi
   cloud_properties:
     cpu: 8

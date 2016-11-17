@@ -18,7 +18,7 @@ resource_pools:
       root_disk_size_gb: 40
       root_disk_type: pd-standard
       tags:
-        - ((bosh_external_tag))
+        - ((bosh_director_tag))
       service_scopes:
         - compute
         - devstorage.full_control

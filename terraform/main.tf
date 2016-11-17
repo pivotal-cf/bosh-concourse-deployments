@@ -58,9 +58,9 @@ chmod +x /usr/local/bin/bosh
 EOT
 }
 
-// allow SSH, UAA, and BOSH traffic from `trusted_cidr` to Director
-resource "google_compute_firewall" "bosh-external" {
-  name    = "bosh-external"
+// allow SSH, UAA, and BOSH traffic from `jumpbox` to Director
+resource "google_compute_firewall" "bosh-jumpbox-director" {
+  name    = "bosh-jumpbox-director"
   network = "${google_compute_network.bosh.name}"
 
   allow {
@@ -69,11 +69,80 @@ resource "google_compute_firewall" "bosh-external" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "6868", "8443", "25555"]
+    ports    = ["22", "8443", "25555"]
   }
 
-  source_ranges = ["${var.trusted_cidr}"]
-  target_tags = ["${var.bosh_external_tag}"]
+  source_tags = ["${var.jumpbox_tag}"]
+  target_tags = ["${var.bosh_director_tag}"]
+}
+
+// allow NATs, UAA, and BOSH traffic from `upgrader` to Director
+resource "google_compute_firewall" "bosh-upgrader-director" {
+  name    = "bosh-upgrader-director"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6868", "8443", "25555"]
+  }
+
+  source_tags = ["${var.concourse_upgrader_tag}"]
+  target_tags = ["${var.bosh_director_tag}"]
+}
+
+
+// allow postgres from ATC to DB
+resource "google_compute_firewall" "bosh-atc-to-db" {
+  name    = "bosh-atc-to-db"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["5432"]
+  }
+
+  source_tags = ["${var.concourse_atc_tag}"]
+  target_tags = ["${var.concourse_db_tag}"]
+}
+
+// allow nats from `bosh_internal` to Director
+resource "google_compute_firewall" "bosh-internal-to-director" {
+  name    = "bosh-internal-to-director"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6868"]
+  }
+
+  source_tags = ["${var.bosh_internal_tag}"]
+  target_tags = ["${var.bosh_director_tag}"]
+}
+
+// allow SSH from Director to `bosh_internal`
+resource "google_compute_firewall" "bosh-director-to-internal" {
+  name    = "bosh-director-to-internal"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_tags = ["${var.bosh_director_tag}"]
+  target_tags = ["${var.bosh_internal_tag}"]
 }
 
 // Allow Concourse access
@@ -87,28 +156,9 @@ resource "google_compute_firewall" "concourse-external" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_tags = ["${var.concourse_external_tag}"]
+  target_tags = ["${var.concourse_atc_tag}"]
 }
 
-// Allow all traffic within subnet
-resource "google_compute_firewall" "bosh-internal" {
-  name    = "bosh-internal"
-  network = "${google_compute_network.bosh.name}"
-
-  allow {
-    protocol = "icmp"
-  }
-
-  allow {
-    protocol = "tcp"
-  }
-
-  allow {
-    protocol = "udp"
-  }
-
-  source_tags = ["${var.bosh_internal_tag}"]
-}
 
 // allow nothing, open SSH manually for access
 resource "google_compute_firewall" "jumpbox-external" {
@@ -134,7 +184,21 @@ resource "google_compute_firewall" "jumpbox-internal" {
   }
 
   source_tags = ["${var.jumpbox_tag}"]
-  target_tags = ["${var.bosh_external_tag}"]
+  target_tags = ["${var.bosh_director_tag}"]
+}
+
+// allow http and https from jumpbox to upgrader
+resource "google_compute_firewall" "jumpbox-to-upgrader" {
+  name    = "jumpbox-to-upgrader"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443"]
+  }
+
+  source_tags = ["${var.jumpbox_tag}"]
+  target_tags = ["${var.concourse_upgrader_tag}"]
 }
 
 // NAT
