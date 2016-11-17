@@ -31,6 +31,11 @@ variable "bosh_internal_tag" {
     default = "bosh-internal"
 }
 
+variable "jumpbox_tag" {
+    type = "string"
+    default = "bosh-jumpbox"
+}
+
 variable "network_name" {
     type = "string"
     default = "concourse"

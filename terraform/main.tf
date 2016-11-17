@@ -22,6 +22,31 @@ resource "google_compute_address" "concourse" {
   name = "concourse-ip"
 }
 
+
+resource "google_compute_address" "jumpbox" {
+  name = "jumpbox-ip"
+}
+
+resource "google_compute_instance" "default" {
+  name         = "bosh-jumpbox"
+  machine_type = "n1-standard-1"
+  zone         = "${var.zone}"
+
+  tags = ["${var.jumpbox_tag}"]
+
+  disk {
+    image = "ubuntu-1604-xenial-v20161115"
+  }
+
+  network_interface {
+    network = "${google_compute_network.bosh.self_link}"
+    subnetwork = "${google_compute_subnetwork.bosh-subnet-1.self_link}"
+    access_config {
+      nap_ip = "${google_compute_address.jumpbox.address}"
+    }
+  }
+}
+
 // allow SSH, UAA, and BOSH traffic from `trusted_cidr` to Director
 resource "google_compute_firewall" "bosh-external" {
   name    = "bosh-external"
@@ -72,4 +97,27 @@ resource "google_compute_firewall" "bosh-internal" {
   }
 
   source_tags = ["${var.bosh_internal_tag}"]
+}
+
+// allow nothing, open SSH manually for access
+resource "google_compute_firewall" "jumpbox-external" {
+  name    = "jumpbox-external"
+  network = "${google_compute_network.bosh.name}"
+
+  source_ranges = ["${var.trusted_cidr}"]
+  target_tags = ["${var.jumpbox_tag}"]
+}
+
+// allow SSH from jumpbox to Director
+resource "google_compute_firewall" "jumpbox-internal" {
+  name    = "jumpbox-internal"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_tags = ["${var.jumpbox_tag}"]
+  target_tags = ["${var.bosh_external_tag}"]
 }
