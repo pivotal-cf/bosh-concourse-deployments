@@ -195,3 +195,28 @@ resource "google_compute_firewall" "nat-traffic" {
   source_tags = ["${var.nat_traffic_tag}"]
   target_tags = ["${var.natbox_tag}"]
 }
+
+resource "google_compute_target_pool" "concourse_target_pool" {
+  name = "${var.concourse_target_pool}"
+}
+
+resource "google_compute_forwarding_rule" "concourse_fowarding_rule_http" {
+  name       = "concourse-forwarding-rule-http"
+  target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
+  port_range = "80"
+  ip_address = "${google_compute_address.concourse.address}"
+}
+
+resource "google_compute_forwarding_rule" "concourse_fowarding_rule_https" {
+  name       = "concourse-forwarding-rule-https"
+  target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
+  port_range = "443"
+  ip_address = "${google_compute_address.concourse.address}"
+}
+
+resource "google_compute_forwarding_rule" "concourse_fowarding_rule_worker" {
+  name       = "concourse-forwarding-rule-worker"
+  target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
+  port_range = "2222"
+  ip_address = "${google_compute_address.concourse.address}"
+}

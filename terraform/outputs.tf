@@ -46,3 +46,7 @@ output "subnetwork_name" {
 output "nat_traffic_tag" {
     value = "${var.nat_traffic_tag}"
 }
+
+output "concourse_target_pool" {
+    value = "${var.concourse_target_pool}"
+}

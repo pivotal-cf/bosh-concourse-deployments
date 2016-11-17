@@ -64,3 +64,8 @@ variable "region" {
     type = "string"
     default = "us-west1"
 }
+
+variable "concourse_target_pool" {
+    type = "string"
+    default = "concourse-target-pool"
+}
