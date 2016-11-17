@@ -42,3 +42,7 @@ output "network_name" {
 output "subnetwork_name" {
     value = "${var.subnetwork_name}"
 }
+
+output "nat_traffic_tag" {
+    value = "${var.nat_traffic_tag}"
+}

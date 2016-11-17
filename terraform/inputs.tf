@@ -36,6 +36,15 @@ variable "jumpbox_tag" {
     default = "bosh-jumpbox"
 }
 
+variable "natbox_tag" {
+    type = "string"
+    default = "bosh-natbox"
+}
+
+variable "nat_traffic_tag" {
+    type = "string"
+    default = "bosh-nat-traffic"
+}
 variable "network_name" {
     type = "string"
     default = "concourse"

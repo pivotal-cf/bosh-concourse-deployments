@@ -35,7 +35,7 @@ resource "google_compute_instance" "jumpbox" {
   tags = ["${var.jumpbox_tag}"]
 
   disk {
-    image = "ubuntu-1604-xenial-v20161115"
+    image = "ubuntu-1404-trusty-v20161109"
   }
 
   network_interface {
@@ -135,4 +135,63 @@ resource "google_compute_firewall" "jumpbox-internal" {
 
   source_tags = ["${var.jumpbox_tag}"]
   target_tags = ["${var.bosh_external_tag}"]
+}
+
+// NAT
+resource "google_compute_instance" "nat" {
+  name         = "nat"
+  machine_type = "n1-standard-1"
+  zone         = "${var.zone}"
+
+  tags = ["${var.natbox_tag}"]
+
+  disk {
+    image = "ubuntu-1404-trusty-v20161109"
+  }
+
+  network_interface {
+    subnetwork = "${var.subnetwork_name}"
+    access_config {
+      // Ephemeral IP
+    }
+  }
+
+  can_ip_forward = true
+
+  metadata_startup_script = <<EOT
+#!/bin/bash
+sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+EOT
+}
+
+resource "google_compute_route" "nat" {
+  name        = "nat"
+  dest_range  = "0.0.0.0/0"
+  network       = "${var.network_name}"
+  next_hop_instance = "${google_compute_instance.nat.name}"
+  next_hop_instance_zone = "${var.zone}"
+  priority    = 800
+  tags = ["${var.nat_traffic_tag}"]
+}
+
+// allow all traffic out through NAT box
+resource "google_compute_firewall" "nat-traffic" {
+  name    = "bosh-nat-traffic"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+  }
+
+  allow {
+    protocol = "udp"
+  }
+
+  source_tags = ["${var.nat_traffic_tag}"]
+  target_tags = ["${var.natbox_tag}"]
 }
