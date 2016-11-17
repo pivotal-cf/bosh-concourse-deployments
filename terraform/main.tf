@@ -42,7 +42,7 @@ resource "google_compute_instance" "default" {
     network = "${google_compute_network.bosh.self_link}"
     subnetwork = "${google_compute_subnetwork.bosh-subnet-1.self_link}"
     access_config {
-      nap_ip = "${google_compute_address.jumpbox.address}"
+      nat_ip = "${google_compute_address.jumpbox.address}"
     }
   }
 }
