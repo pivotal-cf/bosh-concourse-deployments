@@ -104,6 +104,10 @@ resource "google_compute_firewall" "jumpbox-external" {
   name    = "jumpbox-external"
   network = "${google_compute_network.bosh.name}"
 
+  allow {
+    protocol = "icmp"
+  }
+
   source_ranges = ["${var.trusted_cidr}"]
   target_tags = ["${var.jumpbox_tag}"]
 }
