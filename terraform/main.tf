@@ -27,7 +27,7 @@ resource "google_compute_address" "jumpbox" {
   name = "jumpbox-ip"
 }
 
-resource "google_compute_instance" "default" {
+resource "google_compute_instance" "jumpbox" {
   name         = "bosh-jumpbox"
   machine_type = "n1-standard-1"
   zone         = "${var.zone}"
@@ -44,6 +44,18 @@ resource "google_compute_instance" "default" {
       nat_ip = "${google_compute_address.jumpbox.address}"
     }
   }
+
+  metadata_startup_script = <<EOT
+#!/bin/bash
+set -e
+
+apt-get update
+apt-get install -y jq
+
+version=$(curl -s https://api.github.com/repos/cloudfoundry/bosh-cli/releases/latest | jq -r .tag_name | sed -e "s/^v//")
+wget -O /usr/local/bin/bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-$version-linux-amd64
+chmod +x /usr/local/bin/bosh
+EOT
 }
 
 // allow SSH, UAA, and BOSH traffic from `trusted_cidr` to Director
