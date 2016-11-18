@@ -9,13 +9,11 @@ image_resource:
 inputs:
   - name: terraform
   - name: deployments-src
-  - name: bosh-release
-  - name: cpi-release
-  - name: stemcell
+  - name: director-templates
   - name: bosh-cli
 
 outputs:
-  - name: output-src
+  - name: updated-director-state
 
 params:
   BOSH_DIRECTOR_SECRETS: ""

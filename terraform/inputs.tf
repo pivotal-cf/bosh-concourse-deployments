@@ -11,7 +11,12 @@ variable "trusted_cidr" {
     type = "string"
 }
 
-variable "director_cidr" {
+variable "allow_direct_access_to_director" {
+    description = "Set to `1` to allow traffic on BOSH ports from `trusted_cidr`. This should only be done temporarily to upgrade the director or perform a deployment."
+    default = 0
+}
+
+variable "internal_cidr" {
     type = "string"
     default = "10.0.0.0/24"
 }
@@ -50,12 +55,12 @@ variable "nat_traffic_tag" {
     type = "string"
     default = "bosh-nat-traffic"
 }
-variable "network_name" {
+variable "network" {
     type = "string"
     default = "concourse"
 }
 
-variable "subnetwork_name" {
+variable "subnetwork" {
     type = "string"
     default = "concourse"
 }
@@ -73,9 +78,4 @@ variable "region" {
 variable "concourse_target_pool" {
     type = "string"
     default = "concourse-target-pool"
-}
-
-variable "concourse_upgrader_tag" {
-    type = "string"
-    default = "concourse-upgrader"
 }

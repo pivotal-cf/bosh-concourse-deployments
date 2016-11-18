@@ -13,31 +13,25 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
-cpi_dir="$( cd "${workspace_dir}/cpi-release" && pwd )"
-bosh_dir="$( cd "${workspace_dir}/bosh-release" && pwd )"
-stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
+director_templates_dir="$( cd "${workspace_dir}/director-templates" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
 
 # outputs
-output_dir="$( cd "${workspace_dir}/output-src" && pwd )"
+output_dir="$( cd "${workspace_dir}/updated-director-state" && pwd )"
 
-git clone "${deployments_dir}" "${output_dir}"
+cp "${director_templates_dir}/bosh.yml" "${output_dir}"
 
-working_dir="$( cd "${output_dir}/bosh/" && pwd )"
-mkdir -p "${working_dir}/assets/"
-cp ${cpi_dir}/*.tgz "${working_dir}/assets/cpi.tgz"
-cp ${bosh_dir}/*.tgz "${working_dir}/assets/bosh.tgz"
-cp ${stemcell_dir}/*.tgz "${working_dir}/assets/stemcell.tgz"
-
-pushd "${working_dir}" > /dev/null
+pushd "${output_dir}" > /dev/null
   echo "Updating director..."
   ${bosh_cli} -n create-env \
+    --ops-file "${director_templates_dir}/use-gcp.yml" \
+    --ops-file "${director_templates_dir}/external-ip.yml" \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
-    -v "director_admin_user=${BOSH_USER}" \
-    -v "director_admin_password=${BOSH_PASSWORD}" \
+    -v "admin_user=${BOSH_USER}" \
+    -v "admin_password=${BOSH_PASSWORD}" \
     -l "${terraform_config}/metadata" \
-    ./director.yml
+    ./bosh.yml
 popd > /dev/null
 
 echo "Successfully updated director!"

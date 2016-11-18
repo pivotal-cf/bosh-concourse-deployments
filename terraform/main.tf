@@ -5,12 +5,12 @@ provider "google" {
 }
 
 resource "google_compute_network" "bosh" {
-  name = "${var.network_name}"
+  name = "${var.network}"
 }
 
 resource "google_compute_subnetwork" "bosh-subnet-1" {
-  name          = "${var.subnetwork_name}"
-  ip_cidr_range = "${var.director_cidr}"
+  name          = "${var.subnetwork}"
+  ip_cidr_range = "${var.internal_cidr}"
   network       = "${google_compute_network.bosh.self_link}"
 }
 
@@ -21,7 +21,6 @@ resource "google_compute_address" "director" {
 resource "google_compute_address" "concourse" {
   name = "concourse-ip"
 }
-
 
 resource "google_compute_address" "jumpbox" {
   name = "jumpbox-ip"
@@ -39,7 +38,7 @@ resource "google_compute_instance" "jumpbox" {
   }
 
   network_interface {
-    subnetwork = "${var.subnetwork_name}"
+    subnetwork = "${var.subnetwork}"
     access_config {
       nat_ip = "${google_compute_address.jumpbox.address}"
     }
@@ -76,8 +75,11 @@ resource "google_compute_firewall" "bosh-jumpbox-director" {
   target_tags = ["${var.bosh_director_tag}"]
 }
 
-// allow NATs, UAA, and BOSH traffic from `upgrader` to Director
+// allow NATs, UAA, and BOSH traffic from `trusted_cidr` to Director
+// This resource will not created by default, set `allow_direct_access_to_director=1` to enable
 resource "google_compute_firewall" "bosh-upgrader-director" {
+  count = "${var.allow_direct_access_to_director}"
+
   name    = "bosh-upgrader-director"
   network = "${google_compute_network.bosh.name}"
 
@@ -90,10 +92,9 @@ resource "google_compute_firewall" "bosh-upgrader-director" {
     ports    = ["6868", "8443", "25555"]
   }
 
-  source_tags = ["${var.concourse_upgrader_tag}"]
+  source_ranges = ["${var.trusted_cidr}"]
   target_tags = ["${var.bosh_director_tag}"]
 }
-
 
 // allow postgres from ATC to DB
 resource "google_compute_firewall" "bosh-atc-to-db" {
@@ -187,20 +188,6 @@ resource "google_compute_firewall" "jumpbox-internal" {
   target_tags = ["${var.bosh_director_tag}"]
 }
 
-// allow http and https from jumpbox to upgrader
-resource "google_compute_firewall" "jumpbox-to-upgrader" {
-  name    = "jumpbox-to-upgrader"
-  network = "${google_compute_network.bosh.name}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80", "443"]
-  }
-
-  source_tags = ["${var.jumpbox_tag}"]
-  target_tags = ["${var.concourse_upgrader_tag}"]
-}
-
 // NAT
 resource "google_compute_instance" "nat" {
   name         = "nat"
@@ -214,7 +201,7 @@ resource "google_compute_instance" "nat" {
   }
 
   network_interface {
-    subnetwork = "${var.subnetwork_name}"
+    subnetwork = "${var.subnetwork}"
     access_config {
       // Ephemeral IP
     }
@@ -232,7 +219,7 @@ EOT
 resource "google_compute_route" "nat" {
   name        = "nat"
   dest_range  = "0.0.0.0/0"
-  network       = "${var.network_name}"
+  network       = "${var.network}"
   next_hop_instance = "${google_compute_instance.nat.name}"
   next_hop_instance_zone = "${var.zone}"
   priority    = 800

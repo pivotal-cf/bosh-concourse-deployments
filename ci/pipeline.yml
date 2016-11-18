@@ -6,38 +6,32 @@ jobs:
       - do:
         - aggregate:
           - get: deployments-src
-          - get: stemcell
-          - get: bosh-release
-          - get: cpi-release
+          - get: director-templates
           - get: bosh-cli
         - put: terraform
           params:
             env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
+            vars:
+              allow_direct_access_to_director: 1
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
-          output_mapping: {output-src: updated-deployments-src}
           params:
             BOSH_DIRECTOR_SECRETS: {{bosh_director_secrets}}
             BOSH_ENVIRONMENT:      {{director_url}}
             BOSH_USER:             {{director_admin_username}}
             BOSH_PASSWORD:         {{director_admin_password}}
           ensure:
-            do:
-            - task: commit-state-file
-              file: deployments-src/ci/tasks/git-commit.yml
-              input_mapping: {input-src: updated-deployments-src}
-              output_mapping: {output-src: committed-deployments-src}
+            put: director-state
+            params:
+              file: updated-director-state/bosh-state.json
+            ensure:
+              put: terraform
               params:
-                GIT_ADD_ARGS: ./bosh/director-state.json
-                GIT_COMMIT_MSG: ":airplane: Auto-commit: Updating Director deployment state"
-                GIT_COMMIT_USERNAME: bosh-ci
-                GIT_COMMIT_EMAIL: cf-bosh-eng+bosh-ci@pivotal.io
-                GIT_SUCCEED_ON_NO_CHANGES: true
-            - put: deployments-src
-              params:
-                repository: committed-deployments-src/
-                rebase: true
+                env_name: bosh-cpi-concourse
+                terraform_source: deployments-src/terraform/
+                vars:
+                  allow_direct_access_to_director: 0
 
   - name: update-cloud-config
     serial_groups: [deploy]
@@ -87,6 +81,10 @@ resource_types:
     type: docker-image
     source:
       repository: ljfranklin/terraform-resource
+  - name: gcs-resource
+    type: docker-image
+    source:
+      repository: frodenas/gcs-resource
 
 resources:
   - name: deployments-src
@@ -94,7 +92,14 @@ resources:
     source:
       uri: git@github.com:pivotal-cf/bosh-concourse-deployments.git
       private_key: {{deployments_github_deploy_key}}
-      branch: master
+      # branch: master
+      branch: WIP-add-terraform-templates
+  - name: director-templates
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/bosh-deployment.git
+      # branch: master
+      branch: PR-cpi-team-feedback
   - name: terraform
     type: terraform
     source:
@@ -108,23 +113,21 @@ resources:
         google_project_id: {{google_project_id}}
         google_credentials_json: {{google_credentials_json}}
         trusted_cidr: {{trusted_cidr}}
-  - name: bosh-release
-    type: bosh-io-release
+  - name: director-state
+    type: gcs-resource
     source:
-      repository: cloudfoundry/bosh
-  - name: stemcell
-    type: bosh-io-stemcell
-    source:
-      name: bosh-google-kvm-ubuntu-trusty-go_agent
-  - name: cpi-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry-incubator/bosh-google-cpi-release
+      bucket: {{deployments_bucket_name}}
+      json_key: {{google_credentials_json}}
+      versioned_file: director/bosh-state.json
   - name: bosh-cli
     type: s3
     source:
       bucket: bosh-cli-artifacts
       regexp: bosh-cli-(\d+\.\d+\.\d+)-linux-amd64
+  - name: stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-google-kvm-ubuntu-trusty-go_agent
   - name: concourse-and-garden
     type: github-release
     source:

@@ -37,8 +37,8 @@ networks:
     subnets:
     - az: z1
       cloud_properties:
-        network_name: ((network_name))
-        subnetwork_name: ((subnetwork_name))
+        network_name: ((network))
+        subnetwork_name: ((subnetwork))
         tags:
           - ((bosh_internal_tag))
   - name: vip

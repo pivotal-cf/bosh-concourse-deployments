@@ -1,21 +1,29 @@
 
-output "gce_zone" {
+output "zone" {
     value = "${var.zone}"
 }
 
-output "director_cidr" {
-    value = "${var.director_cidr}"
+output "network" {
+    value = "${var.network}"
 }
 
-output "director_gateway" {
-    value = "${cidrhost(var.director_cidr,1)}"
+output "subnetwork" {
+    value = "${var.subnetwork}"
 }
 
-output "director_private_ip" {
-    value = "${cidrhost(var.director_cidr,6)}"
+output "internal_cidr" {
+    value = "${var.internal_cidr}"
 }
 
-output "director_public_ip" {
+output "internal_gw" {
+    value = "${cidrhost(var.internal_cidr,1)}"
+}
+
+output "internal_director_ip" {
+    value = "${cidrhost(var.internal_cidr,6)}"
+}
+
+output "director_external_ip" {
     value = "${google_compute_address.director.address}"
 }
 
@@ -23,8 +31,8 @@ output "concourse_public_ip" {
     value = "${google_compute_address.concourse.address}"
 }
 
-output "bosh_director_tag" {
-    value = "${var.bosh_director_tag}"
+output "director_tags" {
+    value = ["${var.bosh_director_tag}"]
 }
 
 output "concourse_atc_tag" {
@@ -37,14 +45,6 @@ output "concourse_db_tag" {
 
 output "bosh_internal_tag" {
     value = "${var.bosh_internal_tag}"
-}
-
-output "network_name" {
-    value = "${var.network_name}"
-}
-
-output "subnetwork_name" {
-    value = "${var.subnetwork_name}"
 }
 
 output "nat_traffic_tag" {
