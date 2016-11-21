@@ -17,10 +17,11 @@ jobs:
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
           params:
-            BOSH_DIRECTOR_SECRETS: {{bosh_director_secrets}}
-            BOSH_ENVIRONMENT:      {{director_url}}
-            BOSH_USER:             {{director_admin_username}}
-            BOSH_PASSWORD:         {{director_admin_password}}
+            GOOGLE_CREDENTIALS_JSON: {{google_credentials_json}}
+            BOSH_DIRECTOR_SECRETS:   {{bosh_director_secrets}}
+            BOSH_ENVIRONMENT:        {{director_url}}
+            BOSH_USER:               {{director_admin_username}}
+            BOSH_PASSWORD:           {{director_admin_password}}
           ensure:
             put: director-state
             params:

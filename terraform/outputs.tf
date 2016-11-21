@@ -23,11 +23,11 @@ output "internal_director_ip" {
     value = "${cidrhost(var.internal_cidr,6)}"
 }
 
-output "director_external_ip" {
+output "external_director_ip" {
     value = "${google_compute_address.director.address}"
 }
 
-output "concourse_public_ip" {
+output "external_concourse_ip" {
     value = "${google_compute_address.concourse.address}"
 }
 

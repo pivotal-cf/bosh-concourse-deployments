@@ -6,6 +6,7 @@ deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # env
+: ${GOOGLE_CREDENTIALS_JSON:?}
 : ${BOSH_DIRECTOR_SECRETS:?}
 : ${BOSH_ENVIRONMENT:?}
 : ${BOSH_USER:?}
@@ -21,6 +22,11 @@ chmod +x "${bosh_cli}"
 output_dir="$( cd "${workspace_dir}/updated-director-state" && pwd )"
 
 cp "${director_templates_dir}/bosh.yml" "${output_dir}"
+
+umask 077
+export GOOGLE_APPLICATION_CREDENTIALS="$( mktemp /tmp/google-creds-XXXXXXXXXXX )"
+echo "${GOOGLE_CREDENTIALS_JSON}" > "${GOOGLE_APPLICATION_CREDENTIALS}"
+trap "{ rm ${GOOGLE_APPLICATION_CREDENTIALS}; }" EXIT
 
 pushd "${output_dir}" > /dev/null
   echo "Updating director..."
