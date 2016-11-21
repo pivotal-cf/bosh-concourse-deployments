@@ -21,6 +21,8 @@ params:
   BOSH_ENVIRONMENT:        ""
   BOSH_USER:               ""
   BOSH_PASSWORD:           ""
+  ROOT_CA_PEM:             ""
+  ROOT_CA_KEY:             ""
 
 run:
   path: deployments-src/ci/tasks/deploy-director

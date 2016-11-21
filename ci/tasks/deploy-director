@@ -11,6 +11,8 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${BOSH_ENVIRONMENT:?}
 : ${BOSH_USER:?}
 : ${BOSH_PASSWORD:?}
+: ${ROOT_CA_PEM:?}
+: ${ROOT_CA_KEY:?}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
@@ -28,6 +30,27 @@ export GOOGLE_APPLICATION_CREDENTIALS="$( mktemp /tmp/google-creds-XXXXXXXXXXX )
 echo "${GOOGLE_CREDENTIALS_JSON}" > "${GOOGLE_APPLICATION_CREDENTIALS}"
 trap "{ rm ${GOOGLE_APPLICATION_CREDENTIALS}; }" EXIT
 
+cert_dir="$(mktemp -d /tmp/certs-XXXXXX)"
+trap "{ rm -rf ${cert_dir}; }" EXIT
+
+internal_director_ip=$(jq -r -e .internal_director_ip ${terraform_config}/metadata)
+# TODO: remove external IP once we have SSH tunnel
+external_director_ip=$(jq -r -e .external_director_ip ${terraform_config}/metadata)
+cat > ${cert_dir}/openssl-exts.conf <<-EOL
+extensions = san
+[san]
+subjectAltName = IP:${internal_director_ip}
+subjectAltName = IP:${external_director_ip}
+subjectAltName = IP:127.0.0.1
+EOL
+
+openssl req -new -nodes -newkey rsa:4096 -sha256 -nodes -keyout ${cert_dir}/bosh.key \
+  -out ${cert_dir}/bosh.csr -subj "/C=US/O=BOSH/CN=127.0.0.1"
+openssl x509 -req -in ${cert_dir}/bosh.csr \
+  -CA <(echo "$ROOT_CA_PEM") -CAkey <(echo "$ROOT_CA_KEY") -CAcreateserial \
+  -out ${cert_dir}/bosh.crt -days 99999 \
+  -extfile ${cert_dir}/openssl-exts.conf
+
 pushd "${output_dir}" > /dev/null
   echo "Updating director..."
   ${bosh_cli} -n create-env \
@@ -36,6 +59,7 @@ pushd "${output_dir}" > /dev/null
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
+    -v "director_ssl={ \"private_key\": \"$(cat ${cert_dir}/bosh.key)\", \"certificate\": \"$(cat ${cert_dir}/bosh.crt)\", \"ca\": \"$ROOT_CA_PEM\" }" \
     -l "${terraform_config}/metadata" \
     ./bosh.yml
 popd > /dev/null

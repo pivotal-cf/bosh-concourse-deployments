@@ -22,6 +22,8 @@ jobs:
             BOSH_ENVIRONMENT:        {{director_url}}
             BOSH_USER:               {{director_admin_username}}
             BOSH_PASSWORD:           {{director_admin_password}}
+            ROOT_CA_PEM:             {{root_ca_pem}}
+            ROOT_CA_KEY:             {{root_ca_key}}
           ensure:
             put: director-state
             params:
