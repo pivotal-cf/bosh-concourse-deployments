@@ -26,10 +26,6 @@ output_dir="$( cd "${workspace_dir}/updated-director-state" && pwd )"
 cp "${director_templates_dir}/bosh.yml" "${output_dir}"
 
 umask 077
-export GOOGLE_APPLICATION_CREDENTIALS="$( mktemp /tmp/google-creds-XXXXXXXXXXX )"
-echo "${GOOGLE_CREDENTIALS_JSON}" > "${GOOGLE_APPLICATION_CREDENTIALS}"
-trap "{ rm ${GOOGLE_APPLICATION_CREDENTIALS}; }" EXIT
-
 cert_dir="$(mktemp -d /tmp/certs-XXXXXX)"
 trap "{ rm -rf ${cert_dir}; }" EXIT
 
@@ -61,6 +57,7 @@ pushd "${output_dir}" > /dev/null
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca=unused" \
     -v "director_ssl={ \"private_key\": \"$(cat ${cert_dir}/bosh.key)\", \"certificate\": \"$(cat ${cert_dir}/bosh.crt)\", \"ca\": \"$ROOT_CA_PEM\" }" \
+    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'" \
     -l "${terraform_config}/metadata" \
     ./bosh.yml
 popd > /dev/null
