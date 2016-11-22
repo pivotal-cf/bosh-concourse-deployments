@@ -47,7 +47,7 @@ EOL
 openssl req -new -nodes -newkey rsa:4096 -sha256 -nodes -keyout ${cert_dir}/bosh.key \
   -out ${cert_dir}/bosh.csr -subj "/C=US/O=BOSH/CN=127.0.0.1"
 openssl x509 -req -in ${cert_dir}/bosh.csr \
-  -CA <(echo "$ROOT_CA_PEM") -CAkey <(echo "$ROOT_CA_KEY") -CAcreateserial \
+  -CA <(echo "$ROOT_CA_PEM") -CAkey <(echo "$ROOT_CA_KEY") -CAcreateserial -CAserial ${cert_dir}/serial \
   -out ${cert_dir}/bosh.crt -days 99999 \
   -extfile ${cert_dir}/openssl-exts.conf
 
@@ -59,6 +59,7 @@ pushd "${output_dir}" > /dev/null
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
+    -v "default_ca=unused" \
     -v "director_ssl={ \"private_key\": \"$(cat ${cert_dir}/bosh.key)\", \"certificate\": \"$(cat ${cert_dir}/bosh.crt)\", \"ca\": \"$ROOT_CA_PEM\" }" \
     -l "${terraform_config}/metadata" \
     ./bosh.yml
