@@ -25,27 +25,9 @@ output_dir="$( cd "${workspace_dir}/updated-director-state" && pwd )"
 
 cp "${director_templates_dir}/bosh.yml" "${output_dir}"
 
-umask 077
-cert_dir="$(mktemp -d /tmp/certs-XXXXXX)"
-trap "{ rm -rf ${cert_dir}; }" EXIT
-
 internal_director_ip=$(jq -r -e .internal_director_ip ${terraform_config}/metadata)
 # TODO: remove external IP once we have SSH tunnel
 external_director_ip=$(jq -r -e .external_director_ip ${terraform_config}/metadata)
-cat > ${cert_dir}/openssl-exts.conf <<-EOL
-extensions = san
-[san]
-subjectAltName = IP:${internal_director_ip}
-subjectAltName = IP:${external_director_ip}
-subjectAltName = IP:127.0.0.1
-EOL
-
-openssl req -new -nodes -newkey rsa:4096 -sha256 -nodes -keyout ${cert_dir}/bosh.key \
-  -out ${cert_dir}/bosh.csr -subj "/C=US/O=BOSH/CN=127.0.0.1"
-openssl x509 -req -in ${cert_dir}/bosh.csr \
-  -CA <(echo "$ROOT_CA_PEM") -CAkey <(echo "$ROOT_CA_KEY") -CAcreateserial -CAserial ${cert_dir}/serial \
-  -out ${cert_dir}/bosh.crt -days 99999 \
-  -extfile ${cert_dir}/openssl-exts.conf
 
 pushd "${output_dir}" > /dev/null
   echo "Updating director..."
@@ -56,10 +38,12 @@ pushd "${output_dir}" > /dev/null
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca=unused" \
-    -v "director_ssl={ \"private_key\": \"$(cat ${cert_dir}/bosh.key)\", \"certificate\": \"$(cat ${cert_dir}/bosh.crt)\", \"ca\": \"$ROOT_CA_PEM\" }" \
+    -v "director_ssl={ \"alternative_names\": [ \"IP:127.0.0.1\", \"IP:${internal_director_ip}\", \"IP:${external_director_ip}\" ] }" \
+    -v "default_ca={ \"private_key\": \"$ROOT_CA_KEY", \"certificate\": \"$ROOT_CA_PEM\" }" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'" \
     -l "${terraform_config}/metadata" \
     ./bosh.yml
+  rm creds.yml
 popd > /dev/null
 
 echo "Successfully updated director!"
