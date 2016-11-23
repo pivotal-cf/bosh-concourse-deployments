@@ -39,7 +39,7 @@ pushd "${output_dir}" > /dev/null
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca=unused" \
     -v "director_ssl={ \"alternative_names\": [ \"IP:127.0.0.1\", \"IP:${internal_director_ip}\", \"IP:${external_director_ip}\" ] }" \
-    -v "default_ca={ \"private_key\": \"$ROOT_CA_KEY", \"certificate\": \"$ROOT_CA_PEM\" }" \
+    -v "default_ca={ \"private_key\": \"$ROOT_CA_KEY\", \"certificate\": \"$ROOT_CA_PEM\" }" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'" \
     -l "${terraform_config}/metadata" \
     ./bosh.yml
