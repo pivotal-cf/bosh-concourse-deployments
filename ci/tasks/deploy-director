@@ -36,8 +36,8 @@ external_director_ip=$(jq -r -e .external_director_ip ${terraform_config}/metada
 pushd "${output_dir}" > /dev/null
   echo "Updating director..."
   ${bosh_cli} -n create-env \
-    --ops-file "${director_templates_dir}/use-gcp.yml" \
-    --ops-file "${director_templates_dir}/external-ip.yml" \
+    --ops-file "${director_templates_dir}/gcp/cpi.yml" \
+    --ops-file "${director_templates_dir}/external-ip-not-recommended.yml" \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
