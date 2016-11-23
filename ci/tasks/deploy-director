@@ -37,7 +37,7 @@ pushd "${output_dir}" > /dev/null
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca=${DEFAULT_CA_JSON}" \
-    -v "gcp_credentials_json=${GOOGLE_CREDENTIALS_JSON}" \
+    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'"   \
     -l "${terraform_config}/metadata" \
     --vars-store /tmp/please-delete-me-i-hope \
     ./bosh.yml
