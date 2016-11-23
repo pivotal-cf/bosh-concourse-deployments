@@ -23,6 +23,7 @@ params:
   BOSH_PASSWORD:           ""
   ROOT_CA_PEM:             ""
   ROOT_CA_KEY:             ""
+  DEFAULT_CA_JSON:         ""
 
 run:
   path: deployments-src/ci/tasks/deploy-director

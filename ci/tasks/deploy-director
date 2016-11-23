@@ -13,6 +13,7 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${BOSH_PASSWORD:?}
 : ${ROOT_CA_PEM:?}
 : ${ROOT_CA_KEY:?}
+: ${DEFAULT_CA_JSON:?}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
@@ -38,12 +39,12 @@ pushd "${output_dir}" > /dev/null
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca=unused" \
-    -v "director_ssl={ \"alternative_names\": [ \"IP:127.0.0.1\", \"IP:${internal_director_ip}\", \"IP:${external_director_ip}\" ] }" \
-    -v "default_ca={ \"private_key\": \"$ROOT_CA_KEY\", \"certificate\": \"$ROOT_CA_PEM\" }" \
-    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'" \
+    -v "default_ca=${DEFAULT_CA_JSON}" \
+    -v "gcp_credentials_json=${GOOGLE_CREDENTIALS_JSON}" \
     -l "${terraform_config}/metadata" \
+    --vars-store /tmp/please-delete-me-i-hope \
     ./bosh.yml
-  rm creds.yml
+  rm creds.yml /tmp/please-delete-me-i-hope
 popd > /dev/null
 
 echo "Successfully updated director!"
