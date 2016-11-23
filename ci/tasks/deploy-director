@@ -16,13 +16,18 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
 director_templates_dir="$( cd "${workspace_dir}/director-templates" && pwd )"
+director_state_dir="$( cd "${workspace_dir}/director-state" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
 
 # outputs
 output_dir="$( cd "${workspace_dir}/updated-director-state" && pwd )"
 
+tmp_dir="$( mktemp -d /tmp/deploy-director-XXXXXXXX)"
+trap "{ rm -rf ${tmp_dir}; }" EXIT
+
 cp "${director_templates_dir}/bosh.yml" "${output_dir}"
+cp ${director_state_dir}/*.json "${output_dir}"
 
 internal_director_ip=$(jq -r -e .internal_director_ip ${terraform_config}/metadata)
 # TODO: remove external IP once we have SSH tunnel
@@ -39,9 +44,8 @@ pushd "${output_dir}" > /dev/null
     -v "default_ca=${DEFAULT_CA_JSON}" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'"   \
     -l "${terraform_config}/metadata" \
-    --vars-store /tmp/please-delete-me-i-hope \
+    --vars-store "${tmp_dir}/throwaway-var-store" \
     ./bosh.yml
-  rm creds.yml /tmp/please-delete-me-i-hope
 popd > /dev/null
 
 echo "Successfully updated director!"

@@ -8,6 +8,7 @@ jobs:
           - get: deployments-src
           - get: director-templates
           - get: bosh-cli
+          - get: director-state
         - put: terraform
           params:
             env_name: bosh-cpi-concourse
