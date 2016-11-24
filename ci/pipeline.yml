@@ -14,7 +14,7 @@ jobs:
             env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
             vars:
-              allow_direct_access_to_director: 1
+              allow_director_access_via_jumpbox: 1
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
           params:
@@ -24,6 +24,8 @@ jobs:
             BOSH_USER:               {{director_admin_username}}
             BOSH_PASSWORD:           {{director_admin_password}}
             DEFAULT_CA_JSON:         {{default_ca_json}}
+            JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
+            JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
           ensure:
             put: director-state
             params:
@@ -34,7 +36,7 @@ jobs:
                 env_name: bosh-cpi-concourse
                 terraform_source: deployments-src/terraform/
                 vars:
-                  allow_direct_access_to_director: 0
+                  allow_director_access_via_jumpbox: 0
 
   - name: update-cloud-config
     serial_groups: [deploy]

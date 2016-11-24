@@ -5,7 +5,7 @@ FROM alpine:latest
 
 RUN apk update && \
     apk --no-cache add \
-    ca-certificates wget bash git jq \
+    ca-certificates wget bash git jq openssh \
     # needed to render bosh templates
     ruby ruby-dev \
     # needed to run Google CPI packaging scripts

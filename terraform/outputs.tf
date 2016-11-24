@@ -23,8 +23,8 @@ output "internal_director_ip" {
     value = "${cidrhost(var.internal_cidr,6)}"
 }
 
-output "external_director_ip" {
-    value = "${google_compute_address.director.address}"
+output "external_jumpbox_ip" {
+    value = "${google_compute_address.jumpbox.address}"
 }
 
 output "external_concourse_ip" {

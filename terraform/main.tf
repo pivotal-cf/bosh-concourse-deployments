@@ -14,10 +14,6 @@ resource "google_compute_subnetwork" "bosh-subnet-1" {
   network       = "${google_compute_network.bosh.self_link}"
 }
 
-resource "google_compute_address" "director" {
-  name = "bosh-director-ip"
-}
-
 resource "google_compute_address" "concourse" {
   name = "concourse-ip"
 }
@@ -75,12 +71,30 @@ resource "google_compute_firewall" "bosh-jumpbox-director" {
   target_tags = ["${var.bosh_director_tag}"]
 }
 
-// allow NATs, UAA, and BOSH traffic from `trusted_cidr` to Director
-// This resource will not created by default, set `allow_direct_access_to_director=1` to enable
-resource "google_compute_firewall" "bosh-upgrader-director" {
-  count = "${var.allow_direct_access_to_director}"
+// allow BOSH ports to allow SSH tunneling from `trusted_cidr` to Director via Jumpbox
+// This resource will not created by default, set `allow_director_access_via_jumpbox=1` to enable
+resource "google_compute_firewall" "jumpbox-ssh" {
+  count = "${var.allow_director_access_via_jumpbox}"
 
-  name    = "bosh-upgrader-director"
+  name    = "jumpbox-ssh"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["${var.trusted_cidr}"]
+  target_tags = ["${var.jumpbox_tag}"]
+}
+resource "google_compute_firewall" "jumpbox-to-director" {
+  count = "${var.allow_director_access_via_jumpbox}"
+
+  name    = "jumpbox-to-director"
   network = "${google_compute_network.bosh.name}"
 
   allow {
@@ -92,7 +106,7 @@ resource "google_compute_firewall" "bosh-upgrader-director" {
     ports    = ["6868", "8443", "25555"]
   }
 
-  source_ranges = ["${var.trusted_cidr}"]
+  source_tags = ["${var.jumpbox_tag}"]
   target_tags = ["${var.bosh_director_tag}"]
 }
 
