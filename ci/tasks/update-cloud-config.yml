@@ -12,9 +12,11 @@ inputs:
   - name: bosh-cli
 
 params:
-  BOSH_ENVIRONMENT:      ""
   BOSH_USER:             ""
   BOSH_PASSWORD:         ""
+  BOSH_CA_CERT:          ""
+  JUMPBOX_SSH_USER:      ""
+  JUMPBOX_SSH_KEY:       ""
 
 run:
   path: deployments-src/ci/tasks/update-cloud-config

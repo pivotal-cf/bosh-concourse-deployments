@@ -9,7 +9,8 @@ jobs:
           - get: director-templates
           - get: bosh-cli
           - get: director-state
-        - put: terraform
+        - &open-ssh-to-jumpbox
+          put: terraform
           params:
             env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
@@ -30,7 +31,7 @@ jobs:
             put: director-state
             params:
               file: updated-director-state/bosh-state.json
-            ensure:
+            ensure: &close-ssh-to-jumpbox
               put: terraform
               params:
                 env_name: bosh-cpi-concourse
@@ -45,16 +46,16 @@ jobs:
         - aggregate:
           - get: deployments-src
           - get: bosh-cli
-        - put: terraform
-          params:
-            env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/
+        - *open-ssh-to-jumpbox
         - task: update-cloud-config
           file: deployments-src/ci/tasks/update-cloud-config.yml
           params:
-            BOSH_ENVIRONMENT:      {{director_url}}
             BOSH_USER:             {{director_admin_username}}
             BOSH_PASSWORD:         {{director_admin_password}}
+            BOSH_CA_CERT:          {{director_ca_cert}}
+            JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
+            JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
+          ensure: *close-ssh-to-jumpbox
 
   - name: update-concourse
     serial_groups: [deploy]
