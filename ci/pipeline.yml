@@ -20,10 +20,10 @@ jobs:
           params:
             GOOGLE_CREDENTIALS_JSON: {{google_credentials_json}}
             BOSH_DIRECTOR_SECRETS:   {{bosh_director_secrets}}
-            BOSH_ENVIRONMENT:        {{director_url}}
             BOSH_USER:               {{director_admin_username}}
             BOSH_PASSWORD:           {{director_admin_password}}
-            DEFAULT_CA_JSON:         {{default_ca_json}}
+            BOSH_CA_CERT:            {{director_ca_cert}}
+            BOSH_CA_KEY:             {{director_ca_key}}
             JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
           ensure:
@@ -105,7 +105,7 @@ resources:
   - name: director-templates
     type: git
     source:
-      uri: https://github.com/cloudfoundry/bosh-deployment.git
+      uri: https://github.com/ljfranklin/bosh-deployment.git
       # branch: master
       branch: PR-cpi-team-feedback
   - name: terraform

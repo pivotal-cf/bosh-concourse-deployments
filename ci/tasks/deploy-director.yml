@@ -19,10 +19,10 @@ outputs:
 params:
   GOOGLE_CREDENTIALS_JSON: ""
   BOSH_DIRECTOR_SECRETS:   ""
-  BOSH_ENVIRONMENT:        ""
   BOSH_USER:               ""
   BOSH_PASSWORD:           ""
-  DEFAULT_CA_JSON:         ""
+  BOSH_CA_CERT:            ""
+  BOSH_CA_KEY:             ""
   JUMPBOX_SSH_KEY:         ""
   JUMPBOX_SSH_USER:        ""
 
