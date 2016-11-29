@@ -118,7 +118,7 @@ resources:
         secret_access_key: {{storage_secret_key}}
         endpoint: https://storage.googleapis.com
       vars:
-        google_project_id: {{google_project_id}}
+        project_id: {{project_id}}
         google_credentials_json: {{google_credentials_json}}
         trusted_cidr: {{trusted_cidr}}
   - name: director-state

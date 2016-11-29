@@ -1,5 +1,5 @@
 provider "google" {
-    project     = "${var.google_project_id}"
+    project     = "${var.project_id}"
     credentials = "${var.google_credentials_json}"
     region      = "${var.region}"
 }

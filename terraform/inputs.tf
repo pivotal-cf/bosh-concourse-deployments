@@ -1,5 +1,5 @@
 
-variable "google_project_id" {
+variable "project_id" {
     type = "string"
 }
 
