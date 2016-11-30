@@ -1,0 +1,130 @@
+---
+
+# TO UPDATE:
+#   bosh create-env ./concourse-cpi.yml -l <( lpass show --notes "bosh-concourse-upgrader-create-env" )
+#   Remember to commit the statefile changes when deploy is finished!
+
+name: concourse
+
+releases:
+- name: concourse
+  url: https://bosh.io/d/github.com/concourse/concourse?v=2.5.0
+  sha1: 0d1f436aad50bb09ac2c809cd6cb6df3e38a7767
+- name: garden-runc
+  url: https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.0.3
+  sha1: 0c04b944d50ec778f5b34304fd4bc8fc0ed83b2b
+- name: bosh-vsphere-cpi
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=34
+  sha1: 6a4e6d05a4b50c3d4fa53bda1d5d552f5899f1a6
+
+disk_pools:
+- name: disks
+  disk_size: 20_000
+
+resource_pools:
+- name: default
+  network: private
+  stemcell:
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3312
+    sha1: e69d870d9aa90135429e30852ce32bdbb425db51
+  cloud_properties:
+    cpu: 2
+    ram: 4_096
+    disk: 20_000
+
+networks:
+- name: private
+  type: manual
+  subnets:
+  - range: ((vcenter_cidr))
+    gateway: ((vcenter_gateway))
+    dns: [((vcenter_dns))]
+    cloud_properties: {name: ((vcenter_network))}
+
+instance_groups:
+- name: web
+  instances: 1
+  resource_pool: default
+  persistent_disk_pool: disks
+  networks:
+  - {name: private, static_ips: [((director_ip))]}
+  jobs:
+  - name: atc
+    release: concourse
+    properties:
+      external_url: ((external_url))
+      basic_auth_username: ((basic_auth_username))
+      basic_auth_password: ((basic_auth_password))
+      tls_cert: ((tls_cert))
+      tls_key: ((tls_key))
+      bind_port: 80
+      tls_bind_port: 443
+      postgresql:
+        address: 127.0.0.1
+        database: &atc_db atc
+        role:
+          name: &atc_role atc
+          password: &atc_password ((postgres_password))
+
+  - name: tsa
+    release: concourse
+    properties:
+      atc:
+        url: ((external_url))
+
+  - name: postgresql
+    release: concourse
+    properties:
+      databases:
+      - name: *atc_db
+        role: *atc_role
+        password: *atc_password
+
+  - name: groundcrew
+    release: concourse
+    properties:
+      tsa:
+        host: 127.0.0.1
+      baggageclaim:
+        url: http://127.0.0.1:7788
+  - name: baggageclaim
+    release: concourse
+    properties: {}
+  - name: garden
+    release: garden-runc
+    properties:
+      garden:
+        listen_network: tcp
+        listen_address: 0.0.0.0:7777
+  properties:
+    vcenter: &vcenter # <--- Replace values below
+      address: ((vcenter_address))
+      user: ((vcenter_user))
+      password: ((vcenter_password))
+      datacenters:
+      - name: ((vcenter_datacenter))
+        datastore_pattern: ((vcenter_datastore_pattern))
+        persistent_datastore_pattern: ((vcenter_datastore_pattern))
+        clusters: [((vcenter_cluster))]
+        vm_folder: bosh-upgrader-vms
+        template_folder: bosh-upgrader-templates
+        disk_path: bosh-upgrader-disks
+    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: false
+  canary_watch_time: 1000-60000
+  update_watch_time: 1000-60000
+
+cloud_provider:
+  template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
+
+  mbus: "https://mbus:((mbus_bootstrap_password))@((director_ip)):6868"
+
+  properties:
+    vcenter: *vcenter
+    agent: {mbus: "https://mbus:((mbus_bootstrap_password))@0.0.0.0:6868"}
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: *ntp
