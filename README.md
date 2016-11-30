@@ -15,3 +15,14 @@ The bucket which holds to BOSH Director's state must be created manually
 ```
 gsutil versioning set on gs://bosh-gcp-concourse-deployment
 ```
+
+### Creating a new Concourse team
+
+1. Register Concourse as an OAuth application: https://github.com/settings/applications/new
+1. Create the team:
+```bash
+fly set-team -n bosh-cpi \
+    --github-auth-client-id $CLIENT_ID \
+    --github-auth-client-secret $CLIENT_SECRET \
+    --github-auth-team "cloudfoundry/CF BOSH CPI"
+```
