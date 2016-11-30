@@ -1,7 +1,7 @@
 ---
 
 # TO UPDATE:
-#   bosh create-env ./concourse-cpi.yml -l <( lpass show --notes "bosh-concourse-upgrader-create-env" )
+#   bosh create-env ./upgrader.yml -l <( lpass show --notes "bosh-concourse-upgrader-create-env" )
 #   Remember to commit the statefile changes when deploy is finished!
 
 name: concourse
@@ -31,6 +31,9 @@ resource_pools:
     cpu: 2
     ram: 4_096
     disk: 20_000
+  env:
+    bosh:
+      password: ((upgrader_vm_password))
 
 networks:
 - name: private
