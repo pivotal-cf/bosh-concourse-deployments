@@ -5,12 +5,19 @@ azs:
 vm_types:
 - name: concourse_cpi
   cloud_properties:
-    machine_type: n1-highcpu-4
-    root_disk_size_gb: 100
+    machine_type: n1-standard-2
+    root_disk_size_gb: 20
     root_disk_type: pd-standard
     tags:
       - ((concourse_atc_tag))
-- name: worker_cpi
+- name: concourse_cpi_database
+  cloud_properties:
+    machine_type: n1-standard-2
+    root_disk_size_gb: 20
+    root_disk_type: pd-standard
+    tags:
+      - ((concourse_db_tag))
+- name: concourse_cpi_worker
   cloud_properties:
     cpu: 8
     ram: 16_384

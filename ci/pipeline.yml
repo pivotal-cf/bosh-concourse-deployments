@@ -68,19 +68,19 @@ jobs:
           - get: concourse-and-garden
             params:
               globs: ['concourse-*.tgz','garden-runc-*.tgz']
-        - put: terraform
-          params:
-            env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/
+        - *open-ssh-to-jumpbox
         - task: deploy-concourse
           file: deployments-src/ci/tasks/deploy-concourse.yml
           params:
             DEPLOYMENT_NAME:        concourse-cpi
             DEPLOYMENT_CONFIG_PATH: concourse/concourse-cpi.yml
             CONCOURSE_SECRETS:      {{concourse_secrets}}
-            BOSH_ENVIRONMENT:       {{director_url}}
             BOSH_USER:              {{director_admin_username}}
             BOSH_PASSWORD:          {{director_admin_password}}
+            BOSH_CA_CERT:           {{director_ca_cert}}
+            JUMPBOX_SSH_KEY:        {{jumpbox_ssh_key}}
+            JUMPBOX_SSH_USER:       {{jumpbox_ssh_user}}
+          ensure: *close-ssh-to-jumpbox
 
 resource_types:
   - name: terraform

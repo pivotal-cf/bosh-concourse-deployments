@@ -26,7 +26,6 @@ instance_groups:
   vm_type: concourse_cpi
   stemcell: default
   azs: [z1]
-  persistent_disk_pool: persistent
   networks:
     - name: concourse
       default: [dns, gateway]
@@ -44,12 +43,22 @@ instance_groups:
           client_secret: ((github_client_secret))
           # these users will have access to the `main` team
           authorize: ((github_authorized_teams))
-
     - name: tsa
       release: concourse
       properties:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_private_key))
+
+- name: concourse_cpi_database
+  instances: 1
+  vm_type: concourse_cpi_database
+  stemcell: default
+  azs: [z1]
+  persistent_disk_pool: persistent
+  networks:
+    - name: concourse
+      default: [dns, gateway]
+  jobs:
     - name: postgresql
       release: concourse
       properties:
@@ -58,9 +67,9 @@ instance_groups:
             role: atc
             password: ((concourse_db_password))
 
-- name: worker_cpi
+- name: concourse_cpi_worker
   instances: 3
-  vm_type: worker_cpi
+  vm_type: concourse_cpi_worker
   stemcell: default
   azs: [z1]
   networks:
