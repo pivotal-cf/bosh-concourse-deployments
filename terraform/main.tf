@@ -124,7 +124,7 @@ resource "google_compute_firewall" "bosh-atc-to-db" {
   target_tags = ["${var.concourse_db_tag}"]
 }
 
-// allow nats from `bosh_internal` to Director
+// allow nats and blobstore from `bosh_internal` to Director
 resource "google_compute_firewall" "bosh-internal-to-director" {
   name    = "bosh-internal-to-director"
   network = "${google_compute_network.bosh.name}"
@@ -135,7 +135,7 @@ resource "google_compute_firewall" "bosh-internal-to-director" {
 
   allow {
     protocol = "tcp"
-    ports    = ["6868"]
+    ports    = ["4222", "25250"]
   }
 
   source_tags = ["${var.bosh_internal_tag}"]

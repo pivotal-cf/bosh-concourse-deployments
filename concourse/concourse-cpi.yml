@@ -29,13 +29,15 @@ instance_groups:
   networks:
     - name: concourse
       default: [dns, gateway]
-    - name: vip
-      static_ips: [((concourse_public_ip))]
   jobs:
     - name: atc
       release: concourse
       properties:
         external_url: ((concourse_external_url))
+        bind_port: 80
+        tls_bind_port: 443
+        tls_cert: ((atc_certificate))
+        tls_key: ((atc_private_key))
         publicly_viewable: true
         postgresql_database: &atc_db atc
         github_auth:

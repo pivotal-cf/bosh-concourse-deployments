@@ -1,6 +1,6 @@
 azs:
 - name: z1
-  cloud_properties: {zone: ((gce_zone))}
+  cloud_properties: {zone: ((zone))}
 
 vm_types:
 - name: concourse_cpi
@@ -8,22 +8,21 @@ vm_types:
     machine_type: n1-standard-2
     root_disk_size_gb: 20
     root_disk_type: pd-standard
-    tags:
-      - ((concourse_atc_tag))
+    tags: ((concourse_atc_tags))
+    target_pool: ((concourse_target_pool))
 - name: concourse_cpi_database
   cloud_properties:
     machine_type: n1-standard-2
     root_disk_size_gb: 20
     root_disk_type: pd-standard
-    tags:
-      - ((concourse_db_tag))
+    tags: ((concourse_db_tags))
 - name: concourse_cpi_worker
   cloud_properties:
     cpu: 8
     ram: 16_384
     root_disk_size_gb: 164
     root_disk_type: pd-standard
-    ephemeral_external_ip: true
+    tags: ((concourse_worker_tags))
 - name: compilation
   cloud_properties:
     machine_type: n1-highcpu-4

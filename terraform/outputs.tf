@@ -35,15 +35,19 @@ output "external_concourse_ip" {
 }
 
 output "director_tags" {
-    value = ["${var.bosh_director_tag}"]
+    value = ["${var.bosh_director_tag}", "${var.nat_traffic_tag}"]
 }
 
-output "concourse_atc_tag" {
-    value = "${var.concourse_atc_tag}"
+output "concourse_atc_tags" {
+    value = ["${var.concourse_atc_tag}", "${var.nat_traffic_tag}"]
 }
 
-output "concourse_db_tag" {
-    value = "${var.concourse_db_tag}"
+output "concourse_worker_tags" {
+    value = ["${var.nat_traffic_tag}"]
+}
+
+output "concourse_db_tags" {
+    value = ["${var.concourse_db_tag}"]
 }
 
 output "bosh_internal_tag" {

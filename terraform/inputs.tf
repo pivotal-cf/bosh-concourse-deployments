@@ -79,3 +79,8 @@ variable "concourse_target_pool" {
     type = "string"
     default = "concourse-target-pool"
 }
+
+variable "blobstore_internal_tag" {
+  type = "string"
+  default = "blobstore-internal"
+}
