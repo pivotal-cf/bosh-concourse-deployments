@@ -18,6 +18,10 @@ resource "google_compute_address" "concourse" {
   name = "concourse-ip"
 }
 
+resource "google_compute_address" "nat" {
+  name = "nat-external-ip"
+}
+
 resource "google_compute_address" "jumpbox" {
   name = "jumpbox-ip"
 }
@@ -91,6 +95,28 @@ resource "google_compute_firewall" "jumpbox-ssh" {
   source_ranges = ["${var.trusted_cidr}"]
   target_tags = ["${var.jumpbox_tag}"]
 }
+
+// allow 6868 from `trusted_cidr` to Natbox
+// This resource will not created by default, set `allow_mbus_access_to_natbox=1` to enable
+resource "google_compute_firewall" "mbus-natbox" {
+  count = "${var.allow_mbus_access_to_natbox}"
+
+  name    = "natbox-mbus"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6868"]
+  }
+
+  source_ranges = ["${var.trusted_cidr}"]
+  target_tags = ["${var.natbox_tag}"]
+}
+
 resource "google_compute_firewall" "jumpbox-to-director" {
   count = "${var.allow_director_access_via_jumpbox}"
 
@@ -202,40 +228,11 @@ resource "google_compute_firewall" "jumpbox-internal" {
   target_tags = ["${var.bosh_director_tag}"]
 }
 
-// NAT
-resource "google_compute_instance" "nat" {
-  name         = "nat"
-  machine_type = "n1-standard-1"
-  zone         = "${var.zone}"
-
-  tags = ["${var.natbox_tag}"]
-
-  disk {
-    image = "ubuntu-1404-trusty-v20161109"
-  }
-
-  network_interface {
-    subnetwork = "${var.subnetwork}"
-    access_config {
-      // Ephemeral IP
-    }
-  }
-
-  can_ip_forward = true
-
-  metadata_startup_script = <<EOT
-#!/bin/bash
-sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-EOT
-}
-
 resource "google_compute_route" "nat" {
   name        = "nat"
   dest_range  = "0.0.0.0/0"
-  network       = "${var.network}"
-  next_hop_instance = "${google_compute_instance.nat.name}"
-  next_hop_instance_zone = "${var.zone}"
+  network     = "${var.network}"
+  next_hop_ip = "${cidrhost(var.internal_cidr,4)}"
   priority    = 800
   tags = ["${var.nat_traffic_tag}"]
 }

@@ -16,6 +16,11 @@ variable "allow_director_access_via_jumpbox" {
     default = 0
 }
 
+variable "allow_mbus_access_to_natbox" {
+    description = "Set to `1` to allow traffic on 6868 from `trusted_cidr` to the natbox. This should only be done temporarily to upgrade the natbox."
+    default = 0
+}
+
 variable "internal_cidr" {
     type = "string"
     default = "10.0.0.0/24"

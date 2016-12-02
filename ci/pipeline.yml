@@ -1,5 +1,39 @@
 ---
 jobs:
+  - name: update-natbox
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+          - get: natbox-state
+          - get: bosh-google-cpi-release
+          - get: networking-release
+          - get: stemcell
+        - put: terraform
+          params:
+            env_name: bosh-cpi-concourse
+            terraform_source: deployments-src/terraform/
+            vars:
+              allow_mbus_access_to_natbox: 1
+        - task: update-natbox
+          file: deployments-src/ci/tasks/deploy-natbox.yml
+          params:
+            GOOGLE_CREDENTIALS_JSON: {{google_credentials_json}}
+            NATBOX_SECRETS:          {{natbox_secrets}}
+          ensure:
+            put: natbox-state
+            params:
+              file: updated-natbox-state/natbox-state.json
+            ensure:
+              put: terraform
+              params:
+                env_name: bosh-cpi-concourse
+                terraform_source: deployments-src/terraform/
+                vars:
+                  allow_mbus_access_to_natbox: 0
+
   - name: update-director
     serial_groups: [deploy]
     plan:
@@ -82,6 +116,28 @@ jobs:
             JUMPBOX_SSH_USER:       {{jumpbox_ssh_user}}
           ensure: *close-ssh-to-jumpbox
 
+  - name: open-ssh-for-30m
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - get: deployments-src
+        - *open-ssh-to-jumpbox
+        - task: wait-30m
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: boshcpi/bosh-concourse-deployments
+            run:
+              path: bash
+              args:
+                - -c
+                - |
+                  echo "🔓 😴 Sleeping for 30 minutes, hit cancel once to close the SSH port early..."
+                  sleep 1800
+          ensure: *close-ssh-to-jumpbox
+
 resource_types:
   - name: terraform
     type: docker-image
@@ -122,6 +178,12 @@ resources:
         project_id: {{project_id}}
         google_credentials_json: {{google_credentials_json}}
         trusted_cidr: {{trusted_cidr}}
+  - name: natbox-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{google_credentials_json}}
+      versioned_file: natbox/natbox-state.json
   - name: director-state
     type: gcs-resource
     source:
@@ -137,6 +199,14 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-google-kvm-ubuntu-trusty-go_agent
+  - name: bosh-google-cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry-incubator/bosh-google-cpi-release
+  - name: networking-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/networking-release
   - name: concourse-and-garden
     type: github-release
     source:

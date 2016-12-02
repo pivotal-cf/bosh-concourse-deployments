@@ -1,0 +1,72 @@
+---
+name: concourse
+
+releases:
+- name: networking
+  url: file://../../networking-release/release.tgz
+- name: bosh-google-cpi
+  url: file://../../bosh-google-cpi-release/release.tgz
+
+resource_pools:
+- name: default
+  network: private
+  stemcell:
+    url: file://../../stemcell/stemcell.tgz
+  cloud_properties:
+    cpu: 1
+    ram: 4_096
+    disk: 10_000
+    zone: ((zone))
+    tags: ((natbox_tags))
+    ip_forwarding: true
+  env:
+    bosh:
+      password: ((vm_password))
+
+networks:
+- name: private
+  type: manual
+  subnets:
+  - range: ((internal_cidr))
+    gateway: ((internal_gw))
+    dns: [8.8.8.8]
+    cloud_properties:
+      network_name: ((network))
+      subnetwork_name: ((subnetwork))
+- name: public
+  type: vip
+
+instance_groups:
+- name: nat
+  instances: 1
+  resource_pool: default
+  networks:
+  - name: private
+    default: [dns, gateway]
+    static_ips: [((internal_natbox_ip))]
+  - name: public
+    static_ips: [((external_nat_ip))]
+  jobs:
+  - name: nat
+    release: networking
+    properties:
+      networking:
+        nat:
+          out_interface: eth0
+
+cloud_provider:
+  template:
+    name: google_cpi
+    release: bosh-google-cpi
+
+  mbus: "https://mbus:((mbus_bootstrap_password))@((external_nat_ip)):6868"
+
+  properties:
+    google:
+      project: ((project_id))
+      json_key: ((gcp_credentials_json))
+    agent: {mbus: "https://mbus:((mbus_bootstrap_password))@0.0.0.0:6868"}
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp:
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org

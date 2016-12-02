@@ -26,6 +26,14 @@ output "internal_director_ip" {
     value = "${cidrhost(var.internal_cidr,6)}"
 }
 
+output "internal_jumpbox_ip" {
+    value = "${cidrhost(var.internal_cidr,5)}"
+}
+
+output "internal_natbox_ip" {
+    value = "${cidrhost(var.internal_cidr,4)}"
+}
+
 output "external_jumpbox_ip" {
     value = "${google_compute_address.jumpbox.address}"
 }
@@ -60,4 +68,12 @@ output "nat_traffic_tag" {
 
 output "concourse_target_pool" {
     value = "${var.concourse_target_pool}"
+}
+
+output "external_nat_ip" {
+  value = "${google_compute_address.nat.address}"
+}
+
+output "natbox_tags" {
+  value = ["${var.natbox_tag}"]
 }
