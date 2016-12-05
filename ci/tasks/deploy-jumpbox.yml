@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: boshcpi/bosh-concourse-deployments
+
+inputs:
+  - name: terraform
+  - name: deployments-src
+  - name: bosh-cli
+  - name: jumpbox-state
+  - name: jumpbox-deployment-src
+
+outputs:
+  - name: updated-jumpbox-state
+
+params:
+  GOOGLE_CREDENTIALS: ""
+  JUMPBOX_SECRETS:    ""
+
+run:
+  path: deployments-src/ci/tasks/deploy-jumpbox

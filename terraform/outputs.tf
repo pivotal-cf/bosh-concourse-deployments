@@ -77,3 +77,7 @@ output "external_nat_ip" {
 output "natbox_tags" {
   value = ["${var.natbox_tag}"]
 }
+
+output "jumpbox_tags" {
+  value = ["${var.jumpbox_tag}"]
+}

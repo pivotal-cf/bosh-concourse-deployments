@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -eu
+
+deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
+workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
+
+# env
+: ${GOOGLE_CREDENTIALS:?}
+: ${JUMPBOX_SECRETS:?}
+
+# inputs
+terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
+jumpbox_state_dir="$( cd "${workspace_dir}/jumpbox-state" && pwd )"
+jumpbox_deployment_dir="$( cd "${workspace_dir}/jumpbox-deployment-src" && pwd )"
+bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
+chmod +x "${bosh_cli}"
+
+# outputs
+output_dir="$( cd "${workspace_dir}/updated-jumpbox-state" && pwd )"
+
+cp ${jumpbox_state_dir}/*.json "${output_dir}"
+
+pushd "${workspace_dir}" > /dev/null
+  echo "Updating jumpbox..."
+  ${bosh_cli} -n create-env \
+    --state "${output_dir}/jumpbox-state.json" \
+    --ops-file "${jumpbox_deployment_dir}/gcp/cpi.yml" \
+    -l "${terraform_config}/metadata" \
+    -l <( echo "${JUMPBOX_SECRETS}" ) \
+    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
+    ${jumpbox_deployment_dir}/jumpbox.yml
+popd > /dev/null
+
+echo "Successfully updated jumpbox!"

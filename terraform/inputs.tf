@@ -11,13 +11,18 @@ variable "trusted_cidr" {
     type = "string"
 }
 
-variable "allow_director_access_via_jumpbox" {
-    description = "Set to `1` to allow traffic on BOSH ports from `trusted_cidr` to the jumpbox. This should only be done temporarily to upgrade the director or perform a deployment."
+variable "allow_ssh_access_to_jumpbox" {
+    description = "Set to `1` to allow SSH traffic from `trusted_cidr` to the jumpbox. This should only be done temporarily to upgrade the director or perform a deployment."
     default = 0
 }
 
 variable "allow_mbus_access_to_natbox" {
     description = "Set to `1` to allow traffic on 6868 from `trusted_cidr` to the natbox. This should only be done temporarily to upgrade the natbox."
+    default = 0
+}
+
+variable "allow_mbus_access_to_jumpbox" {
+    description = "Set to `1` to allow traffic on 6868 from `trusted_cidr` to the jumpbox. This should only be done temporarily to upgrade the jumpbox."
     default = 0
 }
 

@@ -26,37 +26,6 @@ resource "google_compute_address" "jumpbox" {
   name = "jumpbox-ip"
 }
 
-resource "google_compute_instance" "jumpbox" {
-  name         = "bosh-jumpbox"
-  machine_type = "n1-standard-1"
-  zone         = "${var.zone}"
-
-  tags = ["${var.jumpbox_tag}"]
-
-  disk {
-    image = "ubuntu-1404-trusty-v20161109"
-  }
-
-  network_interface {
-    subnetwork = "${var.subnetwork}"
-    access_config {
-      nat_ip = "${google_compute_address.jumpbox.address}"
-    }
-  }
-
-  metadata_startup_script = <<EOT
-#!/bin/bash
-set -e
-
-apt-get update
-apt-get install -y jq
-
-version=$(curl -s https://api.github.com/repos/cloudfoundry/bosh-cli/releases/latest | jq -r .tag_name | sed -e "s/^v//")
-wget -O /usr/local/bin/bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-$version-linux-amd64
-chmod +x /usr/local/bin/bosh
-EOT
-}
-
 // allow SSH, UAA, and BOSH traffic from `jumpbox` to Director
 resource "google_compute_firewall" "bosh-jumpbox-director" {
   name    = "bosh-jumpbox-director"
@@ -76,9 +45,9 @@ resource "google_compute_firewall" "bosh-jumpbox-director" {
 }
 
 // allow BOSH ports to allow SSH tunneling from `trusted_cidr` to Director via Jumpbox
-// This resource will not created by default, set `allow_director_access_via_jumpbox=1` to enable
+// This resource will not created by default, set `allow_ssh_access_to_jumpbox=1` to enable
 resource "google_compute_firewall" "jumpbox-ssh" {
-  count = "${var.allow_director_access_via_jumpbox}"
+  count = "${var.allow_ssh_access_to_jumpbox}"
 
   name    = "jumpbox-ssh"
   network = "${google_compute_network.bosh.name}"
@@ -117,8 +86,29 @@ resource "google_compute_firewall" "mbus-natbox" {
   target_tags = ["${var.natbox_tag}"]
 }
 
+// allow 6868 from `trusted_cidr` to Jumpbox
+// This resource will not created by default, set `allow_mbus_access_to_jumpbox=1` to enable
+resource "google_compute_firewall" "mbus-jumpbox" {
+  count = "${var.allow_mbus_access_to_jumpbox}"
+
+  name    = "jumpbox-mbus"
+  network = "${google_compute_network.bosh.name}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6868"]
+  }
+
+  source_ranges = ["${var.trusted_cidr}"]
+  target_tags = ["${var.jumpbox_tag}"]
+}
+
 resource "google_compute_firewall" "jumpbox-to-director" {
-  count = "${var.allow_director_access_via_jumpbox}"
+  count = "${var.allow_ssh_access_to_jumpbox}"
 
   name    = "jumpbox-to-director"
   network = "${google_compute_network.bosh.name}"
