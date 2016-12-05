@@ -20,8 +20,8 @@ jobs:
         - task: update-natbox
           file: deployments-src/ci/tasks/deploy-natbox.yml
           params:
-            GOOGLE_CREDENTIALS_JSON: {{google_credentials_json}}
-            NATBOX_SECRETS:          {{natbox_secrets}}
+            GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+            NATBOX_SECRETS:     {{natbox_secrets}}
           ensure:
             put: natbox-state
             params:
@@ -53,7 +53,7 @@ jobs:
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
           params:
-            GOOGLE_CREDENTIALS_JSON: {{google_credentials_json}}
+            GOOGLE_CREDENTIALS:      {{gcp_credentials_json}}
             BOSH_DIRECTOR_SECRETS:   {{bosh_director_secrets}}
             BOSH_USER:               {{director_admin_username}}
             BOSH_PASSWORD:           {{director_admin_password}}
@@ -176,19 +176,19 @@ resources:
         endpoint: https://storage.googleapis.com
       vars:
         project_id: {{project_id}}
-        google_credentials_json: {{google_credentials_json}}
+        gcp_credentials_json: {{gcp_credentials_json}}
         trusted_cidr: {{trusted_cidr}}
   - name: natbox-state
     type: gcs-resource
     source:
       bucket: {{deployments_bucket_name}}
-      json_key: {{google_credentials_json}}
+      json_key: {{gcp_credentials_json}}
       versioned_file: natbox/natbox-state.json
   - name: director-state
     type: gcs-resource
     source:
       bucket: {{deployments_bucket_name}}
-      json_key: {{google_credentials_json}}
+      json_key: {{gcp_credentials_json}}
       versioned_file: director/bosh-state.json
   - name: bosh-cli
     type: s3

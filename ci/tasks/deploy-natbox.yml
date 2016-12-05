@@ -19,8 +19,8 @@ outputs:
   - name: updated-natbox-state
 
 params:
-  GOOGLE_CREDENTIALS_JSON: ""
-  NATBOX_SECRETS:          ""
+  GOOGLE_CREDENTIALS: ""
+  NATBOX_SECRETS:     ""
 
 run:
   path: deployments-src/ci/tasks/deploy-natbox

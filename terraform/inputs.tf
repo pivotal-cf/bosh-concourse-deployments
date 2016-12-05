@@ -3,7 +3,7 @@ variable "project_id" {
     type = "string"
 }
 
-variable "google_credentials_json" {
+variable "gcp_credentials_json" {
     type = "string"
 }
 

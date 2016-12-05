@@ -6,7 +6,7 @@ deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # env
-: ${GOOGLE_CREDENTIALS_JSON:?}
+: ${GOOGLE_CREDENTIALS:?}
 : ${NATBOX_SECRETS:?}
 
 # inputs
@@ -26,7 +26,7 @@ pushd "${workspace_dir}" > /dev/null
     --state "${output_dir}/natbox-state.json" \
     -l "${terraform_config}/metadata" \
     -l <( echo "${NATBOX_SECRETS}" ) \
-    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'" \
+    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     ${deployments_dir}/natbox/natbox.yml
 popd > /dev/null
 

@@ -6,7 +6,7 @@ deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # env
-: ${GOOGLE_CREDENTIALS_JSON:?}
+: ${GOOGLE_CREDENTIALS:?}
 : ${BOSH_DIRECTOR_SECRETS:?}
 : ${BOSH_USER:?}
 : ${BOSH_PASSWORD:?}
@@ -66,7 +66,7 @@ pushd "${output_dir}" > /dev/null
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca={ \"certificate\": \"${BOSH_CA_CERT}\", \"private_key\": \"${BOSH_CA_KEY}\" }" \
     -l "${terraform_config}/metadata" \
-    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS_JSON}'" \
+    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     ./bosh.yml
 popd > /dev/null
 

@@ -17,7 +17,7 @@ outputs:
   - name: updated-director-state
 
 params:
-  GOOGLE_CREDENTIALS_JSON: ""
+  GOOGLE_CREDENTIALS:      ""
   BOSH_DIRECTOR_SECRETS:   ""
   BOSH_USER:               ""
   BOSH_PASSWORD:           ""
