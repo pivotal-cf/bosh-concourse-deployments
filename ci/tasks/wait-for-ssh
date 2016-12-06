@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+# env
+: ${SLEEP_TIME:?}
+
+deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
+workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
+
+# inputs
+terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
+
+external_jumpbox_ip=$(jq -r -e .external_jumpbox_ip ${terraform_config}/metadata)
+
+echo "Your jumpbox address is '${external_jumpbox_ip}'."
+echo "We'll leave the SSH port open for $(( ${SLEEP_TIME} / 60 )) minutes."
+echo "Hit cancel once to close the SSH port early"
+echo "😴 ..."
+sleep "${SLEEP_TIME}"

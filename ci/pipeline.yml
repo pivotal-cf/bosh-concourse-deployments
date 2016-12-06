@@ -154,20 +154,8 @@ jobs:
       - do:
         - get: deployments-src
         - *open-ssh-to-jumpbox
-        - task: wait-30m
-          config:
-            platform: linux
-            image_resource:
-              type: docker-image
-              source:
-                repository: boshcpi/bosh-concourse-deployments
-            run:
-              path: bash
-              args:
-                - -c
-                - |
-                  echo "🔓 😴 Sleeping for 30 minutes, hit cancel once to close the SSH port early..."
-                  sleep 1800
+        - task: wait-for-ssh
+          file: deployments-src/ci/tasks/wait-for-ssh.yml
           ensure: *close-ssh-to-jumpbox
 
 resource_types:
