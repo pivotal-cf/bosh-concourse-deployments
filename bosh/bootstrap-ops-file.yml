@@ -1,0 +1,8 @@
+# assumes you have a tunnel open from localhost:6868 to the private director IP
+# e.g. ssh -fnNT -L 6868:$INTERNAL_DIRECTOR_IP:6868 $JUMPBOX_USER@$JUMPBOX_IP
+- type: replace
+  path: /cloud_provider/mbus
+  value: https://mbus:((mbus_bootstrap_password))@localhost:6868
+- type: replace
+  path: /variables/name=director_ssl/options/alternative_names
+  value: [((internal_director_ip)), 127.0.0.1]

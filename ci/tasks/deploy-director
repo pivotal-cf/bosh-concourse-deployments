@@ -59,8 +59,9 @@ pushd "${output_dir}" > /dev/null
   echo "Updating director..."
   ${bosh_cli} -n create-env \
     --ops-file "${director_templates_dir}/gcp/cpi.yml" \
-    --ops-file "${director_templates_dir}/bootstrap-over-ssh-tunnel.yml" \
+    --ops-file "${director_templates_dir}/enable-local-dns.yml" \
     --ops-file "${deployments_dir}/bosh/debug-ops-file.yml" \
+    --ops-file "${deployments_dir}/bosh/bootstrap-ops-file.yml" \
     --vars-store "${tmp_dir}/throwaway-var-store" \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -v "admin_user=${BOSH_USER}" \
