@@ -19,9 +19,6 @@ resource_pools:
     zone: ((zone))
     tags: ((natbox_tags))
     ip_forwarding: true
-  env:
-    bosh:
-      password: ((vm_password))
 
 networks:
 - name: private

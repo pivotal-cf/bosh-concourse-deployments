@@ -187,8 +187,7 @@ resources:
   - name: deployments-src
     type: git
     source:
-      uri: git@github.com:pivotal-cf/bosh-concourse-deployments.git
-      private_key: {{deployments_github_deploy_key}}
+      uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
       # branch: master
       branch: WIP-add-terraform-templates
   - name: director-templates

@@ -36,8 +36,8 @@ instance_groups:
         external_url: ((concourse_external_url))
         bind_port: 80
         tls_bind_port: 443
-        tls_cert: ((atc_certificate))
-        tls_key: ((atc_private_key))
+        tls_cert: ((tls_cert))
+        tls_key: ((tls_key))
         publicly_viewable: true
         postgresql_database: &atc_db atc
         github_auth:
