@@ -25,7 +25,7 @@ instance_groups:
   instances: 1
   vm_type: concourse_cpi
   stemcell: default
-  azs: [z1]
+  azs: [us1]
   networks:
     - name: concourse
       default: [dns, gateway]
@@ -50,12 +50,15 @@ instance_groups:
       properties:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_private_key))
+        team_authorized_keys:
+        - team: ((bosh_cpi_team))
+          ssh_key: ((bosh_cpi_team_ssh_public_key))
 
 - name: concourse_cpi_database
   instances: 1
   vm_type: concourse_cpi_database
   stemcell: default
-  azs: [z1]
+  azs: [us1]
   persistent_disk_pool: persistent
   networks:
     - name: concourse
@@ -73,13 +76,38 @@ instance_groups:
   instances: 3
   vm_type: concourse_cpi_worker
   stemcell: default
-  azs: [z1]
+  azs: [us1]
   networks:
     - name: concourse
   jobs:
     - name: groundcrew
       release: concourse
       properties: {}
+    - name: garden
+      release: garden-runc
+      properties:
+        garden:
+          listen_network: tcp
+          listen_address: 0.0.0.0:7777
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+
+- name: concourse_cpi_sf_worker_asia
+  instances: 1
+  vm_type: concourse_cpi_sf_worker_small
+  stemcell: default
+  azs: [asia1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      properties:
+        tags: [asia]
+        team: ((bosh_cpi_team))
+        tsa:
+          private_key: ((bosh_cpi_team_ssh_private_key))
     - name: garden
       release: garden-runc
       properties:

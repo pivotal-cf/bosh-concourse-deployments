@@ -70,14 +70,24 @@ variable "network" {
     default = "concourse"
 }
 
-variable "subnetwork" {
+variable "us_subnetwork" {
     type = "string"
-    default = "concourse"
+    default = "us-concourse"
+}
+
+variable "asia_subnetwork" {
+    type = "string"
+    default = "asia-concourse"
 }
 
 variable "zone" {
     type = "string"
     default = "us-west1-b"
+}
+
+variable "asia_zone" {
+    type = "string"
+    default = "asia-east1-b"
 }
 
 variable "region" {

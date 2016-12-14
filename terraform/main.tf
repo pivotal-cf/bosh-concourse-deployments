@@ -9,7 +9,7 @@ resource "google_compute_network" "bosh" {
 }
 
 resource "google_compute_subnetwork" "bosh-subnet-1" {
-  name          = "${var.subnetwork}"
+  name          = "${var.us_subnetwork}"
   ip_cidr_range = "${var.internal_cidr}"
   network       = "${google_compute_network.bosh.self_link}"
 }

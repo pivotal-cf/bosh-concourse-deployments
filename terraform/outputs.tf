@@ -6,12 +6,20 @@ output "zone" {
     value = "${var.zone}"
 }
 
+output "asia_zone" {
+    value = "${var.asia_zone}"
+}
+
 output "network" {
     value = "${var.network}"
 }
 
-output "subnetwork" {
-    value = "${var.subnetwork}"
+output "us_subnetwork" {
+    value = "${var.us_subnetwork}"
+}
+
+output "asia_subnetwork" {
+    value = "${var.asia_subnetwork}"
 }
 
 output "internal_cidr" {

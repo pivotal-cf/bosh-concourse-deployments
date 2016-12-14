@@ -1,6 +1,8 @@
 azs:
-- name: z1
+- name: us1
   cloud_properties: {zone: ((zone))}
+- name: asia1
+  cloud_properties: {zone: ((asia_zone))}
 
 vm_types:
 - name: concourse_cpi
@@ -23,6 +25,13 @@ vm_types:
     root_disk_size_gb: 164
     root_disk_type: pd-standard
     tags: ((concourse_worker_tags))
+- name: concourse_cpi_sf_worker_small
+  cloud_properties:
+    cpu: 4
+    ram: 16_384
+    root_disk_size_gb: 164
+    root_disk_type: pd-standard
+    tags: ((concourse_worker_tags))
 - name: compilation
   cloud_properties:
     machine_type: n1-highcpu-4
@@ -33,7 +42,7 @@ vm_types:
 compilation:
   workers: 5
   reuse_compilation_vms: true
-  az: z1
+  az: us1
   vm_type: compilation
   network: concourse
 
@@ -41,10 +50,16 @@ networks:
   - name: concourse
     type: dynamic
     subnets:
-    - az: z1
+    - az: us1
       cloud_properties:
         network_name: ((network))
-        subnetwork_name: ((subnetwork))
+        subnetwork_name: ((us_subnetwork))
+        tags:
+          - ((bosh_internal_tag))
+    - az: asia1
+      cloud_properties:
+        network_name: ((network))
+        subnetwork_name: ((asia_subnetwork))
         tags:
           - ((bosh_internal_tag))
   - name: vip
