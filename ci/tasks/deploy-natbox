@@ -8,12 +8,21 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 # env
 : ${GOOGLE_CREDENTIALS:?}
 : ${NATBOX_SECRETS:?}
+: ${REGION:?}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
 nat_state_dir="$( cd "${workspace_dir}/natbox-state" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
+
+# external natbox ip address
+zone="$( cat ${terraform_config}/metadata | jq .${REGION}_zone )"
+subnetwork="$( cat ${terraform_config}/metadata | jq .${REGION}_subnetwork )"
+internal_cidr="$( cat ${terraform_config}/metadata | jq .${REGION}_internal_cidr )"
+internal_gw="$( cat ${terraform_config}/metadata | jq .${REGION}_internal_gw )"
+internal_natbox_ip="$( cat ${terraform_config}/metadata | jq .${REGION}_internal_natbox_ip )"
+external_nat_ip="$( cat ${terraform_config}/metadata | jq .${REGION}_external_nat_ip )"
 
 # outputs
 output_dir="$( cd "${workspace_dir}/updated-natbox-state" && pwd )"
@@ -23,9 +32,15 @@ cp ${nat_state_dir}/*.json "${output_dir}"
 pushd "${workspace_dir}" > /dev/null
   echo "Updating NAT..."
   ${bosh_cli} -n create-env \
-    --state "${output_dir}/natbox-state.json" \
+    --state "${output_dir}/${REGION}-natbox-state.json" \
     -l "${terraform_config}/metadata" \
     -l <( echo "${NATBOX_SECRETS}" ) \
+    -v "zone=${zone}" \
+    -v "subnetwork=${subnetwork}" \
+    -v "internal_cidr=${internal_cidr}" \
+    -v "internal_gw=${internal_gw}" \
+    -v "internal_natbox_ip=${internal_natbox_ip}" \
+    -v "external_nat_ip=${external_nat_ip}" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     ${deployments_dir}/natbox/natbox.yml
 popd > /dev/null

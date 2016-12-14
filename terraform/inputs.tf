@@ -26,9 +26,14 @@ variable "allow_mbus_access_to_jumpbox" {
     default = 0
 }
 
-variable "internal_cidr" {
+variable "us_internal_cidr" {
     type = "string"
     default = "10.0.0.0/24"
+}
+
+variable "asia_internal_cidr" {
+    type = "string"
+    default = "10.0.1.0/24"
 }
 
 variable "bosh_director_tag" {
@@ -80,7 +85,7 @@ variable "asia_subnetwork" {
     default = "asia-concourse"
 }
 
-variable "zone" {
+variable "us_zone" {
     type = "string"
     default = "us-west1-b"
 }
@@ -93,6 +98,11 @@ variable "asia_zone" {
 variable "region" {
     type = "string"
     default = "us-west1"
+}
+
+variable "asia_region" {
+    type = "string"
+    default = "asia-east1"
 }
 
 variable "concourse_target_pool" {

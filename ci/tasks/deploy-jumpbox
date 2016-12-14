@@ -16,6 +16,11 @@ jumpbox_deployment_dir="$( cd "${workspace_dir}/jumpbox-deployment-src" && pwd )
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
 
+zone="$( cat ${terraform_config}/metadata | jq .us_zone )"
+subnetwork="$( cat ${terraform_config}/metadata | jq .us_subnetwork )"
+internal_cidr="$( cat ${terraform_config}/metadata | jq .us_internal_cidr )"
+internal_gw="$( cat ${terraform_config}/metadata | jq .us_internal_gw )"
+
 # outputs
 output_dir="$( cd "${workspace_dir}/updated-jumpbox-state" && pwd )"
 
@@ -28,6 +33,10 @@ pushd "${workspace_dir}" > /dev/null
     --ops-file "${jumpbox_deployment_dir}/gcp/cpi.yml" \
     -l "${terraform_config}/metadata" \
     -l <( echo "${JUMPBOX_SECRETS}" ) \
+    -v "zone=${zone}" \
+    -v "subnetwork=${subnetwork}" \
+    -v "internal_cidr=${internal_cidr}" \
+    -v "internal_gw=${internal_gw}" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     ${jumpbox_deployment_dir}/jumpbox.yml
 popd > /dev/null

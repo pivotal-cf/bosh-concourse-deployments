@@ -7,7 +7,8 @@ jobs:
         - aggregate:
           - get: deployments-src
           - get: bosh-cli
-          - get: natbox-state
+          - get: us-natbox-state
+          - get: asia-natbox-state
           - get: bosh-google-cpi-release
           - get: networking-release
           - get: stemcell
@@ -17,22 +18,37 @@ jobs:
             terraform_source: deployments-src/terraform/
             vars:
               allow_mbus_access_to_natbox: 1
-        - task: update-natbox
+        - task: update-us-natbox
           file: deployments-src/ci/tasks/deploy-natbox.yml
           params:
             GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
             NATBOX_SECRETS:     {{natbox_secrets}}
+            REGION:             us
+          input_mapping:
+            natbox-state: us-natbox-state
           ensure:
-            put: natbox-state
+            put: us-natbox-state
             params:
-              file: updated-natbox-state/natbox-state.json
-            ensure:
-              put: terraform
-              params:
-                env_name: bosh-cpi-concourse
-                terraform_source: deployments-src/terraform/
-                vars:
-                  allow_mbus_access_to_natbox: 0
+              file: updated-natbox-state/us-natbox-state.json
+        - task: update-asia-natbox
+          file: deployments-src/ci/tasks/deploy-natbox.yml
+          params:
+            GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+            NATBOX_SECRETS:     {{natbox_secrets}}
+            REGION:             asia
+          input_mapping:
+            natbox-state: asia-natbox-state
+          ensure:
+            put: asia-natbox-state
+            params:
+              file: updated-natbox-state/asia-natbox-state.json
+        ensure:
+          put: terraform
+          params:
+            env_name: bosh-cpi-concourse
+            terraform_source: deployments-src/terraform/
+            vars:
+              allow_mbus_access_to_natbox: 0
 
   - name: update-jumpbox
     serial_groups: [deploy]
@@ -203,12 +219,18 @@ resources:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
         trusted_cidr: {{trusted_cidr}}
-  - name: natbox-state
+  - name: us-natbox-state
     type: gcs-resource
     source:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
-      versioned_file: natbox/natbox-state.json
+      versioned_file: natbox/us-natbox-state.json
+  - name: asia-natbox-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: natbox/asia-natbox-state.json
   - name: jumpbox-state
     type: gcs-resource
     source:

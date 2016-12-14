@@ -1,6 +1,6 @@
 azs:
 - name: us1
-  cloud_properties: {zone: ((zone))}
+  cloud_properties: {zone: ((us_zone))}
 - name: asia1
   cloud_properties: {zone: ((asia_zone))}
 

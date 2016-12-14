@@ -2,8 +2,8 @@ output "project_id" {
     value = "${var.project_id}"
 }
 
-output "zone" {
-    value = "${var.zone}"
+output "us_zone" {
+    value = "${var.us_zone}"
 }
 
 output "asia_zone" {
@@ -22,24 +22,36 @@ output "asia_subnetwork" {
     value = "${var.asia_subnetwork}"
 }
 
-output "internal_cidr" {
-    value = "${var.internal_cidr}"
+output "us_internal_cidr" {
+    value = "${var.us_internal_cidr}"
 }
 
-output "internal_gw" {
-    value = "${cidrhost(var.internal_cidr,1)}"
+output "asia_internal_cidr" {
+    value = "${var.asia_internal_cidr}"
+}
+
+output "us_internal_gw" {
+    value = "${cidrhost(var.us_internal_cidr,1)}"
+}
+
+output "asia_internal_gw" {
+    value = "${cidrhost(var.asia_internal_cidr,1)}"
 }
 
 output "internal_director_ip" {
-    value = "${cidrhost(var.internal_cidr,6)}"
+    value = "${cidrhost(var.us_internal_cidr,6)}"
 }
 
 output "internal_jumpbox_ip" {
-    value = "${cidrhost(var.internal_cidr,5)}"
+    value = "${cidrhost(var.us_internal_cidr,5)}"
 }
 
-output "internal_natbox_ip" {
-    value = "${cidrhost(var.internal_cidr,4)}"
+output "us_internal_natbox_ip" {
+    value = "${cidrhost(var.us_internal_cidr,4)}"
+}
+
+output "asia_internal_natbox_ip" {
+    value = "${cidrhost(var.asia_internal_cidr,4)}"
 }
 
 output "external_jumpbox_ip" {
@@ -78,8 +90,12 @@ output "concourse_target_pool" {
     value = "${var.concourse_target_pool}"
 }
 
-output "external_nat_ip" {
-  value = "${google_compute_address.nat.address}"
+output "us_external_nat_ip" {
+  value = "${google_compute_address.us_nat.address}"
+}
+
+output "asia_external_nat_ip" {
+  value = "${google_compute_address.asia_nat.address}"
 }
 
 output "natbox_tags" {

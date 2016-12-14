@@ -10,16 +10,29 @@ resource "google_compute_network" "bosh" {
 
 resource "google_compute_subnetwork" "bosh-subnet-1" {
   name          = "${var.us_subnetwork}"
-  ip_cidr_range = "${var.internal_cidr}"
+  ip_cidr_range = "${var.us_internal_cidr}"
   network       = "${google_compute_network.bosh.self_link}"
+  region        = "${var.region}"
+}
+
+resource "google_compute_subnetwork" "bosh-subnet-2" {
+  name          = "${var.asia_subnetwork}"
+  ip_cidr_range = "${var.asia_internal_cidr}"
+  network       = "${google_compute_network.bosh.self_link}"
+  region        = "${var.asia_region}"
 }
 
 resource "google_compute_address" "concourse" {
   name = "concourse-ip"
 }
 
-resource "google_compute_address" "nat" {
-  name = "nat-external-ip"
+resource "google_compute_address" "us_nat" {
+  name = "us-nat-external-ip"
+}
+
+resource "google_compute_address" "asia_nat" {
+  name   = "asia-nat-external-ip"
+  region = "${var.asia_region}"
 }
 
 resource "google_compute_address" "jumpbox" {
@@ -218,11 +231,20 @@ resource "google_compute_firewall" "jumpbox-internal" {
   target_tags = ["${var.bosh_director_tag}"]
 }
 
-resource "google_compute_route" "nat" {
-  name        = "nat"
+resource "google_compute_route" "us_nat" {
+  name        = "us-nat"
   dest_range  = "0.0.0.0/0"
   network     = "${var.network}"
-  next_hop_ip = "${cidrhost(var.internal_cidr,4)}"
+  next_hop_ip = "${cidrhost(var.us_internal_cidr,4)}"
+  priority    = 800
+  tags = ["${var.nat_traffic_tag}"]
+}
+
+resource "google_compute_route" "asia_nat" {
+  name        = "asia-nat"
+  dest_range  = "0.0.0.0/0"
+  network     = "${var.network}"
+  next_hop_ip = "${cidrhost(var.asia_internal_cidr,4)}"
   priority    = 800
   tags = ["${var.nat_traffic_tag}"]
 }
