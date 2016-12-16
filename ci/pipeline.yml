@@ -7,7 +7,7 @@ jobs:
         - aggregate:
           - get: deployments-src
           - get: bosh-cli
-          - get: us-natbox-state
+          - get: concourse-natbox-state
           - get: asia-natbox-state
           - get: bosh-google-cpi-release
           - get: networking-release
@@ -17,38 +17,49 @@ jobs:
             env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
             vars:
-              allow_mbus_access_to_natbox: 1
-        - task: update-us-natbox
-          file: deployments-src/ci/tasks/deploy-natbox.yml
-          params:
-            GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-            NATBOX_SECRETS:     {{natbox_secrets}}
-            REGION:             us
-          input_mapping:
-            natbox-state: us-natbox-state
-          ensure:
-            put: us-natbox-state
+              concourse_subnet:
+                allow_mbus_access_to_natbox: 1
+              asia_subnet:
+                allow_mbus_access_to_natbox: 1
+        - aggregate:
+          - task: update-concourse-natbox
+            file: deployments-src/ci/tasks/deploy-natbox.yml
             params:
-              file: updated-natbox-state/us-natbox-state.json
-        - task: update-asia-natbox
-          file: deployments-src/ci/tasks/deploy-natbox.yml
-          params:
-            GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-            NATBOX_SECRETS:     {{natbox_secrets}}
-            REGION:             asia
-          input_mapping:
-            natbox-state: asia-natbox-state
-          ensure:
-            put: asia-natbox-state
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+              NATBOX_SECRETS:     {{natbox_secrets}}
+              SUBNET_NAME:        concourse_subnet
+            input_mapping:
+              natbox-state: concourse-natbox-state
+            output_mapping:
+              updated-natbox-state: concourse-updated-natbox-state
+            ensure:
+              put: concourse-natbox-state
+              params:
+                file: concourse-updated-natbox-state/natbox-state.json
+          - task: update-asia-natbox
+            file: deployments-src/ci/tasks/deploy-natbox.yml
             params:
-              file: updated-natbox-state/asia-natbox-state.json
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+              NATBOX_SECRETS:     {{natbox_secrets}}
+              SUBNET_NAME:        asia_subnet
+            input_mapping:
+              natbox-state: asia-natbox-state
+            output_mapping:
+              updated-natbox-state: asia-updated-natbox-state
+            ensure:
+              put: asia-natbox-state
+              params:
+                file: asia-updated-natbox-state/natbox-state.json
         ensure:
           put: terraform
           params:
             env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
             vars:
-              allow_mbus_access_to_natbox: 0
+              concourse_subnet:
+                allow_mbus_access_to_natbox: 0
+              asia_subnet:
+                allow_mbus_access_to_natbox: 0
 
   - name: update-jumpbox
     serial_groups: [deploy]
@@ -64,12 +75,14 @@ jobs:
             env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
             vars:
-              allow_mbus_access_to_jumpbox: 1
+              concourse_subnet:
+                allow_mbus_access_to_jumpbox: 1
         - task: update-jumpbox
           file: deployments-src/ci/tasks/deploy-jumpbox.yml
           params:
             GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
             JUMPBOX_SECRETS:    {{jumpbox_secrets}}
+            SUBNET_NAME:        concourse_subnet
           ensure:
             put: jumpbox-state
             params:
@@ -80,7 +93,8 @@ jobs:
                 env_name: bosh-cpi-concourse
                 terraform_source: deployments-src/terraform/
                 vars:
-                  allow_mbus_access_to_jumpbox: 0
+                  concourse_subnet:
+                    allow_mbus_access_to_jumpbox: 0
 
   - name: update-director
     serial_groups: [deploy]
@@ -97,7 +111,8 @@ jobs:
             env_name: bosh-cpi-concourse
             terraform_source: deployments-src/terraform/
             vars:
-              allow_ssh_access_to_jumpbox: 1
+              concourse_subnet:
+                allow_ssh_access_to_jumpbox: 1
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
           params:
@@ -109,6 +124,7 @@ jobs:
             BOSH_CA_KEY:             {{director_ca_key}}
             JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
+            SUBNET_NAME:             concourse_subnet
           ensure:
             put: director-state
             params:
@@ -119,7 +135,8 @@ jobs:
                 env_name: bosh-cpi-concourse
                 terraform_source: deployments-src/terraform/
                 vars:
-                  allow_ssh_access_to_jumpbox: 0
+                  concourse_subnet:
+                    allow_ssh_access_to_jumpbox: 0
 
   - name: update-cloud-config
     serial_groups: [deploy]
@@ -219,12 +236,12 @@ resources:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
         trusted_cidr: {{trusted_cidr}}
-  - name: us-natbox-state
+  - name: concourse-natbox-state
     type: gcs-resource
     source:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
-      versioned_file: natbox/us-natbox-state.json
+      versioned_file: natbox/concourse-natbox-state.json
   - name: asia-natbox-state
     type: gcs-resource
     source:

@@ -42,7 +42,7 @@ instance_groups:
     default: [dns, gateway]
     static_ips: [((internal_natbox_ip))]
   - name: public
-    static_ips: [((external_nat_ip))]
+    static_ips: [((external_natbox_ip))]
   jobs:
   - name: nat
     release: networking
@@ -56,7 +56,7 @@ cloud_provider:
     name: google_cpi
     release: bosh-google-cpi
 
-  mbus: "https://mbus:((mbus_bootstrap_password))@((external_nat_ip)):6868"
+  mbus: "https://mbus:((mbus_bootstrap_password))@((external_natbox_ip)):6868"
 
   properties:
     google:

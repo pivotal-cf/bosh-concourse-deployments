@@ -21,7 +21,7 @@ outputs:
 params:
   GOOGLE_CREDENTIALS: ""
   NATBOX_SECRETS:     ""
-  REGION:             ""
+  SUBNET_NAME:        ""
 
 run:
   path: deployments-src/ci/tasks/deploy-natbox
