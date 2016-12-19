@@ -72,8 +72,8 @@ instance_groups:
             role: atc
             password: ((concourse_db_password))
 
-- name: concourse_cpi_worker
-  instances: 3
+- name: concourse_cpi_sf_worker
+  instances: 1
   vm_type: concourse_cpi_worker
   stemcell: default
   azs: [us1]
@@ -82,7 +82,12 @@ instance_groups:
   jobs:
     - name: groundcrew
       release: concourse
-      properties: {}
+      consumes:
+        baggageclaim: {from: sf_baggageclaim}
+      properties:
+        team: ((bosh_cpi_team))
+        tsa:
+          private_key: ((bosh_cpi_team_ssh_private_key))
     - name: garden
       release: garden-runc
       properties:
@@ -91,6 +96,8 @@ instance_groups:
           listen_address: 0.0.0.0:7777
     - name: baggageclaim
       release: concourse
+      provides:
+        baggageclaim: {as: sf_baggageclaim}
       properties: {}
 
 - name: concourse_cpi_sf_worker_asia
@@ -103,6 +110,8 @@ instance_groups:
   jobs:
     - name: groundcrew
       release: concourse
+      consumes:
+        baggageclaim: {from: asia_baggageclaim}
       properties:
         tags: [asia]
         team: ((bosh_cpi_team))
@@ -116,4 +125,6 @@ instance_groups:
           listen_address: 0.0.0.0:7777
     - name: baggageclaim
       release: concourse
+      provides:
+        baggageclaim: {as: asia_baggageclaim}
       properties: {}

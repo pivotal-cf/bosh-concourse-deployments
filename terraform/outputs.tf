@@ -24,8 +24,13 @@ output "concourse_subnet" {
     external_jumpbox_ip = "${module.jumpbox.external_ip}"
 
     internal_director_ip  = "${module.director.internal_ip}"
-    director_tags         = "${jsonencode(list(module.director.tag))}"
+    director_tag          = "${module.director.tag}"
     director_internal_tag = "${module.director.internal_tag}"
+
+    external_concourse_ip = "${module.concourse.external_ip}"
+    concourse_atc_tag     = "${module.concourse.atc_tag}"
+    concourse_db_tag      = "${module.concourse.db_tag}"
+    concourse_target_pool = "${module.concourse.target_pool}"
   }
 }
 
@@ -42,40 +47,8 @@ output "asia_subnet" {
     internal_natbox_ip = "${module.asia_subnet.internal_natbox_ip}"
     external_natbox_ip = "${module.asia_subnet.external_natbox_ip}"
 
-    natbox_tags = "${jsonencode(list(module.asia_subnet.natbox_tag))}"
+    natbox_tag = "${module.asia_subnet.natbox_tag}"
     nat_traffic_tag = "${module.asia_subnet.nat_traffic_tag}"
     project_id = "${var.project_id}"
   }
-}
-
-output "network" {
-    value = "${var.network}"
-}
-
-output "external_concourse_ip" {
-    value = "${google_compute_address.concourse.address}"
-}
-
-output "director_tags" {
-    value = ["${var.bosh_director_tag}", "${module.concourse_subnet.nat_traffic_tag}"]
-}
-
-output "concourse_atc_tags" {
-    value = ["${var.concourse_atc_tag}", "${module.concourse_subnet.nat_traffic_tag}"]
-}
-
-output "concourse_worker_tags" {
-    value = ["${module.concourse_subnet.nat_traffic_tag}"]
-}
-
-output "concourse_db_tags" {
-    value = ["${var.concourse_db_tag}"]
-}
-
-output "bosh_internal_tag" {
-    value = "${var.bosh_internal_tag}"
-}
-
-output "concourse_target_pool" {
-    value = "${var.concourse_target_pool}"
 }

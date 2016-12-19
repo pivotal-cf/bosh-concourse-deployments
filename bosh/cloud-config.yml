@@ -10,28 +10,34 @@ vm_types:
     machine_type: n1-standard-2
     root_disk_size_gb: 20
     root_disk_type: pd-standard
-    tags: ((concourse_atc_tags))
+    tags:
+      - ((concourse_atc_tag))
+      - ((nat_traffic_tag))
     target_pool: ((concourse_target_pool))
 - name: concourse_cpi_database
   cloud_properties:
     machine_type: n1-standard-2
     root_disk_size_gb: 20
     root_disk_type: pd-standard
-    tags: ((concourse_db_tags))
+    tags:
+      - ((concourse_db_tag))
+      - ((nat_traffic_tag))
 - name: concourse_cpi_worker
   cloud_properties:
     cpu: 8
     ram: 16_384
     root_disk_size_gb: 164
     root_disk_type: pd-standard
-    tags: ((concourse_worker_tags))
+    tags:
+      - ((nat_traffic_tag))
 - name: concourse_cpi_sf_worker_small
   cloud_properties:
     cpu: 4
     ram: 16_384
     root_disk_size_gb: 164
     root_disk_type: pd-standard
-    tags: ((concourse_worker_tags))
+    tags:
+      - ((nat_traffic_tag))
 - name: compilation
   cloud_properties:
     machine_type: n1-highcpu-4
@@ -55,13 +61,13 @@ networks:
         network_name: ((network))
         subnetwork_name: ((us_subnetwork))
         tags:
-          - ((bosh_internal_tag))
+          - ((director_internal_tag))
     - az: asia1
       cloud_properties:
         network_name: ((network))
         subnetwork_name: ((asia_subnetwork))
         tags:
-          - ((bosh_internal_tag))
+          - ((director_internal_tag))
   - name: vip
     type: vip
 

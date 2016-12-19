@@ -17,7 +17,7 @@ bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
 
 terraform_metadata="$( cat ${terraform_config}/metadata | jq -e .${SUBNET_NAME} )"
-natbox_tags=$(echo "${terraform_metadata}" | jq -e -r .natbox_tags)
+natbox_tag=$(echo "${terraform_metadata}" | jq -e -r .natbox_tag)
 
 # outputs
 output_dir="$( cd "${workspace_dir}/updated-natbox-state" && pwd )"
@@ -30,7 +30,7 @@ pushd "${workspace_dir}" > /dev/null
     --state "${output_dir}/natbox-state.json" \
     -l <( echo "${terraform_metadata}" ) \
     -l <( echo "${NATBOX_SECRETS}" ) \
-    -v "natbox_tags=${natbox_tags}" \
+    -v "natbox_tags=[${natbox_tag}]" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     ${deployments_dir}/natbox/natbox.yml
 popd > /dev/null

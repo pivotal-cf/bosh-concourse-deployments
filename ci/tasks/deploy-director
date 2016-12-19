@@ -47,7 +47,7 @@ cp ${director_state_dir}/*.json "${output_dir}"
 terraform_metadata="$(jq -e .${SUBNET_NAME} ${terraform_config}/metadata)"
 external_jumpbox_ip=$(echo "${terraform_metadata}" | jq -r -e .external_jumpbox_ip)
 internal_director_ip=$(echo "${terraform_metadata}" | jq -r -e .internal_director_ip)
-director_tags=$(echo "${terraform_metadata}" | jq -e -r .director_tags)
+director_tag=$(echo "${terraform_metadata}" | jq -e -r .director_tag)
 nat_traffic_tag=$(echo "${terraform_metadata}" | jq -e .nat_traffic_tag)
 
 jumpbox_address="${JUMPBOX_SSH_USER}@${external_jumpbox_ip}"
@@ -68,7 +68,7 @@ pushd "${output_dir}" > /dev/null
     --vars-store "${tmp_dir}/throwaway-var-store" \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -l <(echo "${terraform_metadata}") \
-    -v "director_tags=${director_tags}" \
+    -v "director_tags=[${director_tag},${nat_traffic_tag}]" \
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca={ \"certificate\": \"${BOSH_CA_CERT}\", \"private_key\": \"${BOSH_CA_KEY}\" }" \

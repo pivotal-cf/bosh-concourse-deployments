@@ -4,6 +4,7 @@ set -eu -o pipefail
 
 # env
 : ${SLEEP_TIME:?}
+: ${SUBNET_NAME:?}
 
 deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
@@ -11,7 +12,8 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
 
-external_jumpbox_ip=$(jq -r -e .external_jumpbox_ip ${terraform_config}/metadata)
+terraform_metadata="$(jq -r -e .${SUBNET_NAME} ${terraform_config}/metadata)"
+external_jumpbox_ip=$(echo "${terraform_metadata}" | jq -r -e .external_jumpbox_ip)
 
 echo "Your jumpbox address is '${external_jumpbox_ip}'."
 echo "We'll leave the SSH port open for $(( ${SLEEP_TIME} / 60 )) minutes."
