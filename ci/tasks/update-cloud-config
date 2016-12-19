@@ -11,6 +11,7 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${BOSH_CA_CERT:?}
 : ${JUMPBOX_SSH_USER:?}
 : ${JUMPBOX_SSH_KEY:?}
+: ${SUBNET_NAME:?}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
@@ -27,8 +28,9 @@ ssh_key_path="${tmp_dir}/id_rsa.pem"
 echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
 chmod 400 "${ssh_key_path}"
 
-external_jumpbox_ip=$(jq -r -e .external_jumpbox_ip ${terraform_config}/metadata)
-internal_director_ip=$(jq -r -e .internal_director_ip ${terraform_config}/metadata)
+terraform_metadata="$(jq -e .${SUBNET_NAME} ${terraform_config}/metadata)"
+external_jumpbox_ip=$(echo "${terraform_metadata}" | jq -r -e .external_jumpbox_ip)
+internal_director_ip=$(echo "${terraform_metadata}" | jq -r -e .internal_director_ip)
 
 jumpbox_address="${JUMPBOX_SSH_USER}@${external_jumpbox_ip}"
 ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
