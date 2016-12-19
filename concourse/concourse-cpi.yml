@@ -48,11 +48,13 @@ instance_groups:
     - name: tsa
       release: concourse
       properties:
-        authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_private_key))
+        host_public_key: ((tsa_public_key))
         team_authorized_keys:
         - team: ((bosh_cpi_team))
           ssh_key: ((bosh_cpi_team_ssh_public_key))
+        - team: ((bosh_sap_team))
+          ssh_key: ((bosh_sap_team_ssh_public_key))
 
 - name: concourse_cpi_database
   instances: 1
@@ -86,18 +88,50 @@ instance_groups:
         baggageclaim: {from: sf_baggageclaim}
       properties:
         team: ((bosh_cpi_team))
-        tsa:
-          private_key: ((bosh_cpi_team_ssh_private_key))
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
     - name: garden
       release: garden-runc
       properties:
         garden:
           listen_network: tcp
-          listen_address: 0.0.0.0:7777
+          listen_address: 127.0.0.1:7777
     - name: baggageclaim
       release: concourse
       provides:
         baggageclaim: {as: sf_baggageclaim}
+      properties: {}
+
+- name: concourse_cpi_sap_worker
+  instances: 1
+  vm_type: concourse_cpi_worker
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim: {from: sap_baggageclaim}
+      properties:
+        team: ((bosh_sap_team))
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+    - name: garden
+      release: garden-runc
+      properties:
+        garden:
+          listen_network: tcp
+          listen_address: 127.0.0.1:7777
+    - name: baggageclaim
+      release: concourse
+      provides:
+        baggageclaim: {as: sap_baggageclaim}
       properties: {}
 
 - name: concourse_cpi_sf_worker_asia
@@ -115,14 +149,16 @@ instance_groups:
       properties:
         tags: [asia]
         team: ((bosh_cpi_team))
-        tsa:
-          private_key: ((bosh_cpi_team_ssh_private_key))
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
     - name: garden
       release: garden-runc
       properties:
         garden:
           listen_network: tcp
-          listen_address: 0.0.0.0:7777
+          listen_address: 127.0.0.1:7777
     - name: baggageclaim
       release: concourse
       provides:
