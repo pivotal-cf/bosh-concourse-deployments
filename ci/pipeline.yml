@@ -1,5 +1,34 @@
 ---
 jobs:
+  - name: update-vsphere-v5.1-worker
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: vsphere-v5.1-worker-state
+          - get: bosh-vsphere-cpi-release
+          - get: concourse-and-garden
+            passed: [update-concourse]
+            trigger: true
+            params:
+              globs: ['concourse-*.tgz','garden-runc-*.tgz']
+          - get: stemcell
+            resource: vsphere-stemcell
+        - aggregate:
+          - task: update-vsphere-v5.1-worker
+            file: deployments-src/ci/tasks/deploy-worker.yml
+            params:
+              WORKER_SECRETS: {{vsphere-v51-worker-secrets}}
+              ENVIRONMENT_NAME: vsphere-v5.1
+            ensure:
+              put: worker-state
+              resource: vsphere-v5.1-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+
   - name: update-natbox
     serial_groups: [deploy]
     plan:
@@ -247,6 +276,12 @@ resources:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: natbox/concourse-natbox-state.json
+  - name: vsphere-v5.1-worker-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: worker/vsphere-v5.1-worker-state.json
   - name: asia-natbox-state
     type: gcs-resource
     source:
@@ -274,10 +309,18 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-google-kvm-ubuntu-trusty-go_agent
+  - name: vsphere-stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
   - name: bosh-google-cpi-release
     type: bosh-io-release
     source:
       repository: cloudfoundry-incubator/bosh-google-cpi-release
+  - name: bosh-vsphere-cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
   - name: networking-release
     type: bosh-io-release
     source:

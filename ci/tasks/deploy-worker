@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -eu
+
+deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
+workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
+
+# env
+: ${ENVIRONMENT_NAME:?}
+: ${WORKER_SECRETS:?}
+
+# inputs
+worker_state_dir="$( cd "${workspace_dir}/worker-state" && pwd )"
+bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
+chmod +x "${bosh_cli}"
+
+# outputs
+output_dir="$( cd "${workspace_dir}/updated-worker-state" && pwd )"
+
+cp ${worker_state_dir}/*.json "${output_dir}/worker-state.json"
+
+pushd "${workspace_dir}" > /dev/null
+  echo "Updating WORKER..."
+  ${bosh_cli} -n create-env \
+    --state "${output_dir}/worker-state.json" \
+    -l <( echo "${WORKER_SECRETS}" ) \
+    ${deployments_dir}/${ENVIRONMENT_NAME}/worker.yml
+popd > /dev/null
+
+echo "Successflly updated worker!"

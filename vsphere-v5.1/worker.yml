@@ -1,0 +1,82 @@
+---
+name: vsphere-concourse-worker
+
+releases:
+  - name: bosh-vsphere-cpi
+    url: file://../../cpi-release/release.tgz
+  - name: concourse
+    url: file://../../concourse-release/release.tgz
+  - name: garden-runc
+    url: file://../../garden-runc-release/release.tgz
+
+resource_pools:
+  - name: vms
+    network: private
+    stemcell:
+      url: file://../../stemcell/stemcell.tgz
+    cloud_properties:
+      cpu: 4
+      ram: 4_096
+      disk: 100_000
+
+networks:
+  - name: private
+    type: manual
+    subnets:
+      - range: ((vcenter_internal_cidr))
+        gateway: ((vcenter_gateway))
+        reserved: ((vcenter_reserved_ips))
+        dns: ((vcenter_dns))
+        cloud_properties: {name: ((vcenter_network_name))}
+
+instance_groups:
+  - name: worker
+    instances: 1
+    jobs:
+      - name: groundcrew
+        release: concourse
+      - name: baggageclaim
+        release: concourse
+      - name: garden
+        release: garden-runc
+    resource_pool: vms
+    networks:
+      - {name: private, static_ips: [((vcenter_worker_ip))]}
+    properties:
+      tags: ["vsphere", "vsphere-v5.1"]
+      baggageclaim:
+        forward_address: 127.0.0.1:7788
+      garden:
+        listen_network: tcp
+        listen_address: 127.0.0.1:7777
+        allow_host_access: true
+        btrfs_store_size_mb: 1000000
+        forward_address: 127.0.0.1:7777
+      tsa:
+        host: ((concourse_tsa_hostname))
+        host_public_key: ((concourse_tsa_public_key))
+        private_key: ((vcenter_worker_private_key))
+
+cloud_provider:
+  template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
+
+  mbus: "https://mbus:((vcenter_worker_mbus_password))@((vcenter_worker_ip)):6868"
+
+  properties:
+    vcenter:
+      address: ((vcenter_address))
+      user: ((vcenter_user))
+      password: ((vcenter_password))
+      datacenters:
+        - name: ((vcenter_datacenter))
+          vm_folder: ((vcenter_datacenter_vm_folder))
+          template_folder: ((vcenter_datacenter_template_volder))
+          datastore_pattern: ((vcenter_datacenter_datastore_pattern))
+          persistent_datastore_pattern: ((vcenter_persistent_datacenter_datastore_pattern))
+          disk_path: ((vcenter_datacenter_disk_path))
+          clusters: ((vcenter_clusters))
+
+    agent: {mbus: "https://mbus:((vcenter_worker_mbus_password))@((vcenter_worker_ip)):6868"}
+
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: [0.pool.ntp.org, 1.pool.ntp.org]
