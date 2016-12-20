@@ -3,11 +3,11 @@ name: vsphere-concourse-worker
 
 releases:
   - name: bosh-vsphere-cpi
-    url: file://../../cpi-release/release.tgz
+    url: file://../../bosh-cpi-release/release.tgz
   - name: concourse
-    url: file://../../concourse-release/release.tgz
+    url: file://../../concourse-and-garden/concourse-release.tgz
   - name: garden-runc
-    url: file://../../garden-runc-release/release.tgz
+    url: file://../../concourse-and-garden/garden-runc-release.tgz
 
 resource_pools:
   - name: vms
@@ -76,7 +76,7 @@ cloud_provider:
           disk_path: ((vcenter_datacenter_disk_path))
           clusters: ((vcenter_clusters))
 
-    agent: {mbus: "https://mbus:((vcenter_worker_mbus_password))@((vcenter_worker_ip)):6868"}
+    agent: {mbus: "https://mbus:((vcenter_worker_mbus_password))@0.0.0.0:6868"}
 
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: [0.pool.ntp.org, 1.pool.ntp.org]

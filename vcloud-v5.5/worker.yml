@@ -1,0 +1,83 @@
+---
+name: vcloud-v5-5-concourse-worker
+
+releases:
+  - name: bosh-vcloud-cpi
+    url: file://../../bosh-cpi-release/release.tgz
+  - name: concourse
+    url: file://../../concourse-and-garden/concourse-release.tgz
+  - name: garden-runc
+    url: file://../../concourse-and-garden/garden-runc-release.tgz
+
+resource_pools:
+  - name: vms
+    network: private
+    stemcell:
+      url: file://../../stemcell/stemcell.tgz
+    cloud_properties:
+      cpu: 2
+      ram: 16_384
+      disk: 80_000
+    env:
+      vapp: 'bosh-concourse-worker'
+
+networks:
+  - name: private
+    type: manual
+    subnets:
+      - range: ((vcloud_internal_cidr))
+        gateway: ((vcloud_gateway))
+        dns: ((vcloud_dns))
+        cloud_properties: {name: ((vcloud_network_name))}
+
+instance_groups:
+  - name: worker
+    instances: 1
+    resource_pool: vms
+    networks:
+      - {name: private, static_ips: [((vcloud_worker_ip))]}
+    properties:
+      tags: ["vcloud-v5.5"]
+      baggageclaim:
+        forward_address: 127.0.0.1:7788
+      garden:
+        listen_network: tcp
+        listen_address: 127.0.0.1:7777
+        allow_host_access: true
+        btrfs_store_size_mb: 1000000
+        forward_address: 127.0.0.1:7777
+      tsa:
+        host: ((concourse_tsa_hostname))
+        host_public_key: ((concourse_tsa_public_key))
+        private_key: ((vcloud_worker_private_key))
+    jobs:
+      - name: groundcrew
+        release: concourse
+      - name: baggageclaim
+        release: concourse
+      - name: garden
+        release: garden-runc
+
+cloud_provider:
+  template: {name: vcloud_cpi, release: bosh-vcloud-cpi}
+
+  mbus: "https://mbus:((vcloud_worker_mbus_password))@((vcloud_public_ip)):6868"
+
+  properties:
+    vcd:
+      url: ((vcloud_url))
+      user: ((vcloud_user))
+      password: ((vcloud_password))
+      entities:
+        organization: ((vcloud_organization))
+        virtual_datacenter: ((vcloud_datacenter))
+        vapp_catalog: ((vcloud_vapp_catalog))
+        media_catalog: ((vcloud_media_catalog))
+        media_storage_profile: ((vcloud_media_storage_profile))
+        vm_metadata_key: ((vcloud_vm_metadata_key))
+      control: {wait_max: 900}
+
+    agent: {mbus: "https://mbus:((vcloud_worker_mbus_password))@0.0.0.0:6868"}
+
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: [0.pool.ntp.org, 1.pool.ntp.org]

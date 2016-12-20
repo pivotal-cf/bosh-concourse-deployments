@@ -19,7 +19,7 @@ releases:
 
 disk_pools:
 - name: disks
-  disk_size: 20_000
+  disk_size: 100_000
 
 resource_pools:
 - name: default
@@ -30,7 +30,7 @@ resource_pools:
   cloud_properties:
     cpu: 2
     ram: 4_096
-    disk: 20_000
+    disk: 200_000
   env:
     bosh:
       password: ((upgrader_vm_password))

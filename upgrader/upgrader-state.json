@@ -1,20 +1,20 @@
 {
     "director_id": "984210ef-a1bf-4d75-4373-05c2193dc276",
     "installation_id": "74833b41-bfd2-48df-6383-d67c5aee32a9",
-    "current_vm_cid": "vm-fc6452ab-9cde-4031-95f2-fdbbb36f97d4",
+    "current_vm_cid": "vm-5370b6af-9919-4e44-9b80-6e7881e8c60a",
     "current_stemcell_id": "e7a33059-74ee-4f82-48af-835b575d5890",
-    "current_disk_id": "e82d1f3e-0aa7-44b6-7a16-f2e1f3976737",
+    "current_disk_id": "8f3f371e-8d94-44d8-40e0-f229a234cd36",
     "current_release_ids": [
-        "13605087-f006-47f0-7dfc-699c1a958c3a",
-        "d85dea9b-9faf-4a55-7bbe-6adcf8548f60",
-        "b49be9df-d8e2-4def-65a5-967722a2b2eb"
+        "f532d237-cade-4a88-5f8b-b091a7f84709",
+        "073c893f-4d12-4529-50e7-5adc67004bda",
+        "ed31f60c-48b6-41aa-6fe7-16aa94ac0dea"
     ],
-    "current_manifest_sha": "7d388a4d752c471c02af64c58d2172b25fd03312649f5fda625a5067abbc26f1f4bb9a41bcb2ff4351ff970d89e8532b87999a2cc1b7aed3574e616bb6d0dc9f",
+    "current_manifest_sha": "7ae34bd22cfbee717cd1ac8b48f4319603b04437675edaa68258f04f5fcbdf027df4c4fbb72aaad562e404eebada2adba9b76cdd18f7a106d8c1bc92e17dfaad",
     "disks": [
         {
-            "id": "e82d1f3e-0aa7-44b6-7a16-f2e1f3976737",
-            "cid": "disk-ebebb28a-c331-45e3-9fe8-7ece946f06c3",
-            "size": 20000,
+            "id": "8f3f371e-8d94-44d8-40e0-f229a234cd36",
+            "cid": "disk-c298db61-f99a-4637-b652-ca9660203bba",
+            "size": 100000,
             "cloud_properties": {}
         }
     ],
@@ -28,17 +28,17 @@
     ],
     "releases": [
         {
-            "id": "13605087-f006-47f0-7dfc-699c1a958c3a",
+            "id": "f532d237-cade-4a88-5f8b-b091a7f84709",
             "name": "concourse",
             "version": "2.5.0"
         },
         {
-            "id": "d85dea9b-9faf-4a55-7bbe-6adcf8548f60",
+            "id": "073c893f-4d12-4529-50e7-5adc67004bda",
             "name": "garden-runc",
             "version": "1.0.3"
         },
         {
-            "id": "b49be9df-d8e2-4def-65a5-967722a2b2eb",
+            "id": "ed31f60c-48b6-41aa-6fe7-16aa94ac0dea",
             "name": "bosh-vsphere-cpi",
             "version": "34"
         }

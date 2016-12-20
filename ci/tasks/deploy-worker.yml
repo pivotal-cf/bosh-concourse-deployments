@@ -4,11 +4,13 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: boshcpi/bosh-concourse-deployments
+    repository: bosh/main
 
 inputs:
   - name: deployments-src
+  - name: bosh-cpi-release
   - name: bosh-cli
+  - name: concourse-and-garden
   - name: worker-state
   - name: stemcell
 
