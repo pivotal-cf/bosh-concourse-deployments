@@ -1,160 +1,108 @@
 ---
 jobs:
-  - name: update-vsphere-v5.1-worker
+  - name: prepare-asia-env
     serial_groups: [deploy]
     plan:
       - do:
         - aggregate:
           - get: deployments-src
+          - get: jumpbox-deployment-src
           - get: bosh-cli
-          - get: worker-state
-            resource: vsphere-v5.1-worker-state
-          - get: bosh-cpi-release
-            resource: bosh-vsphere-cpi-release
-          - get: concourse-and-garden
-            passed: [update-concourse]
-            trigger: true
-            params:
-              globs: ['concourse-*.tgz','garden-runc-*.tgz']
+          - get: asia-natbox-state
+          - get: asia-jumpbox-state
+          - get: bosh-google-cpi-release
+          - get: networking-release
           - get: stemcell
-            resource: vsphere-stemcell
+        - put: terraform
+          params:
+            env_name: bosh-cpi-concourse-asia
+            terraform_source: deployments-src/terraform/asia
+            vars:
+              allow_mbus_access_to_natbox: 1
+              allow_mbus_access_to_jumpbox: 1
         - aggregate:
-          - task: update-vsphere-v5.1-worker
-            file: deployments-src/ci/tasks/deploy-worker.yml
+          - task: update-natbox
+            file: deployments-src/ci/tasks/deploy-natbox.yml
+            input_mapping:
+              natbox-state: asia-natbox-state
             params:
-              WORKER_SECRETS: {{vsphere-v51-worker-secrets}}
-              ENVIRONMENT_NAME: vsphere-v5.1
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+              NATBOX_SECRETS:     {{natbox_secrets}}
             ensure:
-              put: worker-state
-              resource: vsphere-v5.1-worker-state
+              put: asia-natbox-state
               params:
-                file: updated-worker-state/worker-state.json
+                file: updated-natbox-state/natbox-state.json
+          - task: update-jumpbox
+            file: deployments-src/ci/tasks/deploy-jumpbox.yml
+            input_mapping:
+              jumpbox-state: asia-jumpbox-state
+            params:
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+              JUMPBOX_SECRETS:    {{jumpbox_secrets}}
+            ensure:
+              put: asia-jumpbox-state
+              params:
+                file: updated-jumpbox-state/jumpbox-state.json
+        ensure:
+          put: terraform
+          params:
+            env_name: bosh-cpi-concourse-asia
+            terraform_source: deployments-src/terraform/asia
+            vars:
+              allow_mbus_access_to_natbox: 0
+              allow_mbus_access_to_jumpbox: 0
 
-  - name: update-vcloud-v5.5-worker
+  - name: prepare-concourse-env
     serial_groups: [deploy]
     plan:
       - do:
         - aggregate:
           - get: deployments-src
-          - get: bosh-cli
-          - get: worker-state
-            resource: vcloud-v5.5-worker-state
-          - get: bosh-cpi-release
-            resource: bosh-vcloud-cpi-release
-          - get: concourse-and-garden
-            passed: [update-concourse]
-            trigger: true
-            params:
-              globs: ['concourse-*.tgz','garden-runc-*.tgz']
-          - get: stemcell
-            resource: vcloud-stemcell
-        - aggregate:
-          - task: update-vcloud-v5.5-worker
-            file: deployments-src/ci/tasks/deploy-worker.yml
-            params:
-              WORKER_SECRETS: {{vcloud-v55-worker-secrets}}
-              ENVIRONMENT_NAME: vcloud-v5.5
-            ensure:
-              put: worker-state
-              resource: vcloud-v5.5-worker-state
-              params:
-                file: updated-worker-state/worker-state.json
-
-  - name: update-natbox
-    serial_groups: [deploy]
-    plan:
-      - do:
-        - aggregate:
-          - get: deployments-src
+          - get: jumpbox-deployment-src
           - get: bosh-cli
           - get: concourse-natbox-state
-          - get: asia-natbox-state
+          - get: concourse-jumpbox-state
           - get: bosh-google-cpi-release
           - get: networking-release
           - get: stemcell
         - put: terraform
           params:
             env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/
+            terraform_source: deployments-src/terraform/concourse
             vars:
-              concourse_subnet:
-                allow_mbus_access_to_natbox: 1
-              asia_subnet:
-                allow_mbus_access_to_natbox: 1
+              allow_mbus_access_to_natbox: 1
+              allow_mbus_access_to_jumpbox: 1
         - aggregate:
-          - task: update-concourse-natbox
+          - task: update-natbox
             file: deployments-src/ci/tasks/deploy-natbox.yml
+            input_mapping:
+              natbox-state: concourse-natbox-state
             params:
               GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
               NATBOX_SECRETS:     {{natbox_secrets}}
-              SUBNET_NAME:        concourse_subnet
-            input_mapping:
-              natbox-state: concourse-natbox-state
-            output_mapping:
-              updated-natbox-state: concourse-updated-natbox-state
             ensure:
               put: concourse-natbox-state
               params:
-                file: concourse-updated-natbox-state/natbox-state.json
-          - task: update-asia-natbox
-            file: deployments-src/ci/tasks/deploy-natbox.yml
+                file: updated-natbox-state/natbox-state.json
+          - task: update-jumpbox
+            file: deployments-src/ci/tasks/deploy-jumpbox.yml
+            input_mapping:
+              jumpbox-state: concourse-jumpbox-state
             params:
               GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-              NATBOX_SECRETS:     {{natbox_secrets}}
-              SUBNET_NAME:        asia_subnet
-            input_mapping:
-              natbox-state: asia-natbox-state
-            output_mapping:
-              updated-natbox-state: asia-updated-natbox-state
+              JUMPBOX_SECRETS:    {{jumpbox_secrets}}
             ensure:
-              put: asia-natbox-state
+              put: concourse-jumpbox-state
               params:
-                file: asia-updated-natbox-state/natbox-state.json
+                file: updated-jumpbox-state/jumpbox-state.json
         ensure:
           put: terraform
           params:
             env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/
+            terraform_source: deployments-src/terraform/concourse
             vars:
-              concourse_subnet:
-                allow_mbus_access_to_natbox: 0
-              asia_subnet:
-                allow_mbus_access_to_natbox: 0
-
-  - name: update-jumpbox
-    serial_groups: [deploy]
-    plan:
-      - do:
-        - aggregate:
-          - get: deployments-src
-          - get: bosh-cli
-          - get: jumpbox-state
-          - get: jumpbox-deployment-src
-        - put: terraform
-          params:
-            env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/
-            vars:
-              concourse_subnet:
-                allow_mbus_access_to_jumpbox: 1
-        - task: update-jumpbox
-          file: deployments-src/ci/tasks/deploy-jumpbox.yml
-          params:
-            GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-            JUMPBOX_SECRETS:    {{jumpbox_secrets}}
-            SUBNET_NAME:        concourse_subnet
-          ensure:
-            put: jumpbox-state
-            params:
-              file: updated-jumpbox-state/jumpbox-state.json
-            ensure:
-              put: terraform
-              params:
-                env_name: bosh-cpi-concourse
-                terraform_source: deployments-src/terraform/
-                vars:
-                  concourse_subnet:
-                    allow_mbus_access_to_jumpbox: 0
+              allow_mbus_access_to_natbox: 0
+              allow_mbus_access_to_jumpbox: 0
 
   - name: update-director
     serial_groups: [deploy]
@@ -244,6 +192,67 @@ jobs:
             SUBNET_NAME:            concourse_subnet
           ensure: *close-ssh-to-jumpbox
 
+  - name: update-vsphere-v5.1-worker
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: vsphere-v5.1-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-vsphere-cpi-release
+          - get: concourse-and-garden
+            passed: [update-concourse]
+            trigger: true
+            params:
+              globs: ['concourse-*.tgz','garden-runc-*.tgz']
+          - get: stemcell
+            resource: vsphere-stemcell
+        - aggregate:
+          - task: update-vsphere-v5.1-worker
+            file: deployments-src/ci/tasks/deploy-worker.yml
+            params:
+              WORKER_SECRETS: {{vsphere-v51-worker-secrets}}
+              ENVIRONMENT_NAME: vsphere-v5.1
+            ensure:
+              put: worker-state
+              resource: vsphere-v5.1-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+
+  - name: update-vcloud-v5.5-worker
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: vcloud-v5.5-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-vcloud-cpi-release
+          - get: concourse-and-garden
+            passed: [update-concourse]
+            trigger: true
+            params:
+              globs: ['concourse-*.tgz','garden-runc-*.tgz']
+          - get: stemcell
+            resource: vcloud-stemcell
+        - aggregate:
+          - task: update-vcloud-v5.5-worker
+            file: deployments-src/ci/tasks/deploy-worker.yml
+            params:
+              WORKER_SECRETS: {{vcloud-v55-worker-secrets}}
+              ENVIRONMENT_NAME: vcloud-v5.5
+            ensure:
+              put: worker-state
+              resource: vcloud-v5.5-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+
+
   - name: open-ssh-for-30m
     serial_groups: [deploy]
     plan:
@@ -261,6 +270,7 @@ resource_types:
     type: docker-image
     source:
       repository: ljfranklin/terraform-resource
+      tag: 0.8.1
   - name: gcs-resource
     type: docker-image
     source:
@@ -306,7 +316,25 @@ resources:
     source:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
-      versioned_file: natbox/concourse-natbox-state.json
+      versioned_file: concourse/natbox-state.json
+  - name: concourse-jumpbox-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: concourse/jumpbox-state.json
+  - name: asia-natbox-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: asia/natbox-state.json
+  - name: asia-jumpbox-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: asia/jumpbox-state.json
   - name: vsphere-v5.1-worker-state
     type: gcs-resource
     source:
@@ -319,18 +347,6 @@ resources:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: worker/vcloud-v5.5-worker-state.json
-  - name: asia-natbox-state
-    type: gcs-resource
-    source:
-      bucket: {{deployments_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: natbox/asia-natbox-state.json
-  - name: jumpbox-state
-    type: gcs-resource
-    source:
-      bucket: {{deployments_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: jumpbox/jumpbox-state.json
   - name: director-state
     type: gcs-resource
     source:
