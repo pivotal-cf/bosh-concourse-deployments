@@ -17,14 +17,14 @@ outputs:
   - name: updated-director-state
 
 params:
-  GOOGLE_CREDENTIALS:      ""
-  BOSH_DIRECTOR_SECRETS:   ""
-  BOSH_USER:               ""
-  BOSH_PASSWORD:           ""
-  BOSH_CA_CERT:            ""
-  BOSH_CA_KEY:             ""
-  JUMPBOX_SSH_KEY:         ""
-  JUMPBOX_SSH_USER:        ""
+  GOOGLE_CREDENTIALS:    ""
+  BOSH_DIRECTOR_SECRETS: ""
+  BOSH_CLIENT:           ""
+  BOSH_CLIENT_SECRET:    ""
+  BOSH_CA_CERT:          ""
+  BOSH_CA_KEY:           ""
+  JUMPBOX_SSH_KEY:       ""
+  JUMPBOX_SSH_USER:      ""
 
 run:
   path: deployments-src/ci/tasks/deploy-director

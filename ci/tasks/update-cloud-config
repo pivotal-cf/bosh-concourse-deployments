@@ -6,8 +6,8 @@ deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # env
-: ${BOSH_USER:?}
-: ${BOSH_PASSWORD:?}
+: ${BOSH_CLIENT:?}
+: ${BOSH_CLIENT_SECRET:?}
 : ${BOSH_CA_CERT:?}
 : ${JUMPBOX_SSH_USER:?}
 : ${JUMPBOX_SSH_KEY:?}
