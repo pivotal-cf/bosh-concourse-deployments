@@ -70,14 +70,14 @@ output "external_concourse_ip" {
   value = "${module.concourse.external_ip}"
 }
 
-output "concourse_atc_tags" {
-  value = ["${module.concourse.atc_tag}"]
+output "concourse_atc_tag" {
+  value = "${module.concourse.atc_tag}"
 }
 
-output "concourse_db_tags" {
-  value = ["${module.concourse.db_tag}"]
+output "concourse_db_tag" {
+  value = "${module.concourse.db_tag}"
 }
 
 output "concourse_target_pool" {
-  value = ["${module.concourse.target_pool}"]
+  value = "${module.concourse.target_pool}"
 }

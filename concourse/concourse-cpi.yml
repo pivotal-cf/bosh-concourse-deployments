@@ -134,33 +134,33 @@ instance_groups:
         baggageclaim: {as: sap_baggageclaim}
       properties: {}
 
-- name: concourse_cpi_sf_worker_asia
-  instances: 1
-  vm_type: concourse_cpi_sf_worker_small
-  stemcell: default
-  azs: [asia1]
-  networks:
-    - name: concourse
-  jobs:
-    - name: groundcrew
-      release: concourse
-      consumes:
-        baggageclaim: {from: asia_baggageclaim}
-      properties:
-        tags: [asia]
-        team: ((bosh_cpi_team))
-        baggageclaim:
-          forward_address: 127.0.0.1:7788
-        garden:
-          forward_address: 127.0.0.1:7777
-    - name: garden
-      release: garden-runc
-      properties:
-        garden:
-          listen_network: tcp
-          listen_address: 127.0.0.1:7777
-    - name: baggageclaim
-      release: concourse
-      provides:
-        baggageclaim: {as: asia_baggageclaim}
-      properties: {}
+# - name: concourse_cpi_sf_worker_asia
+#   instances: 1
+#   vm_type: concourse_cpi_sf_worker_small
+#   stemcell: default
+#   azs: [asia1]
+#   networks:
+#     - name: concourse
+#   jobs:
+#     - name: groundcrew
+#       release: concourse
+#       consumes:
+#         baggageclaim: {from: asia_baggageclaim}
+#       properties:
+#         tags: [asia]
+#         team: ((bosh_cpi_team))
+#         baggageclaim:
+#           forward_address: 127.0.0.1:7788
+#         garden:
+#           forward_address: 127.0.0.1:7777
+#     - name: garden
+#       release: garden-runc
+#       properties:
+#         garden:
+#           listen_network: tcp
+#           listen_address: 127.0.0.1:7777
+#     - name: baggageclaim
+#       release: concourse
+#       provides:
+#         baggageclaim: {as: asia_baggageclaim}
+#       properties: {}

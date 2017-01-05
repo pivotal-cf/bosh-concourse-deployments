@@ -22,8 +22,6 @@ params:
   BOSH_CA_CERT:           ""
   JUMPBOX_SSH_USER:       ""
   JUMPBOX_SSH_KEY:        ""
-  US_SUBNET_NAME:         ""
-  ASIA_SUBNET_NAME:       ""
 
 run:
   path: deployments-src/ci/tasks/deploy-concourse

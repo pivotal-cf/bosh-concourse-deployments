@@ -184,7 +184,6 @@ jobs:
             BOSH_CA_CERT:           {{director_ca_cert}}
             JUMPBOX_SSH_KEY:        {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:       {{jumpbox_ssh_user}}
-            SUBNET_NAME:            concourse_subnet
           ensure: *close-ssh-to-jumpbox
 
   - name: update-vsphere-v5.1-worker
