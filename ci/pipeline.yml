@@ -159,8 +159,6 @@ jobs:
             BOSH_CA_CERT:          {{director_ca_cert}}
             JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
-            US_SUBNET_NAME:        concourse_subnet
-            ASIA_SUBNET_NAME:      asia_subnet
           ensure: *close-ssh-to-jumpbox
 
   - name: update-concourse

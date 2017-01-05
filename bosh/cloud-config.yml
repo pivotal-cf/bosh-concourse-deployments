@@ -1,8 +1,6 @@
 azs:
 - name: us1
-  cloud_properties: {zone: ((us_zone))}
-- name: asia1
-  cloud_properties: {zone: ((asia_zone))}
+  cloud_properties: {zone: ((zone))}
 
 vm_types:
 - name: concourse_cpi
@@ -59,13 +57,7 @@ networks:
     - az: us1
       cloud_properties:
         network_name: ((network))
-        subnetwork_name: ((us_subnetwork))
-        tags:
-          - ((director_internal_tag))
-    - az: asia1
-      cloud_properties:
-        network_name: ((network))
-        subnetwork_name: ((asia_subnetwork))
+        subnetwork_name: ((subnetwork))
         tags:
           - ((director_internal_tag))
   - name: vip
