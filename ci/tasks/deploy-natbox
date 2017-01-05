@@ -30,4 +30,4 @@ pushd "${workspace_dir}" > /dev/null
     ${deployments_dir}/natbox/natbox.yml
 popd > /dev/null
 
-echo "Successflly updated nat!"
+echo "Successfully updated nat!"

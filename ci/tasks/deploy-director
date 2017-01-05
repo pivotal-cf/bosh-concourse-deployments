@@ -44,11 +44,9 @@ chmod 400 "${ssh_key_path}"
 cp "${director_templates_dir}/bosh.yml" "${output_dir}"
 cp ${director_state_dir}/*.json "${output_dir}"
 
-terraform_metadata="$(jq -e .${SUBNET_NAME} ${terraform_config}/metadata)"
-external_jumpbox_ip=$(echo "${terraform_metadata}" | jq -r -e .external_jumpbox_ip)
-internal_director_ip=$(echo "${terraform_metadata}" | jq -r -e .internal_director_ip)
-director_tag=$(echo "${terraform_metadata}" | jq -e -r .director_tag)
-nat_traffic_tag=$(echo "${terraform_metadata}" | jq -e .nat_traffic_tag)
+terraform_metadata="${terraform_config}/metadata"
+external_jumpbox_ip=$(jq -r -e .external_jumpbox_ip $terraform_metadata)
+internal_director_ip=$(jq -r -e .internal_director_ip $terraform_metadata)
 
 jumpbox_address="${JUMPBOX_SSH_USER}@${external_jumpbox_ip}"
 ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
@@ -67,8 +65,7 @@ pushd "${output_dir}" > /dev/null
     --ops-file "${deployments_dir}/bosh/bootstrap-ops-file.yml" \
     --vars-store "${tmp_dir}/throwaway-var-store" \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
-    -l <(echo "${terraform_metadata}") \
-    -v "director_tags=[${director_tag},${nat_traffic_tag}]" \
+    -l "${terraform_metadata}" \
     -v "admin_user=${BOSH_USER}" \
     -v "admin_password=${BOSH_PASSWORD}" \
     -v "default_ca={ \"certificate\": \"${BOSH_CA_CERT}\", \"private_key\": \"${BOSH_CA_KEY}\" }" \
