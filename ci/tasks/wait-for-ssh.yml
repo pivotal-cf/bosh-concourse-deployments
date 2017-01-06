@@ -12,7 +12,6 @@ inputs:
 
 params:
   SLEEP_TIME:  "1800"
-  SUBNET_NAME: ""
 
 run:
   path: deployments-src/ci/tasks/wait-for-ssh

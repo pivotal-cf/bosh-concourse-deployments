@@ -1,0 +1,73 @@
+---
+name: google-asia-concourse-worker
+
+releases:
+  - name: bosh-google-cpi
+    url: file://../../bosh-cpi-release/release.tgz
+  - name: concourse
+    url: file://../../concourse-and-garden/concourse-release.tgz
+  - name: garden-runc
+    url: file://../../concourse-and-garden/garden-runc-release.tgz
+
+resource_pools:
+  - name: vms
+    network: private
+    stemcell:
+      url: file://../../stemcell/stemcell.tgz
+    cloud_properties:
+      zone: ((zone))
+      tags: ((worker_tags))
+      machine_type: n1-standard-4
+      root_disk_size_gb: 80
+
+networks:
+  - name: private
+    type: manual
+    subnets:
+      - range: ((internal_cidr))
+        gateway: ((internal_gw))
+        cloud_properties:
+          network_name: ((network))
+          subnetwork_name: ((subnetwork))
+          tags: ((worker_tags))
+
+instance_groups:
+  - name: concourse_cpi_sf_worker_asia
+    instances: 1
+    resource_pool: vms
+    networks:
+      - {name: private, static_ips: [((internal_worker_ip))]}
+    properties:
+      tags: ((worker_tags))
+      team: pivotal
+      baggageclaim:
+        forward_address: 127.0.0.1:7788
+      garden:
+        listen_network: tcp
+        listen_address: 127.0.0.1:7777
+        allow_host_access: true
+        btrfs_store_size_mb: 1000000
+        forward_address: 127.0.0.1:7777
+      tsa:
+        host: ((concourse_tsa_hostname))
+        host_public_key: ((concourse_tsa_public_key))
+        private_key: ((google_asia_worker_private_key))
+    jobs:
+      - name: groundcrew
+        release: concourse
+      - name: baggageclaim
+        release: concourse
+      - name: garden
+        release: garden-runc
+
+cloud_provider:
+  template: {name: google_cpi, release: bosh-google-cpi}
+  mbus: https://mbus:((mbus_bootstrap_password))@127.0.0.1:6868
+  properties:
+    agent: {mbus: "https://mbus:((mbus_bootstrap_password))@0.0.0.0:6868"}
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: [time1.google.com,time2.google.com,time3.google.com,time4.google.com]
+    google:
+      project: ((project_id))
+      default_zone: ((zone))
+      json_key: ((gcp_credentials_json))

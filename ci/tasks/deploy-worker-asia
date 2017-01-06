@@ -1,0 +1,66 @@
+#!/bin/bash
+
+set -eu
+
+deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
+workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
+
+# env
+: ${GOOGLE_CREDENTIALS:?}
+: ${ENVIRONMENT_NAME:?}
+: ${WORKER_SECRETS:?}
+: ${RUBY_VERSION:="2.3.1"}
+: ${JUMPBOX_SSH_USER:?}
+: ${JUMPBOX_SSH_KEY:?}
+
+set +u
+source /etc/profile.d/chruby.sh
+chruby $RUBY_VERSION
+
+# inputs
+terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
+worker_state_dir="$( cd "${workspace_dir}/worker-state" && pwd )"
+bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
+chmod +x "${bosh_cli}"
+
+# outputs
+output_dir="$( cd "${workspace_dir}/updated-worker-state" && pwd )"
+
+cp ${worker_state_dir}/*.json "${output_dir}/worker-state.json"
+
+ln -s $PWD/concourse-and-garden/concourse-*.tgz concourse-and-garden/concourse-release.tgz
+ln -s $PWD/concourse-and-garden/garden-runc-*.tgz concourse-and-garden/garden-runc-release.tgz
+
+tmp_dir="$( mktemp -d /tmp/deploy-concourse-asia-worker-XXXXXXXX)"
+cleanup_tmp_dir() {
+  rm -rf "${tmp_dir}" || true
+}
+trap "{ cleanup_tmp_dir; }" EXIT # will be overridden by future trap calls
+
+ssh_key_path="${tmp_dir}/id_rsa.pem"
+echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
+chmod 400 "${ssh_key_path}"
+
+terraform_metadata="${terraform_config}/metadata"
+external_jumpbox_ip=$( jq -r -e .external_jumpbox_ip ${terraform_metadata} )
+internal_worker_ip=$( jq -r -e .internal_worker_ip ${terraform_metadata} )
+
+jumpbox_address="${JUMPBOX_SSH_USER}@${external_jumpbox_ip}"
+ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
+ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:${internal_worker_ip}:6868 "${jumpbox_address}"
+cleanup_ssh_tunnel() {
+  ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
+}
+trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
+
+pushd "${workspace_dir}" > /dev/null
+  echo "Updating WORKER..."
+  ${bosh_cli} -n create-env \
+    --state "${output_dir}/worker-state.json" \
+    -l "${terraform_metadata}" \
+    -l <( echo "${WORKER_SECRETS}" ) \
+    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
+    ${deployments_dir}/${ENVIRONMENT_NAME}/worker.yml
+popd > /dev/null
+
+echo "Successfully updated worker!"

@@ -246,6 +246,51 @@ jobs:
               params:
                 file: updated-worker-state/worker-state.json
 
+  - name: update-google-asia-worker
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: google-asia-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-google-cpi-release
+          - get: concourse-and-garden
+            passed: [update-concourse]
+            trigger: true
+            params:
+              globs: ['concourse-*.tgz','garden-runc-*.tgz']
+          - get: stemcell
+        - &asia-open-ssh-to-jumpbox
+          put: terraform
+          params:
+            env_name: bosh-cpi-concourse-asia
+            terraform_source: deployments-src/terraform/asia
+            vars:
+              allow_ssh_access_to_jumpbox: 1
+        - aggregate:
+          - task: update-google-asia-worker
+            file: deployments-src/ci/tasks/deploy-worker-asia.yml
+            params:
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+              WORKER_SECRETS: {{google-asia-worker-secrets}}
+              ENVIRONMENT_NAME: google-asia-worker
+              JUMPBOX_SSH_KEY:        {{jumpbox_ssh_key}}
+              JUMPBOX_SSH_USER:       {{jumpbox_ssh_user}}
+            ensure:
+              put: worker-state
+              resource: google-asia-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+              ensure: &asia-close-ssh-to-jumpbox
+                put: terraform
+                params:
+                  env_name: bosh-cpi-concourse-asia
+                  terraform_source: deployments-src/terraform/asia
+                  vars:
+                    allow_ssh_access_to_jumpbox: 0
 
   - name: open-ssh-for-30m
     serial_groups: [deploy]
@@ -255,9 +300,17 @@ jobs:
         - *open-ssh-to-jumpbox
         - task: wait-for-ssh
           file: deployments-src/ci/tasks/wait-for-ssh.yml
-          params:
-            SUBNET_NAME: concourse_subnet
           ensure: *close-ssh-to-jumpbox
+
+  - name: asia-open-ssh-for-30m
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - get: deployments-src
+        - *asia-open-ssh-to-jumpbox
+        - task: wait-for-ssh
+          file: deployments-src/ci/tasks/wait-for-ssh.yml
+          ensure: *asia-close-ssh-to-jumpbox
 
 resource_types:
   - name: terraform
@@ -341,6 +394,12 @@ resources:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: worker/vcloud-v5.5-worker-state.json
+  - name: google-asia-worker-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: worker/google-asia-worker-state.json
   - name: director-state
     type: gcs-resource
     source:

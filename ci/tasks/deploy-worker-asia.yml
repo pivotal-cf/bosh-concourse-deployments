@@ -1,0 +1,29 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: bosh/main
+
+inputs:
+  - name: deployments-src
+  - name: bosh-cpi-release
+  - name: bosh-cli
+  - name: concourse-and-garden
+  - name: worker-state
+  - name: stemcell
+  - name: terraform
+
+outputs:
+  - name: updated-worker-state
+
+params:
+  GOOGLE_CREDENTIALS: ""
+  IAAS_CREDENTIALS:   ""
+  ENVIRONMENT_NAME:   ""
+  JUMPBOX_SSH_USER:   ""
+  JUMPBOX_SSH_KEY:    ""
+
+run:
+  path: deployments-src/ci/tasks/deploy-worker-asia
