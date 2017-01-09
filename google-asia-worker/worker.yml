@@ -38,7 +38,7 @@ instance_groups:
     networks:
       - {name: private, static_ips: [((internal_worker_ip))]}
     properties:
-      tags: ((worker_tags))
+      tags: [asia]
       team: pivotal
       baggageclaim:
         forward_address: 127.0.0.1:7788

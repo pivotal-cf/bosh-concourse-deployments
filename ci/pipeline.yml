@@ -297,20 +297,15 @@ jobs:
     plan:
       - do:
         - get: deployments-src
-        - *open-ssh-to-jumpbox
+        - aggregate:
+          - *open-ssh-to-jumpbox
+          - *asia-open-ssh-to-jumpbox
         - task: wait-for-ssh
           file: deployments-src/ci/tasks/wait-for-ssh.yml
-          ensure: *close-ssh-to-jumpbox
-
-  - name: asia-open-ssh-for-30m
-    serial_groups: [deploy]
-    plan:
-      - do:
-        - get: deployments-src
-        - *asia-open-ssh-to-jumpbox
-        - task: wait-for-ssh
-          file: deployments-src/ci/tasks/wait-for-ssh.yml
-          ensure: *asia-close-ssh-to-jumpbox
+          ensure:
+            aggregate:
+              - *close-ssh-to-jumpbox
+              - *asia-close-ssh-to-jumpbox
 
 resource_types:
   - name: terraform
