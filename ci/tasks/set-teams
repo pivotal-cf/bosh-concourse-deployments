@@ -12,15 +12,15 @@ set -eu
 wget -O ./fly "${CONCOURSE_EXTERNAL_URL}/api/v1/cli?arch=amd64&platform=linux"
 chmod +x ./fly
 
-./fly -t concourse login \
+yes | ./fly -t concourse login \
   -c "${CONCOURSE_EXTERNAL_URL}" \
   -u "${CONCOURSE_BASIC_AUTH_USERNAME}" \
   -p "${CONCOURSE_BASIC_AUTH_PASSWORD}"
 
 # Split JSON input into plain-text key value pairs
 IFS=$'\n' CONCOURSE_TEAMS=( $(echo $CONCOURSE_TEAMS | jq -r '.[] | "\"\(.name)\"\n\"\(.github_team)\""') )
-while [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
-  ./fly -t concourse set-team \
+while [ -n "${CONCOURSE_TEAMS:-}" ] && [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
+  yes | ./fly -t concourse set-team \
     --team-name="${CONCOURSE_TEAMS[0]}" \
     --github-auth-client-id="${CONCOURSE_GITHUB_CLIENT_ID}" \
     --github-auth-client-secret="${CONCOURSE_GITHUB_CLIENT_SECRET}" \
