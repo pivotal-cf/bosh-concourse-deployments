@@ -4,6 +4,7 @@ project_id: <GCP project id>
 gcp_credentials_json: |
   {
     <GCP Service Account JSON, download via GCP -> IAM -> Service Accounts>
+    <Used to apply Terraform templates>
     "type": "service_account",
     ...
   }
@@ -47,13 +48,15 @@ bosh_director_secrets: |
 
 # Concourse
 concourse-config-access-token: <Github access token used to avoid rate limiting>
+concourse_github_client_id: <Client ID for Github OAuth application>
+concourse_github_client_secret: <Client secret for Github OAuth application>
+concourse_basic_auth_username: <Basic Auth username for `main` team>
+concourse_basic_auth_password: <Basic Auth password for `main` team>
+concourse_teams: |
+  [
+    {"name": "REPLACE_ME", "github_team":  "YOUR_GH_ORG/YOUR_GH_TEAM"}
+  ]
 concourse_secrets: |
-  github_client_id: <Client ID for Github OAuth application>
-  github_client_secret: <Client secret for Github OAuth application>
-  github_authorized_teams:
-    - organization: <Your admin Github org>
-      teams:
-      - <Your admin Github teams>
   tsa_authorized_keys:
     -  <Public key of external worker, e.g. "ssh-rsa ...">
   tsa_private_key: |
