@@ -182,8 +182,7 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      # branch: master
-      branch: WIP-add-terraform-templates
+      branch: master
   - name: jumpbox-deployment-src
     type: git
     source:
