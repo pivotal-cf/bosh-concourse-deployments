@@ -9,9 +9,9 @@ deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 
 # inputs
-external_jumpbox_ip=$(jq -r -e .external_jumpbox_ip ${workspace_dir}/terraform/metadata)
+jumpbox_external_ip=$(jq -r -e .jumpbox_external_ip ${workspace_dir}/terraform/metadata)
 
-echo "Your jumpbox address is '${external_jumpbox_ip}'."
+echo "Your jumpbox address is '${jumpbox_external_ip}'."
 echo "We'll leave the SSH port open for $(( ${SLEEP_TIME} / 60 )) minutes."
 echo "Hit cancel once to close the SSH port early"
 echo "😴 ..."

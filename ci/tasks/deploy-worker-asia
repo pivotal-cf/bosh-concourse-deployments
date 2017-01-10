@@ -41,13 +41,16 @@ ssh_key_path="${tmp_dir}/id_rsa.pem"
 echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
 chmod 400 "${ssh_key_path}"
 
-terraform_metadata="${terraform_config}/metadata"
-external_jumpbox_ip=$( jq -r -e .external_jumpbox_ip ${terraform_metadata} )
-internal_worker_ip=$( jq -r -e .internal_worker_ip ${terraform_metadata} )
+# remove `natbox_` prefix from keys to conform to jumpbox-deployment templates
+terraform_metadata="${tmp_dir}/terraform_metadata"
+jq 'with_entries(.key |= sub("^worker_"; ""))' "${terraform_config}/metadata" > "${terraform_metadata}"
 
-jumpbox_address="${JUMPBOX_SSH_USER}@${external_jumpbox_ip}"
+jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
+worker_internal_ip=$( jq -r -e .internal_ip ${terraform_metadata} )
+
+jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
 ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
-ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:${internal_worker_ip}:6868 "${jumpbox_address}"
+ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:${worker_internal_ip}:6868 "${jumpbox_address}"
 cleanup_ssh_tunnel() {
   ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
 }

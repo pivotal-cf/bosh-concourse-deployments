@@ -44,13 +44,16 @@ chmod 400 "${ssh_key_path}"
 cp "${director_templates_dir}/bosh.yml" "${output_dir}"
 cp ${director_state_dir}/*.json "${output_dir}"
 
-terraform_metadata="${terraform_config}/metadata"
-external_jumpbox_ip=$(jq -r -e .external_jumpbox_ip $terraform_metadata)
-internal_director_ip=$(jq -r -e .internal_director_ip $terraform_metadata)
+# remove `director_` prefix from keys to conform to bosh-deployment templates
+terraform_metadata="${tmp_dir}/terraform_metadata"
+jq 'with_entries(.key |= sub("^director_"; ""))' "${terraform_config}/metadata" > "${terraform_metadata}"
 
-jumpbox_address="${JUMPBOX_SSH_USER}@${external_jumpbox_ip}"
+jumpbox_external_ip=$(jq -r -e .jumpbox_external_ip $terraform_metadata)
+director_internal_ip=$(jq -r -e .internal_ip $terraform_metadata)
+
+jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
 ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
-ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:${internal_director_ip}:6868 "${jumpbox_address}"
+ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:${director_internal_ip}:6868 "${jumpbox_address}"
 cleanup_ssh_tunnel() {
   ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
 }
@@ -60,7 +63,7 @@ pushd "${output_dir}" > /dev/null
   echo "Updating director..."
   ${bosh_cli} -n create-env \
     --ops-file "${director_templates_dir}/gcp/cpi.yml" \
-    --ops-file "${director_templates_dir}/enable-local-dns.yml" \
+    --ops-file "${director_templates_dir}/local-dns.yml" \
     --ops-file "${deployments_dir}/bosh/debug-ops-file.yml" \
     --ops-file "${deployments_dir}/bosh/bootstrap-ops-file.yml" \
     --vars-store "${tmp_dir}/throwaway-var-store" \

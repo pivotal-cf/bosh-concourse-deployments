@@ -28,12 +28,12 @@ echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
 chmod 400 "${ssh_key_path}"
 
 terraform_metadata="${terraform_config}/metadata"
-external_jumpbox_ip=$( jq -r -e .external_jumpbox_ip ${terraform_metadata} )
-internal_director_ip=$( jq -r -e .internal_director_ip ${terraform_metadata} )
+jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
+director_internal_ip=$( jq -r -e .director_internal_ip ${terraform_metadata} )
 
-jumpbox_address="${JUMPBOX_SSH_USER}@${external_jumpbox_ip}"
+jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
 ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
-ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 25555:${internal_director_ip}:25555 "${jumpbox_address}"
+ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 25555:${director_internal_ip}:25555 "${jumpbox_address}"
 cleanup_ssh_tunnel() {
   ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
 }

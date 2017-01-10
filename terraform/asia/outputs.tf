@@ -26,12 +26,12 @@ output "internal_gw" {
   value = "${module.asia_subnet.internal_gw}"
 }
 
-output "internal_natbox_ip" {
-  value = "${module.asia_subnet.internal_natbox_ip}"
+output "natbox_internal_ip" {
+  value = "${module.asia_subnet.natbox_internal_ip}"
 }
 
-output "external_natbox_ip" {
-  value = "${module.asia_subnet.external_natbox_ip}"
+output "natbox_external_ip" {
+  value = "${module.asia_subnet.natbox_external_ip}"
 }
 
 output "natbox_tags" {
@@ -46,15 +46,15 @@ output "jumpbox_tags" {
   value = ["${module.jumpbox.tag}"]
 }
 
-output "internal_jumpbox_ip" {
+output "jumpbox_internal_ip" {
   value = "${module.jumpbox.internal_ip}"
 }
 
-output "external_jumpbox_ip" {
+output "jumpbox_external_ip" {
   value = "${module.jumpbox.external_ip}"
 }
 
-output "internal_worker_ip" {
+output "worker_internal_ip" {
   value = "${module.create_env_thru_jumpbox.internal_ip}"
 }
 

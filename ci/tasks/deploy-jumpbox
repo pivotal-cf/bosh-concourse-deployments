@@ -19,14 +19,24 @@ chmod +x "${bosh_cli}"
 # outputs
 output_dir="$( cd "${workspace_dir}/updated-jumpbox-state" && pwd )"
 
+tmp_dir="$( mktemp -d /tmp/deploy-jumpbox-XXXXXXXX)"
+cleanup_tmp_dir() {
+  rm -rf "${tmp_dir}" || true
+}
+trap "{ cleanup_tmp_dir; }" EXIT
+
 cp ${jumpbox_state_dir}/*.json "${output_dir}"
+
+# remove `jumpbox_` prefix from keys to conform to jumpbox-deployment templates
+terraform_metadata="${tmp_dir}/terraform_metadata"
+jq 'with_entries(.key |= sub("^jumpbox_"; ""))' "${terraform_config}/metadata" > "${terraform_metadata}"
 
 pushd "${workspace_dir}" > /dev/null
   echo "Updating jumpbox..."
   ${bosh_cli} -n create-env \
     --state "${output_dir}/jumpbox-state.json" \
     --ops-file "${jumpbox_deployment_dir}/gcp/cpi.yml" \
-    -l "${terraform_config}/metadata" \
+    -l "${terraform_metadata}" \
     -l <( echo "${JUMPBOX_SECRETS}" ) \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     ${jumpbox_deployment_dir}/jumpbox.yml

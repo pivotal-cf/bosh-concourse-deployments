@@ -3,54 +3,53 @@ jobs:
   - name: prepare-concourse-env
     serial_groups: [deploy]
     plan:
-      - do:
-        - aggregate:
-          - get: deployments-src
-          - get: jumpbox-deployment-src
-          - get: bosh-cli
-          - get: concourse-natbox-state
-          - get: concourse-jumpbox-state
-          - get: bosh-google-cpi-release
-          - get: networking-release
-          - get: stemcell
-        - put: terraform
+      - aggregate:
+        - get: deployments-src
+        - get: jumpbox-deployment-src
+        - get: bosh-cli
+        - get: concourse-natbox-state
+        - get: concourse-jumpbox-state
+        - get: bosh-google-cpi-release
+        - get: networking-release
+        - get: stemcell
+      - put: terraform
+        params:
+          env_name: bosh-cpi-concourse
+          terraform_source: deployments-src/terraform/concourse
+          vars:
+            allow_mbus_access_to_natbox: 1
+            allow_mbus_access_to_jumpbox: 1
+      - aggregate:
+        - task: update-natbox
+          file: deployments-src/ci/tasks/deploy-natbox.yml
+          input_mapping:
+            natbox-state: concourse-natbox-state
           params:
-            env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/concourse
-            vars:
-              allow_mbus_access_to_natbox: 1
-              allow_mbus_access_to_jumpbox: 1
-        - aggregate:
-          - task: update-natbox
-            file: deployments-src/ci/tasks/deploy-natbox.yml
-            input_mapping:
-              natbox-state: concourse-natbox-state
+            GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+            NATBOX_SECRETS:     {{natbox_secrets}}
+          ensure:
+            put: concourse-natbox-state
             params:
-              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-              NATBOX_SECRETS:     {{natbox_secrets}}
-            ensure:
-              put: concourse-natbox-state
-              params:
-                file: updated-natbox-state/natbox-state.json
-          - task: update-jumpbox
-            file: deployments-src/ci/tasks/deploy-jumpbox.yml
-            input_mapping:
-              jumpbox-state: concourse-jumpbox-state
-            params:
-              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-              JUMPBOX_SECRETS:    {{jumpbox_secrets}}
-            ensure:
-              put: concourse-jumpbox-state
-              params:
-                file: updated-jumpbox-state/jumpbox-state.json
-        ensure:
-          put: terraform
+              file: updated-natbox-state/natbox-state.json
+        - task: update-jumpbox
+          file: deployments-src/ci/tasks/deploy-jumpbox.yml
+          input_mapping:
+            jumpbox-state: concourse-jumpbox-state
           params:
-            env_name: bosh-cpi-concourse
-            terraform_source: deployments-src/terraform/concourse
-            vars:
-              allow_mbus_access_to_natbox: 0
-              allow_mbus_access_to_jumpbox: 0
+            GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+            JUMPBOX_SECRETS:    {{jumpbox_secrets}}
+          ensure:
+            put: concourse-jumpbox-state
+            params:
+              file: updated-jumpbox-state/jumpbox-state.json
+    ensure:
+      put: terraform
+      params:
+        env_name: bosh-cpi-concourse
+        terraform_source: deployments-src/terraform/concourse
+        vars:
+          allow_mbus_access_to_natbox: 0
+          allow_mbus_access_to_jumpbox: 0
 
   - name: update-director
     serial_groups: [deploy]
@@ -112,53 +111,51 @@ jobs:
   - name: update-concourse
     serial_groups: [deploy]
     plan:
-      - do:
-          - aggregate:
-            - get: deployments-src
-            - get: stemcell
-            - get: bosh-cli
-            - get: concourse-and-garden
-              params:
-                globs: ['concourse-*.tgz','garden-runc-*.tgz']
-          - *open-ssh-to-jumpbox
-          - task: deploy-concourse
-            file: deployments-src/ci/tasks/deploy-concourse.yml
-            params:
-              DEPLOYMENT_NAME:               concourse-cpi
-              DEPLOYMENT_CONFIG_PATH:        concourse/concourse-cpi.yml
-              CONCOURSE_SECRETS:             {{concourse_secrets}}
-              BOSH_CLIENT:                   {{director_admin_username}}
-              BOSH_CLIENT_SECRET:            {{director_admin_password}}
-              BOSH_CA_CERT:                  {{director_ca_cert}}
-              JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
-              JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
-              CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
-              CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
-              CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
-              CONCOURSE_TEAMS:               {{concourse_teams}}
-          - task: set-teams
-            file: deployments-src/ci/tasks/set-teams.yml
-            params:
-              CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
-              CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
-              CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password}}
-              CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
-              CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
-              CONCOURSE_TEAMS:                {{concourse_teams}}
-          - put: concourse-update-trigger
-            params:
-              file: concourse-and-garden/tag
-        ensure: *close-ssh-to-jumpbox
+      - aggregate:
+        - get: deployments-src
+        - get: stemcell
+        - get: bosh-cli
+        - get: concourse-and-garden
+          params:
+            globs: ['concourse-*.tgz','garden-runc-*.tgz']
+      - *open-ssh-to-jumpbox
+      - task: deploy-concourse
+        file: deployments-src/ci/tasks/deploy-concourse.yml
+        params:
+          DEPLOYMENT_NAME:               concourse-cpi
+          DEPLOYMENT_CONFIG_PATH:        concourse/concourse-cpi.yml
+          CONCOURSE_SECRETS:             {{concourse_secrets}}
+          BOSH_CLIENT:                   {{director_admin_username}}
+          BOSH_CLIENT_SECRET:            {{director_admin_password}}
+          BOSH_CA_CERT:                  {{director_ca_cert}}
+          JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
+          CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
+          CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
+          CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
+          CONCOURSE_TEAMS:               {{concourse_teams}}
+      - task: set-teams
+        file: deployments-src/ci/tasks/set-teams.yml
+        params:
+          CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
+          CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
+          CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password}}
+          CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
+          CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
+          CONCOURSE_TEAMS:                {{concourse_teams}}
+      - put: concourse-update-trigger
+        params:
+          file: concourse-and-garden/tag
+    ensure: *close-ssh-to-jumpbox
 
   - name: open-ssh-for-30m
     serial_groups: [deploy, deploy-asia]
     plan:
-      - do:
-        - get: deployments-src
-        - *open-ssh-to-jumpbox
-        - task: wait-for-ssh
-          file: deployments-src/ci/tasks/wait-for-ssh.yml
-        ensure: *close-ssh-to-jumpbox
+      - get: deployments-src
+      - *open-ssh-to-jumpbox
+      - task: wait-for-ssh
+        file: deployments-src/ci/tasks/wait-for-ssh.yml
+    ensure: *close-ssh-to-jumpbox
 
 resource_types:
   - name: terraform
@@ -180,9 +177,9 @@ resources:
   - name: director-templates
     type: git
     source:
+      # TODO: switch uri back to cloudfoundry repo after PR merge
       uri: https://github.com/ljfranklin/bosh-deployment.git
-      # branch: master
-      branch: PR-cpi-team-feedback
+      branch: master
   - name: jumpbox-deployment-src
     type: git
     source:

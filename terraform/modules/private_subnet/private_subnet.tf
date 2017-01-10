@@ -99,11 +99,11 @@ output "internal_gw" {
     value = "${cidrhost(var.internal_cidr,1)}"
 }
 
-output "external_natbox_ip" {
+output "natbox_external_ip" {
   value = "${google_compute_address.nat.address}"
 }
 
-output "internal_natbox_ip" {
+output "natbox_internal_ip" {
     value = "${cidrhost(var.internal_cidr,4)}"
 }
 

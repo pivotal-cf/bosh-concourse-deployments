@@ -26,12 +26,12 @@ output "internal_gw" {
   value = "${module.concourse_subnet.internal_gw}"
 }
 
-output "internal_natbox_ip" {
-  value = "${module.concourse_subnet.internal_natbox_ip}"
+output "natbox_internal_ip" {
+  value = "${module.concourse_subnet.natbox_internal_ip}"
 }
 
-output "external_natbox_ip" {
-  value = "${module.concourse_subnet.external_natbox_ip}"
+output "natbox_external_ip" {
+  value = "${module.concourse_subnet.natbox_external_ip}"
 }
 
 output "natbox_tags" {
@@ -46,15 +46,15 @@ output "jumpbox_tags" {
   value = ["${module.jumpbox.tag}"]
 }
 
-output "internal_jumpbox_ip" {
+output "jumpbox_internal_ip" {
   value = "${module.jumpbox.internal_ip}"
 }
 
-output "external_jumpbox_ip" {
+output "jumpbox_external_ip" {
   value = "${module.jumpbox.external_ip}"
 }
 
-output "internal_director_ip" {
+output "director_internal_ip" {
   value = "${module.director.internal_ip}"
 }
 
@@ -66,7 +66,7 @@ output "director_internal_tag" {
   value = "${module.director.internal_tag}"
 }
 
-output "external_concourse_ip" {
+output "concourse_external_ip" {
   value = "${module.concourse.external_ip}"
 }
 
