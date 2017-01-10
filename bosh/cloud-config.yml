@@ -20,7 +20,7 @@ vm_types:
     tags:
       - ((concourse_db_tag))
       - ((nat_traffic_tag))
-- name: concourse_cpi_worker
+- name: concourse_worker_large
   cloud_properties:
     cpu: 8
     ram: 16_384
@@ -28,7 +28,7 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
-- name: concourse_cpi_sf_worker_small
+- name: concourse_worker_small
   cloud_properties:
     cpu: 4
     ram: 16_384

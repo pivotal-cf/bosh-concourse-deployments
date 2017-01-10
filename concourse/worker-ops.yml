@@ -1,0 +1,33 @@
+---
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: ((team))_worker
+    instances: 1
+    vm_type: concourse_worker_large
+    stemcell: default
+    azs: [us1]
+    networks:
+      - name: concourse
+    jobs:
+      - name: groundcrew
+        release: concourse
+        consumes:
+          baggageclaim: {from: ((team))_baggageclaim}
+        properties:
+          team: ((team))
+          baggageclaim:
+            forward_address: 127.0.0.1:7788
+          garden:
+            forward_address: 127.0.0.1:7777
+      - name: garden
+        release: garden-runc
+        properties:
+          garden:
+            listen_network: tcp
+            listen_address: 127.0.0.1:7777
+      - name: baggageclaim
+        release: concourse
+        provides:
+          baggageclaim: {as: ((team))_baggageclaim}
+        properties: {}

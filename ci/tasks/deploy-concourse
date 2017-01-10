@@ -13,6 +13,7 @@ set -eu
 : ${CONCOURSE_EXTERNAL_URL:?}
 : ${CONCOURSE_BASIC_AUTH_USERNAME:?}
 : ${CONCOURSE_BASIC_AUTH_PASSWORD:?}
+: ${CONCOURSE_TEAMS:?}
 
 deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
@@ -56,6 +57,17 @@ echo "Uploading stemcell..."
 ${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
 
 pushd "${deployments_dir}" > /dev/null
+  echo "Building Concourse manifest..."
+
+  ops_flags=""
+  CONCOURSE_TEAMS=( $(echo "${CONCOURSE_TEAMS}" | jq -r '.[] | "\(.name)"') )
+  for team_name in "${CONCOURSE_TEAMS[@]}" ; do
+    ops_path=${tmp_dir}/${team_name}-ops.yml
+    ${bosh_cli} interpolate ./concourse/worker-ops.yml \
+      -v team="${team_name}" > "${ops_path}"
+    ops_flags="${ops_flags} --ops-file ${ops_path}"
+  done
+
   echo "Deploying Concourse..."
   ${bosh_cli} -n --tty deploy \
     -l <(echo "${CONCOURSE_SECRETS}") \
@@ -63,6 +75,7 @@ pushd "${deployments_dir}" > /dev/null
     -v concourse_basic_auth_username=${CONCOURSE_BASIC_AUTH_USERNAME} \
     -v concourse_basic_auth_password=${CONCOURSE_BASIC_AUTH_PASSWORD} \
     -d "${DEPLOYMENT_NAME}" \
+    ${ops_flags} \
     "${DEPLOYMENT_CONFIG_PATH}"
   echo "Successfully deployed Concourse!"
 popd > /dev/null
