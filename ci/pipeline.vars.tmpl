@@ -3,7 +3,7 @@
 project_id: <GCP project id>
 gcp_credentials_json: |
   {
-    <GCP Service Account JSON, download via GCP -> IAM -> Service Accounts>
+    <GCP Service Account JSON, generated via ./scripts/provision-gcloud-for-concourse.sh>
     <Used to apply Terraform templates>
     "type": "service_account",
     ...
@@ -20,8 +20,8 @@ natbox_secrets: |
 jumpbox_ssh_key: |
   <Private key for GCP SSH user.
   Can configure under Project -> Metadata -> SSH Keys in GCP>
-jumpbox_ssh_user: <Username for GCP SSH user>
-trusted_cidr: <IP range to allow traffic to Jumpbox, e.g. SF Office IP address>
+jumpbox_ssh_user: vcap
+trusted_cidr: <IP range to allow traffic to Jumpbox, e.g. `SF_OFFICE_PUBLIC_IP/32`>
 jumpbox_secrets: |
   mbus_bootstrap_password: <BOSH agent password used for creating VM>
 
@@ -43,11 +43,11 @@ bosh_director_secrets: |
   blobstore_director_password: <Director password for internal blobstore>
   blobstore_agent_password: <Agent password for internal blobstore>
   director_name: <Cosmetic name for director>
-  service_account: <GCP service account name for director>
+  service_account: <GCP service account name for director, generated via ./scripts/provision-gcloud-for-concourse.sh>
   hm_password: <Health monitor password>
 
 # Concourse
-concourse-config-access-token: <Github access token used to avoid rate limiting>
+concourse_config_access_token: <Github access token used to avoid rate limiting>
 concourse_github_client_id: <Client ID for Github OAuth application>
 concourse_github_client_secret: <Client secret for Github OAuth application>
 concourse_basic_auth_username: <Basic Auth username for `main` team>

@@ -244,4 +244,4 @@ resources:
     source:
       repository: concourse
       user: concourse
-      access_token: {{concourse-config-access-token}}
+      access_token: {{concourse_config_access_token}}
