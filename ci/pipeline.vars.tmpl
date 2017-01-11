@@ -20,7 +20,6 @@ natbox_secrets: |
 jumpbox_ssh_key: |
   <Private key for GCP SSH user.
   Can configure under Project -> Metadata -> SSH Keys in GCP>
-jumpbox_ssh_user: vcap
 trusted_cidr: <IP range to allow traffic to Jumpbox, e.g. `SF_OFFICE_PUBLIC_IP/32`>
 jumpbox_secrets: |
   mbus_bootstrap_password: <BOSH agent password used for creating VM>
@@ -54,11 +53,9 @@ concourse_basic_auth_username: <Basic Auth username for `main` team>
 concourse_basic_auth_password: <Basic Auth password for `main` team>
 concourse_teams: |
   [
-    {"name": "REPLACE_ME", "github_team":  "YOUR_GH_ORG/YOUR_GH_TEAM"}
+    {"name": "REPLACE_ME", "github_team":  "YOUR_GH_ORG/YOUR_GH_TEAM", "worker_public_key": "SSH_PUB_KEY_FOR_EXTERNAL_WORKERS"}
   ]
 concourse_secrets: |
-  tsa_authorized_keys:
-    -  <Public key of external worker, e.g. "ssh-rsa ...">
   tsa_private_key: |
     -----BEGIN EXAMPLE RSA PRIVATE KEY-----
     <Private key of TSA>

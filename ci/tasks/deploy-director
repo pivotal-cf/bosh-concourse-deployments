@@ -13,7 +13,7 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${BOSH_CA_CERT:?}
 : ${BOSH_CA_KEY:?}
 : ${JUMPBOX_SSH_KEY:?}
-: ${JUMPBOX_SSH_USER:?}
+: ${JUMPBOX_SSH_USER:=vcap}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"

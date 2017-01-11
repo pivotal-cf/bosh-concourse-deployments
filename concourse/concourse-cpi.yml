@@ -47,11 +47,7 @@ instance_groups:
       properties:
         host_key: ((tsa_private_key))
         host_public_key: ((tsa_public_key))
-        team_authorized_keys:
-        - team: ((bosh_cpi_team))
-          ssh_key: ((bosh_cpi_team_ssh_public_key))
-        - team: ((bosh_sap_team))
-          ssh_key: ((bosh_sap_team_ssh_public_key))
+        team_authorized_keys: [] # keys will be added via worker-ops.yml
 
 - name: concourse_cpi_database
   instances: 1
@@ -71,4 +67,4 @@ instance_groups:
             role: atc
             password: ((concourse_db_password))
 
-# worker instances will be added via ops file
+# worker instances will be added via worker-ops.yml

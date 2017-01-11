@@ -43,11 +43,12 @@ main concourse deployment.
   ```
   - for debugging purposes you can also set `TRACE=true` to show all commands being run.
 1. Generate a set of Google Cloud Storage Interoperability Keys as described [here](https://cloud.google.com/storage/docs/migrating#keys).
-1. Add a project-wide SSH key with the username `vcap` as described [here](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys).
 1. Create a GitHub access token to avoid rate limiting as described [here](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
 1. Register main Concourse as an OAuth application with GitHub: https://github.com/settings/applications/new
   - Callback URL: `https://YOUR_CONCOURSE_URL/auth/github/callback`
 1. Generate the Director CA Cert by running `./scripts/generate-director-ca.sh`.
+1. Generate the jumpbox ssh keys by running `./scripts/generate-jumpbox-ssh-key.sh`.
+1. Add the jumpbox key as a project-wide SSH key with the username `vcap` as described [here](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys).
 1. Copy the contents of `./ci/pipeline.vars.tmpl` to a LastPass note or some other safe location, filling in the appropriate values.
 1. Log in using the fly cli to the newly deployed upgrader concourse vm
 1. `fly -t upgrader sp -p concourse -c ~/workspace/bosh-concourse-deployments/ci/pipeline.yml -l <(lpass show note YOUR_LASTPASS_NOTE)`

@@ -9,7 +9,7 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${BOSH_CLIENT:?}
 : ${BOSH_CLIENT_SECRET:?}
 : ${BOSH_CA_CERT:?}
-: ${JUMPBOX_SSH_USER:?}
+: ${JUMPBOX_SSH_USER:=vcap}
 : ${JUMPBOX_SSH_KEY:?}
 
 # inputs
