@@ -19,7 +19,7 @@ releases:
 
 disk_pools:
 - name: disks
-  disk_size: 100_000
+  disk_size: 20_000
 
 resource_pools:
 - name: default
@@ -30,7 +30,7 @@ resource_pools:
   cloud_properties:
     cpu: 2
     ram: 4_096
-    disk: 200_000
+    disk: 20_000
   env:
     bosh:
       password: ((upgrader_vm_password))
@@ -50,14 +50,16 @@ instance_groups:
   resource_pool: default
   persistent_disk_pool: disks
   networks:
-  - {name: private, static_ips: [((director_ip))]}
+  - {name: private, static_ips: [((internal_ip))]}
   jobs:
   - name: atc
     release: concourse
     properties:
       external_url: ((external_url))
-      basic_auth_username: ((basic_auth_username))
-      basic_auth_password: ((basic_auth_password))
+      github_auth:
+        authorize: ((github_auth_main_teams))
+        client_id: ((github_auth_client_id))
+        client_secret: ((github_auth_client_secret))
       tls_cert: ((tls_cert))
       tls_key: ((tls_key))
       bind_port: 80
@@ -100,7 +102,7 @@ instance_groups:
         listen_network: tcp
         listen_address: 0.0.0.0:7777
   properties:
-    vcenter: &vcenter # <--- Replace values below
+    vcenter: &vcenter
       address: ((vcenter_address))
       user: ((vcenter_user))
       password: ((vcenter_password))
@@ -109,9 +111,9 @@ instance_groups:
         datastore_pattern: ((vcenter_datastore_pattern))
         persistent_datastore_pattern: ((vcenter_datastore_pattern))
         clusters: [((vcenter_cluster))]
-        vm_folder: bosh-upgrader-vms
-        template_folder: bosh-upgrader-templates
-        disk_path: bosh-upgrader-disks
+        vm_folder: ((vcenter_vm_folder))
+        template_folder: ((vcenter_template_folder))
+        disk_path: ((vcenter_disk_path))
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
 
 update:
@@ -124,7 +126,7 @@ update:
 cloud_provider:
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
 
-  mbus: "https://mbus:((mbus_bootstrap_password))@((director_ip)):6868"
+  mbus: "https://mbus:((mbus_bootstrap_password))@((internal_ip)):6868"
 
   properties:
     vcenter: *vcenter
