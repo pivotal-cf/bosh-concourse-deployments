@@ -95,5 +95,6 @@ If you have deployed optional external workers you must follow a slightly modifi
 1. Manually trigger `concourse-workers/prepare-asia-env` job.
   - the `concourse/update-concourse` job will place a file in `concourse-update-trigger` resource.
     This file is used to automatically trigger the external worker jobs across pipelines.
-1. Manually trigger `concourse/update-concourse` job.
+1. Manually trigger `concourse/update-concourse` job. This should trigger the external worker
+   jobs (i.e. you don't need to manually trigger the worker jobs).
 
