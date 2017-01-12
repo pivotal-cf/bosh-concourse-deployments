@@ -6,7 +6,7 @@ set -eu
 : ${DIRECTOR_SERVICE_ACCOUNT_ID:?}
 : ${PROJECT_ID:?}
 : ${CONCOURSE_BUCKET_NAME:?}
-: ${TRACE:=false}
+${TRACE:=false}
 
 if [ $TRACE = true ]; then
   set -x
@@ -41,7 +41,7 @@ gsutil versioning set on "gs://${CONCOURSE_BUCKET_NAME}"
 echo "Seeding bucket with empty state files..."
 gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/concourse/natbox-state.json
 gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/concourse/jumpbox-state.json
-gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/concourse/director-state.json
+gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/director/bosh-state.json
 
 echo "Creating Service Account ${terraform_service_account_email}..."
 gcloud iam service-accounts create "${TERRAFORM_SERVICE_ACCOUNT_ID}"
