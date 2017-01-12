@@ -49,7 +49,7 @@ resource "google_compute_route" "nat" {
   name        = "${var.name}-nat"
   dest_range  = "0.0.0.0/0"
   network     = "${var.network}"
-  next_hop_ip = "${cidrhost(var.internal_cidr,4)}"
+  next_hop_ip = "${cidrhost(google_compute_subnetwork.bosh-subnet.ip_cidr_range,4)}"
   priority    = 800
   tags        = ["${var.nat_traffic_tag}"]
 }
