@@ -41,7 +41,6 @@ vm_types:
     machine_type: n1-highcpu-4
     root_disk_size_gb: 15
     root_disk_type: pd-ssd
-    preemptible: true
 
 compilation:
   workers: 5
