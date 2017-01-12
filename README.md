@@ -98,7 +98,7 @@ If you have deployed optional external workers you must follow a slightly modifi
 1. Manually trigger `concourse/update-concourse` job. This should trigger the external worker
    jobs (i.e. you don't need to manually trigger the worker jobs).
 
-#### Figures
+## Figures
 
 ### GCloud Network Topology
 ![gcloud network topology](https://cloud.githubusercontent.com/assets/296065/21912698/5efd0f7e-d8dc-11e6-87ac-7e78fbe0a326.png)
