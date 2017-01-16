@@ -39,7 +39,7 @@ instance_groups:
       - {name: private, static_ips: [((internal_ip))]}
     properties:
       tags: [asia]
-      team: pivotal
+      team: ((gcp_asia_worker_team))
       baggageclaim:
         forward_address: 127.0.0.1:7788
       garden:

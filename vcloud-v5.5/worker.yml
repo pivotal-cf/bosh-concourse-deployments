@@ -38,6 +38,7 @@ instance_groups:
       - {name: private, static_ips: [((vcloud_worker_ip))]}
     properties:
       tags: ["vcloud-v5.5"]
+      team: ((vcloud_worker_team))
       baggageclaim:
         forward_address: 127.0.0.1:7788
       garden:
