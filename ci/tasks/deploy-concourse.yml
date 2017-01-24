@@ -12,6 +12,7 @@ inputs:
   - name: concourse-and-garden
   - name: stemcell
   - name: bosh-cli
+  - name: os-conf
 
 params:
   DEPLOYMENT_NAME:               ""
