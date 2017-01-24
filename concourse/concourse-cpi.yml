@@ -53,7 +53,7 @@ instance_groups:
     - name: limits_not_recommended
       release: os-conf
       properties:
-        limits_conf:
+        limits_conf: |
           *  soft  nofile  32768
           *  hard  nofile  32768
 
