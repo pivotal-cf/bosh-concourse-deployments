@@ -98,8 +98,80 @@ If you have deployed optional external workers you must follow a slightly modifi
 1. Manually trigger `concourse/update-concourse` job. This should trigger the external worker
    jobs (i.e. you don't need to manually trigger the worker jobs).
 
+### External Teams
+
+Thanks to the distributed model of the CF Foundation many teams from many
+companies can share this CI environment to run builds against their CPIs.
+Currently we have created a credentials to allow the Openstack CPI team to
+deploy and use an external worker in one of their Openstack environments.
+
+#### Creating a team on the ATC (Concourse Administrator)
+
+In this example, we are adding a new team 'DigitalOcean CPI'
+
+The DigitalOcean CPI team has provided following:
+
+- a worker public key
+- a GitHub organization
+- a GitHub team within that organization that will be able to authenticate against the Concourse environment.
+- a Concourse team name, no space, no special characters, all lowercase, (e.g. "digitalocean")
+
+The BOSH CPI team does the following:
+
+1. Shares the TSA host public key (search for `concourse_tsa_public_key` in LastPass)
+  with the DigitalOcean CPI team (e.g. "ssh-rsa AAAAB3NTSAHostPublicKey...")
+1. Add the worker public key entry to the list under [`concourse_teams`](https://github.com/pivotal-cf/bosh-concourse-deployments/blob/d87f8b7134b407d78bfcda29dcd721e0ade746bd/ci/pipeline.vars.tmpl#L54-L56) on the secure note saved on LassPass.
+    Example:
+
+```json
+[{"name": "digitalocean", "github_team":  "DigitalOcean/BOSH CPI", "worker_public_key": "ssh-rsa AAAAB3DigitalOceanWorker..."}]
+```
+1. Trigger the [update-concourse](https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/concourse/jobs/update-concourse/) job, making sure there are no running jobs first.
+
+Let the DigitalOcean CPI team know when the deploy has finished so that they can
+rock.
+
+#### Creating external worker manifest (Team member)
+
+The BOSH CPI team has provided following:
+
+- TSA host public key
+- TSA URL (e.g. https://bosh-cpi.ci.cf-app.com)
+
+Do the following:
+
+1. Generate a key for your worker. The following command will create a keypair; don't use passphrase:
+```
+ssh-keygen  -N ''  -f /tmp/openstack-cpi-worker
+```
+1. Transmit the _public_ portion to the BOSH CPI team (e.g. "ssh-rsa AAAAB3DigitalOceanWorker...").
+1. Let the BOSH CPI team know your GitHub organization (e.g.
+"DigitalOcean") and team handle (e.g. "DigitalOcean CPI").
+1. Pick a display name for your team and let the BOSH CPI team know. (e.g. "digitalocean")
+1. Create the manifest for your worker and make sure to set the following properties:
+
+  ```
+  team: ((worker_team_name))
+  tsa:
+    host: ((concourse_tsa_hostname))
+    host_public_key: ((concourse_tsa_public_key))
+    private_key: ((worker_private_key))
+  ```
+
+  * worker_team_name, e.g. "digitalocean". This is the team name provided to BOSH CPI
+  * concourse_tsa_hostname, e.g. https://bosh-cpi.ci.cf-app.com, provided by BOSH CPI
+  * host_public_key: e.g. "ssh-rsa AAAAB3NTSAHostPublicKey...", provided by BOSH CPI
+  * worker_private_key: the private key generated for the worker
+
+You can find a sample of a worker manifest [here](https://github.com/pivotal-cf/bosh-concourse-deployments/blob/d87f8b7134b407d78bfcda29dcd721e0ade746bd/vsphere-v5.1/worker.yml).
+
+After deploying the worker, authenticate with Concourse and confirm worker has registered:
+
+1. Browse to the Concourse URL and download the `fly` client
+1. Log into Concourse: `fly -t cpi login -c https://bosh-cpi.ci.cf-app.com -n digitalocean`
+1. Confirm worker has registered: `fly -t cpi workers`
+
 ## Figures
 
 ### GCloud Network Topology
 ![gcloud network topology](https://cloud.githubusercontent.com/assets/296065/21912698/5efd0f7e-d8dc-11e6-87ac-7e78fbe0a326.png)
-
