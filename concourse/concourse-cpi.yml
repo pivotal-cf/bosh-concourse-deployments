@@ -52,9 +52,10 @@ instance_groups:
         team_authorized_keys: [] # keys will be added via worker-ops.yml
     - name: limits_not_recommended
       release: os-conf
-      properties: |
-        *  soft  nofile  32768
-        *  hard  nofile  32768
+      properties:
+        limits_conf:
+          *  soft  nofile  32768
+          *  hard  nofile  32768
 
 - name: concourse_cpi_database
   instances: 1
