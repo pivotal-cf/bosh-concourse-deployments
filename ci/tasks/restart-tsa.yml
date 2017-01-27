@@ -1,0 +1,32 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: boshcpi/bosh-concourse-deployments
+
+inputs:
+  - name: deployments-src
+  - name: terraform
+  - name: concourse-and-garden
+  - name: stemcell
+  - name: bosh-cli
+  - name: os-conf
+
+params:
+  DEPLOYMENT_NAME:               ""
+  DEPLOYMENT_CONFIG_PATH:        ""
+  CONCOURSE_SECRETS:             ""
+  BOSH_CLIENT:                   ""
+  BOSH_CLIENT_SECRET:            ""
+  BOSH_CA_CERT:                  ""
+  JUMPBOX_SSH_USER:              ""
+  JUMPBOX_SSH_KEY:               ""
+  CONCOURSE_EXTERNAL_URL:        ""
+  CONCOURSE_BASIC_AUTH_USERNAME: ""
+  CONCOURSE_BASIC_AUTH_PASSWORD: ""
+  CONCOURSE_TEAMS:               ""
+
+run:
+  path: deployments-src/ci/tasks/restart-tsa
