@@ -28,6 +28,20 @@ ssh -i /tmp/vcap.pem vcap@104.198.xx.yy
    ```
 7. If you see `Operation timed out`, it means that we need to fire up
    our https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/concourse/jobs/open-ssh-for-30m Concourse job to allow us to ssh-in again.
+8. Use `bosh ssh` to talk to the director (the jumpbox cannot directly ssh to the director) (use your deployment name; don't use `concourse-cpi`):
+
+   ```
+tmux attach || tmux # attach to an existing tmux session if possible
+export BOSH_ENVIRONMENT=10.0.0.6
+export BOSH_CA_CERT=$PWD/ca_cert.pem
+bosh deployments # find your deployment
+bosh instances -d concourse-cpi # or whatever your deployment is
+bosh ssh -d concourse-cpi \
+  concourse_cpi \
+  --gw-user=vcap \
+  --gw-host=10.0.0.6 \
+  --gw-private-key=$PWD/vcap.pem
+   ```
 
 #### Initial Configuration of Jumpbox
 
@@ -65,10 +79,10 @@ chmod 600 /tmp/vcap.pem
 lpass show --note secret-lastpass-note \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["director_admin_username"]; puts data["director_admin_password"]'
    ```
-1. Copy the ca_cert file to the jumpbox:
+1. Copy the ca_cert and the vcap key to the jumpbox (the cert needed to execute BOSH commands; the key is needed to ssh to VMs):
 
    ```
-scp -i /tmp/vcap.pem /tmp/ca_cert.pem vcap@104.198.xx.yy:
+scp -i /tmp/vcap.pem /tmp/vcap.pem /tmp/ca_cert.pem vcap@104.198.xx.yy:
    ```
 1. ssh into the jumpbox:
 
@@ -91,4 +105,9 @@ export BOSH_CLIENT=admin # whatever the director admin user is
 export BOSH_CLIENT_SECRET=blahblah # whatever the director admin password is
 bosh login
 bosh alias-env bosh
+   ```
+1. Install tmux
+
+   ```
+sudo apt-get install -y tmux
    ```

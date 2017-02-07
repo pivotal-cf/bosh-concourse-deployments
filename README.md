@@ -178,4 +178,4 @@ Refer to the _Troubleshooting_ document under `docs/`.
 ## Figures
 
 ### GCloud Network Topology
-![gcloud network topology](https://cloud.githubusercontent.com/assets/296065/21912698/5efd0f7e-d8dc-11e6-87ac-7e78fbe0a326.png)
+![gcloud network topology](https://docs.google.com/drawings/d/1TbnPOjp27vpwxI5hJi2ateVXEU0_2KQf6RbtMmLUyZ0/pub?w=925&h=1172)
