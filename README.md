@@ -171,6 +171,10 @@ After deploying the worker, authenticate with Concourse and confirm worker has r
 1. Log into Concourse: `fly -t cpi login -c https://bosh-cpi.ci.cf-app.com -n digitalocean`
 1. Confirm worker has registered: `fly -t cpi workers`
 
+### Troubleshooting
+
+Refer to the _Troubleshooting_ document under `docs/`.
+
 ## Figures
 
 ### GCloud Network Topology
