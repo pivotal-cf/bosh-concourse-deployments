@@ -59,6 +59,8 @@ echo "Uploading OS Configuration release..."
 echo "Uploading stemcell..."
 ${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
 
+stemcell_version=$( cat ${stemcell_dir}/version )
+
 pushd "${deployments_dir}" > /dev/null
   echo "Building Concourse manifest..."
 
@@ -82,6 +84,7 @@ pushd "${deployments_dir}" > /dev/null
     -v concourse_external_url=${CONCOURSE_EXTERNAL_URL} \
     -v concourse_basic_auth_username=${CONCOURSE_BASIC_AUTH_USERNAME} \
     -v concourse_basic_auth_password=${CONCOURSE_BASIC_AUTH_PASSWORD} \
+    -v stemcell_version=${stemcell_version} \
     -d "${DEPLOYMENT_NAME}" \
     ${ops_flags} \
     "${DEPLOYMENT_CONFIG_PATH}"
