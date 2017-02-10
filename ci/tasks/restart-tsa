@@ -21,7 +21,6 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
 release_dir="$( cd "${workspace_dir}/concourse-and-garden" && pwd )"
-os_conf_release_dir="$( cd "${workspace_dir}/os-conf" && pwd )"
 stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"

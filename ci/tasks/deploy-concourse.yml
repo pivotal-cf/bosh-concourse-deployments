@@ -12,7 +12,7 @@ inputs:
   - name: concourse-and-garden
   - name: stemcell
   - name: bosh-cli
-  - name: os-conf
+  - name: ulimit
 
 params:
   DEPLOYMENT_NAME:               ""

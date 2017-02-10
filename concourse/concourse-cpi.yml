@@ -8,7 +8,7 @@ releases:
   version: latest
 - name: garden-runc
   version: latest
-- name: os-conf
+- name: ulimit
   version: latest
 
 stemcells:
@@ -50,12 +50,12 @@ instance_groups:
         host_key: ((tsa_private_key))
         host_public_key: ((tsa_public_key))
         team_authorized_keys: [] # keys will be added via worker-ops.yml
-    - name: limits_not_recommended
-      release: os-conf
+    - name: ulimit
+      release: ulimit
       properties:
-        limits_conf: |
-          *  soft  nofile  32768
-          *  hard  nofile  32768
+        nofile:
+          soft: 32768
+          hard: 32768
 
 - name: concourse_cpi_database
   instances: 1

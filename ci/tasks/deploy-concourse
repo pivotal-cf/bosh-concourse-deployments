@@ -21,7 +21,7 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
 release_dir="$( cd "${workspace_dir}/concourse-and-garden" && pwd )"
-os_conf_release_dir="$( cd "${workspace_dir}/os-conf" && pwd )"
+ulimit_release_dir="$( cd "${workspace_dir}/ulimit" && pwd )"
 stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
@@ -54,8 +54,8 @@ echo "Uploading Concourse release..."
 ${bosh_cli} -n --tty upload-release ${release_dir}/concourse-*.tgz
 echo "Uploading Garden release..."
 ${bosh_cli} -n --tty upload-release ${release_dir}/garden-runc-*.tgz
-echo "Uploading OS Configuration release..."
-( cd $os_conf_release_dir; ${bosh_cli} -n --tty upload-release )
+echo "Uploading ulimit release..."
+( cd $ulimit_release_dir; ${bosh_cli} -n --tty upload-release )
 echo "Uploading stemcell..."
 ${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
 

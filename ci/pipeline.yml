@@ -116,7 +116,6 @@ jobs:
         - get: concourse-and-garden
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
-        - get: os-conf
       - *open-ssh-to-jumpbox
       - task: restart-tsa
         file: deployments-src/ci/tasks/restart-tsa.yml
@@ -145,7 +144,7 @@ jobs:
         - get: concourse-and-garden
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
-        - get: os-conf
+        - get: ulimit
       - *open-ssh-to-jumpbox
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
@@ -272,8 +271,8 @@ resources:
       repository: concourse
       user: concourse
       access_token: {{concourse_config_access_token}}
-  - name: os-conf
+  - name: ulimit
     type: git
     source:
-      uri: https://github.com/cloudfoundry/os-conf-release.git
+      uri: https://github.com/pivotal-cf/ulimit-release.git
       branch: master
