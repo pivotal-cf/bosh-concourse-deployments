@@ -142,7 +142,7 @@ Do the following:
 
 1. Generate a key for your worker. The following command will create a keypair; don't use passphrase:
 ```
-ssh-keygen  -N '' b 4096 -f /tmp/openstack-cpi-worker -C team_name
+ssh-keygen  -N '' -b 4096 -f /tmp/openstack-cpi-worker -C team_name
 ```
 1. Transmit the _public_ portion to the BOSH CPI team (e.g. "ssh-rsa AAAAB3DigitalOceanWorker...").
 1. Let the BOSH CPI team know your GitHub organization (e.g.
