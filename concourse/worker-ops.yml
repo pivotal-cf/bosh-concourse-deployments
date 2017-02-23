@@ -4,7 +4,7 @@
   value:
     name: ((team))_worker
     instances: 1
-    vm_type: concourse_worker_large
+    vm_type: ((vm_type))
     stemcell: default
     azs: [us1]
     networks:
