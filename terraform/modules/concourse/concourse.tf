@@ -19,6 +19,19 @@ resource "google_compute_firewall" "bosh-atc-to-db" {
   target_tags = ["${var.name}-db"]
 }
 
+// allow postgres from ATC to ATC
+resource "google_compute_firewall" "bosh-atc-to-atc" {
+  name    = "${var.name}-atc-to-atc"
+  network = "${var.network}"
+
+  allow {
+    protocol = "tcp"
+  }
+
+  source_tags = ["${var.name}-atc"]
+  target_tags = ["${var.name}-atc"]
+}
+
 // Allow Concourse access
 resource "google_compute_firewall" "concourse-external" {
   name    = "${var.name}-external"
