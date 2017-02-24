@@ -25,8 +25,8 @@ resource_pools:
 - name: default
   network: private
   stemcell:
-    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.1-vsphere-esxi-ubuntu-trusty-go_agent.tgz
-    sha1: 2571b9bcf0285022593b6912a75dad2f9eb0dcb4
+    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.9-vsphere-esxi-ubuntu-trusty-go_agent.tgz
+    sha1: f5ecf3d5dcb90b0d973726758eead6520adf1ded
   cloud_properties:
     cpu: 2
     ram: 4_096
