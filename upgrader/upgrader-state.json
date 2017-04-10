@@ -1,15 +1,15 @@
 {
     "director_id": "c253a675-3b95-4df8-48ee-98a661df9f02",
     "installation_id": "288f48bd-45e3-4d28-639f-351dfc84933e",
-    "current_vm_cid": "vm-5282285d-b9c0-40fc-bca9-d3ef062b7ee2",
-    "current_stemcell_id": "f3770a25-154a-4080-4dfc-e77aa8b705dd",
+    "current_vm_cid": "vm-5ce54d2e-17dd-4468-8ee6-2417d5c556ab",
+    "current_stemcell_id": "136b03d2-8545-4755-5289-43c472930534",
     "current_disk_id": "55dfbde4-9362-4ee9-43c2-580a8807644b",
     "current_release_ids": [
-        "dfb4ca62-5c54-4cae-66f9-8442d4c86d0e",
-        "3f3377f9-72b5-4535-7608-8dbb41e5034f",
-        "2bb58714-19d7-49ed-7ed9-e87bdc05a875"
+        "4bf1e8a1-fa33-4eec-57c8-dcb8e0ed6184",
+        "da2497ba-25dc-42b7-44b2-6eb677a802b6",
+        "3884781e-6664-4b3f-42d8-5bd3384b72a5"
     ],
-    "current_manifest_sha": "9eb955f1823396078c3e91f83b69254431d6407a1698a22dadc5f13a30f5f12d8ad3e27a5344bb0f804a2ada4fa104a0b75b2b07d9dadf49fb0d477c3784650b",
+    "current_manifest_sha": "3d3098f39633913e66553a3f066a2dcf728cfc9cafb1dbafbd626557893b435f7a52782726e07a26271a25876ee2edb28518051327fd0e768ed7e7f61098fef8",
     "disks": [
         {
             "id": "55dfbde4-9362-4ee9-43c2-580a8807644b",
@@ -20,27 +20,27 @@
     ],
     "stemcells": [
         {
-            "id": "f3770a25-154a-4080-4dfc-e77aa8b705dd",
+            "id": "136b03d2-8545-4755-5289-43c472930534",
             "name": "bosh-vsphere-esxi-ubuntu-trusty-go_agent",
-            "version": "3363.9",
-            "cid": "sc-c5721f6d-ed01-4286-a6a0-1f9376d9e7c8"
+            "version": "3363.15",
+            "cid": "sc-5942cf56-c5fd-46c1-b91b-43796904370b"
         }
     ],
     "releases": [
         {
-            "id": "dfb4ca62-5c54-4cae-66f9-8442d4c86d0e",
+            "id": "4bf1e8a1-fa33-4eec-57c8-dcb8e0ed6184",
             "name": "concourse",
-            "version": "2.7.0"
+            "version": "2.7.1"
         },
         {
-            "id": "3f3377f9-72b5-4535-7608-8dbb41e5034f",
+            "id": "da2497ba-25dc-42b7-44b2-6eb677a802b6",
             "name": "garden-runc",
-            "version": "1.1.1"
+            "version": "1.4.0"
         },
         {
-            "id": "2bb58714-19d7-49ed-7ed9-e87bdc05a875",
+            "id": "3884781e-6664-4b3f-42d8-5bd3384b72a5",
             "name": "bosh-vsphere-cpi",
-            "version": "38"
+            "version": "39"
         }
     ]
 }
