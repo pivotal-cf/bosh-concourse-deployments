@@ -49,4 +49,5 @@ module "concourse" {
 
   name                         = "${var.name}-concourse"
   network                      = "${google_compute_network.bosh.name}"
+  trusted_cidr                 = "${var.trusted_cidr}"
 }
