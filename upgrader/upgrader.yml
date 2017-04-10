@@ -75,7 +75,7 @@ instance_groups:
     release: concourse
     properties:
       atc:
-        url: ((external_url))
+        urls: ["http://127.0.0.1"]
 
   - name: postgresql
     release: concourse
