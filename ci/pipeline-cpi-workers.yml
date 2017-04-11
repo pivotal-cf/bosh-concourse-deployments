@@ -142,6 +142,7 @@ jobs:
             params:
               GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
               JUMPBOX_SECRETS:    {{jumpbox_secrets}}
+              JUMPBOX_PUBLIC_KEY: {{jumpbox_public_key}}
             ensure:
               put: asia-jumpbox-state
               params:
@@ -185,9 +186,8 @@ resources:
   - name: jumpbox-deployment-src
     type: git
     source:
-      uri: https://github.com/ljfranklin/jumpbox-deployment.git
-      # branch: master
-      branch: PR-cpi-team-feedback
+      uri: https://github.com/cppforlife/jumpbox-deployment.git
+      branch: master
   - name: terraform
     type: terraform
     source:

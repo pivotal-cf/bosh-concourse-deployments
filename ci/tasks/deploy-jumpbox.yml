@@ -18,6 +18,7 @@ outputs:
 
 params:
   GOOGLE_CREDENTIALS: ""
+  JUMPBOX_PUBLIC_KEY: ""
   JUMPBOX_SECRETS:    ""
 
 run:
