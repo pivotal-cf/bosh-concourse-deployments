@@ -39,7 +39,7 @@ pushd "${workspace_dir}" > /dev/null
     --ops-file "${jumpbox_deployment_dir}/gcp/cpi.yml" \
     -l "${terraform_metadata}" \
     -l <( echo "${JUMPBOX_SECRETS}" ) \
-    -v "jumpbox_ssh.public_key='${JUMPBOX_PUBLIC_KEY}'" \
+    -l <( echo "${JUMPBOX_PUBLIC_KEY}" ) \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     ${jumpbox_deployment_dir}/jumpbox.yml
 popd > /dev/null
