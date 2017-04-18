@@ -78,6 +78,7 @@ jobs:
             BOSH_CA_CERT:            {{director_ca_cert}}
             BOSH_CA_KEY:             {{director_ca_key}}
             JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
+            JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
           ensure:
             put: director-state
             params:
@@ -105,6 +106,7 @@ jobs:
             BOSH_CLIENT_SECRET:    {{director_admin_password}}
             BOSH_CA_CERT:          {{director_ca_cert}}
             JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
+            JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
           ensure: *close-ssh-to-jumpbox
 
   - name: restart-tsa
@@ -128,6 +130,7 @@ jobs:
           BOSH_CLIENT_SECRET:            {{director_admin_password}}
           BOSH_CA_CERT:                  {{director_ca_cert}}
           JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
@@ -157,6 +160,7 @@ jobs:
           BOSH_CLIENT_SECRET:            {{director_admin_password}}
           BOSH_CA_CERT:                  {{director_ca_cert}}
           JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}

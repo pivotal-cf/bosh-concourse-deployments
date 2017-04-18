@@ -6,7 +6,7 @@ resource "google_compute_address" "concourse" {
   name = "${var.name}-ip"
 }
 
-// allow postgres from ATC to DB
+// allow connection from ATC to DB
 resource "google_compute_firewall" "bosh-atc-to-db" {
   name    = "${var.name}-atc-to-db"
   network = "${var.network}"
@@ -20,7 +20,7 @@ resource "google_compute_firewall" "bosh-atc-to-db" {
   target_tags = ["${var.name}-db"]
 }
 
-// allow postgres from ATC to ATC
+// allow connection from ATC to ATC
 resource "google_compute_firewall" "bosh-atc-to-atc" {
   name    = "${var.name}-atc-to-atc"
   network = "${var.network}"
@@ -45,6 +45,20 @@ resource "google_compute_firewall" "concourse-external" {
 
   source_ranges = ["${var.trusted_cidr}"]
   target_tags = ["${google_compute_firewall.bosh-atc-to-db.source_tags[0]}"]
+}
+
+// Allow external worker communication
+resource "google_compute_firewall" "concourse-worker" {
+  name    = "${var.name}-external"
+  network = "${var.network}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443", "2222"]
+  }
+
+  source_tags = ["${var.name}-worker"]
+  target_tags = ["${var.name}-atc"]
 }
 
 resource "google_compute_target_pool" "concourse_target_pool" {
@@ -77,6 +91,9 @@ output "external_ip" {
 }
 output "atc_tag" {
   value = "${google_compute_firewall.bosh-atc-to-db.source_tags[0]}"
+}
+output "worker_tag" {
+  value = "${google_compute_firewall.concourse-worker.source_tags[0]}"
 }
 output "db_tag" {
   value = "${google_compute_firewall.bosh-atc-to-db.target_tags[0]}"
