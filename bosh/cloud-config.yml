@@ -28,6 +28,7 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
+      - ((concourse_worker_tag))
 - name: concourse_worker_8_20
   cloud_properties:
     cpu: 8
@@ -36,6 +37,7 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
+      - ((concourse_worker_tag))
 - name: concourse_worker_4_16
   cloud_properties:
     cpu: 4
@@ -44,6 +46,7 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
+      - ((concourse_worker_tag))
 - name: concourse_worker_4_8
   cloud_properties:
     cpu: 4
@@ -52,6 +55,7 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
+      - ((concourse_worker_tag))
 - name: compilation
   cloud_properties:
     machine_type: n1-highcpu-4

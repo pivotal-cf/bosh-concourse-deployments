@@ -74,6 +74,10 @@ output "concourse_atc_tag" {
   value = "${module.concourse.atc_tag}"
 }
 
+output "concourse_worker_tag" {
+  value = "${module.concourse.worker_tag}"
+}
+
 output "concourse_db_tag" {
   value = "${module.concourse.db_tag}"
 }
