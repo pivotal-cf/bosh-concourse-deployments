@@ -49,7 +49,7 @@ resource "google_compute_firewall" "concourse-external" {
 
 // Allow external worker communication
 resource "google_compute_firewall" "concourse-worker" {
-  name    = "${var.name}-external"
+  name    = "${var.name}-worker-to-atc"
   network = "${var.network}"
 
   allow {
