@@ -31,6 +31,10 @@ variable "region" {
   default = "us-west1"
 }
 
+variable "concourse_atc_tag" {
+  default = "concourse-concourse-atc"
+}
+
 variable "allow_mbus_access_to_natbox" {
   default = 0
   description = "Allow mbus access (6868) from `trusted_cidr` to the Natbox. Set to 1 to enable."
