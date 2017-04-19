@@ -85,7 +85,7 @@ resource "google_compute_firewall" "nat-atc-traffic" {
     ports    = ["443", "2222"]
   }
 
-  source_ranges = ["${google_compute_address.nat.address}"]
+  source_ranges = ["${google_compute_address.nat.address}/32"]
   target_tags = ["${var.atc_tag}"]
 }
 
