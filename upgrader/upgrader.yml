@@ -8,8 +8,8 @@ name: concourse
 
 releases:
 - name: concourse
-  url: https://bosh.io/d/github.com/concourse/concourse?v=2.7.1
-  sha1: af9424c8f9d9ea14e961743e4d8d4fa187fc1e31
+  url: https://bosh.io/d/github.com/concourse/concourse?v=2.7.3
+  sha1: ca38944353c893660a428cc6678941734b51b036
 - name: garden-runc
   url: https://github.com/concourse/concourse/releases/download/v2.7.1/garden-runc-1.4.0.tgz
   sha1: 1d6020e761806d7f355ceda06c889c582b47dc32
@@ -25,8 +25,8 @@ resource_pools:
 - name: default
   network: private
   stemcell:
-    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.15-vsphere-esxi-ubuntu-trusty-go_agent.tgz
-    sha1: d5571cd8e13d1daca99dc821e4fb751f4cdd42f8
+    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.19-vsphere-esxi-ubuntu-trusty-go_agent.tgz
+    sha1: 728d40eb9fdecba7086b08f2db8bd23a29d372b1
   cloud_properties:
     cpu: 2
     ram: 4_096
@@ -65,7 +65,7 @@ instance_groups:
       bind_port: 80
       tls_bind_port: 443
       postgresql:
-        address: 127.0.0.1
+        address: 127.0.0.1:5432
         database: &atc_db atc
         role:
           name: &atc_role atc
