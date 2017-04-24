@@ -65,6 +65,7 @@ instance_groups:
       bind_port: 80
       tls_bind_port: 443
       postgresql:
+        sslmode: disable
         address: 127.0.0.1:5432
         database: &atc_db atc
         role:
