@@ -226,7 +226,7 @@ resources:
       vars:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
-        trusted_cidr: {{trusted_cidr}}
+        trusted_cidrs: {{trusted_cidrs}}
   - name: concourse-natbox-state
     type: gcs-resource
     source:

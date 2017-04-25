@@ -7,7 +7,7 @@ variable "gcp_credentials_json" {
     type = "string"
 }
 
-variable "trusted_cidr" {
+variable "trusted_cidrs" {
     type = "string"
 }
 

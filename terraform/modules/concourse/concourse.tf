@@ -1,6 +1,8 @@
 variable "name" {}
 variable "network" {}
-variable "trusted_cidr" {}
+variable "trusted_cidrs" {
+  type = "list"
+}
 
 resource "google_compute_address" "concourse" {
   name = "${var.name}-ip"
@@ -43,7 +45,7 @@ resource "google_compute_firewall" "concourse-external" {
     ports    = ["80", "443", "2222"]
   }
 
-  source_ranges = ["${var.trusted_cidr}"]
+  source_ranges = ["${var.trusted_cidrs}"]
   target_tags = ["${google_compute_firewall.bosh-atc-to-db.source_tags[0]}"]
 }
 
