@@ -20,6 +20,7 @@ params:
   GOOGLE_CREDENTIALS: ""
   JUMPBOX_PUBLIC_KEY: ""
   JUMPBOX_SECRETS:    ""
+  TRUSTED_CIDRS:      ""
 
 run:
   path: deployments-src/ci/tasks/deploy-jumpbox
