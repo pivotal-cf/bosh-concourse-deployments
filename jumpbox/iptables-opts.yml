@@ -2,7 +2,7 @@
 - type: replace
   path: /releases/-
   value:
-    name: networking-release
+    name: networking
     url: https://bosh.io/d/github.com/cloudfoundry/networking-release?v=9
     sha1: 9b5f9d27917c3754e492470ac6c9af80d62963db
 
