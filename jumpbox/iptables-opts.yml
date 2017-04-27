@@ -10,7 +10,7 @@
   path: /instance_groups/name=jumpbox/jobs/-
   value:
     name: iptables
-    release: networking-release
+    release: networking
     properties:
       filter:
       - "-P INPUT DROP"
