@@ -15,6 +15,6 @@
       iptables:
         filter:
           INPUT:
-          - "-s ((trusted_cidrs)) -j ACCEPT -p tcp --destination-port 22"
-          - "-s ((trusted_cidrs)) -j ACCEPT -p icmp"
-          - "-j DROP"
+          - "-i eth0 -s ((trusted_cidrs)) -j ACCEPT -p tcp --destination-port 22"
+          - "-i eth0 -s ((trusted_cidrs)) -j ACCEPT -p icmp"
+          - "-i eth0 -j DROP"
