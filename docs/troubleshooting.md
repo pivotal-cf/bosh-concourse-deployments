@@ -24,7 +24,7 @@ chmod 600 /tmp/vcap.pem
 6. Now we can connect to our jumpbox as the user `vcap`:
 
 ```
-ssh -i /tmp/vcap.pem vcap@104.198.xx.yy
+ssh -i /tmp/vcap.pem jumpbox@104.198.xx.yy
 ```
 7. If you see `Operation timed out`, it means that we need to fire up
    our https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/concourse/jobs/open-ssh-for-30m Concourse job to allow us to ssh-in again.
@@ -82,12 +82,12 @@ lpass show --note bosh-concourse-upgrader-cpi-pipeline \
 1. Copy the ca_cert and the vcap key to the jumpbox (the cert needed to execute BOSH commands; the key is needed to ssh to VMs):
 
 ```
-scp -i /tmp/vcap.pem /tmp/vcap.pem /tmp/ca_cert.pem vcap@104.198.xx.yy:
+scp -i /tmp/vcap.pem /tmp/vcap.pem /tmp/ca_cert.pem jumpbox@104.198.xx.yy:
 ```
 1. ssh into the jumpbox:
 
 ```
-ssh -i /tmp/vcap.pem vcap@104.198.xx.yy
+ssh -i /tmp/vcap.pem jumpbox@104.198.xx.yy
 ```
 1. Install BOSH CLI (if it's not already installed):
 
