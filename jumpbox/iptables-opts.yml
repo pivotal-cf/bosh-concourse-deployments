@@ -12,15 +12,9 @@
     name: iptables
     release: networking
     properties:
-      filter:
-      - "-P INPUT DROP"
-      - "-P OUTPUT DROP"
-
-      - "-A INPUT -s ((trusted_cidrs)) -j ACCEPT -p tcp --destination-port 22"
-      - "-A INPUT -s ((trusted_cidrs)) -j ACCEPT -p icmp"
-
-      - "-A OUTPUT -j ACCEPT -p tcp --destination-port 22"
-      - "-A OUTPUT -j ACCEPT -p tcp --destination-port 6868"
-      - "-A OUTPUT -j ACCEPT -p tcp --destination-port 8443"
-      - "-A OUTPUT -j ACCEPT -p tcp --destination-port 25555"
-
+      iptables:
+        filter:
+          INPUT:
+          - "-s ((trusted_cidrs)) -j ACCEPT -p tcp --destination-port 22"
+          - "-s ((trusted_cidrs)) -j ACCEPT -p icmp"
+          - "-j DROP"
