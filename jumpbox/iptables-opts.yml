@@ -16,5 +16,6 @@
         filter:
           INPUT:
           - "-i eth0 -s ((trusted_cidrs)) -j ACCEPT -p tcp --destination-port 22"
+          - "-i eth0 -s ((trusted_cidrs)) -j ACCEPT -p tcp --destination-port 6868"
           - "-i eth0 -s ((trusted_cidrs)) -j ACCEPT -p icmp"
           - "-i eth0 -j DROP"
