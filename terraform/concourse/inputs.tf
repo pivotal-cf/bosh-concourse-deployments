@@ -37,15 +37,15 @@ variable "concourse_atc_tag" {
 
 variable "allow_mbus_access_to_natbox" {
   default = 0
-  description = "Allow mbus access (6868) from `trusted_cidr` to the Natbox. Set to 1 to enable."
+  description = "Allow mbus access (6868) from `trusted_cidrs` to the Natbox. Set to 1 to enable."
 }
 
 variable "allow_mbus_access_to_jumpbox" {
   default = 0
-  description = "Allow mbus access (6868) from `trusted_cidr` to the Jumpbox. Set to 1 to enable."
+  description = "Allow mbus access (6868) from `trusted_cidrs` to the Jumpbox. Set to 1 to enable."
 }
 
 variable "allow_ssh_access_to_jumpbox" {
   default = 0
-  description = "Allow SSH access from `trusted_cidr` to the Jumpbox. Set to 1 to enable."
+  description = "Allow SSH access from `trusted_cidrs` to the Jumpbox. Set to 1 to enable."
 }

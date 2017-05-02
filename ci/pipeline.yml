@@ -138,7 +138,6 @@ jobs:
           CONCOURSE_TEAMS:               {{concourse_teams}}
     ensure: *close-ssh-to-jumpbox
 
-
   - name: update-concourse
     serial_groups: [deploy]
     plan:
@@ -188,6 +187,15 @@ jobs:
       - task: wait-for-ssh
         file: deployments-src/ci/tasks/wait-for-ssh.yml
     ensure: *close-ssh-to-jumpbox
+
+  - name: close-ssh-to-jumpbox
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - get: every-hour
+          trigger: true
+        - get: deployments-src
+      - *close-ssh-to-jumpbox
 
 resource_types:
   - name: terraform
@@ -280,3 +288,7 @@ resources:
     source:
       uri: https://github.com/pivotal-cf/ulimit-release.git
       branch: master
+  - name: every-hour
+    type: time
+    source:
+      interval: 1h

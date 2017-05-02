@@ -1,5 +1,14 @@
 ---
 jobs:
+  - name: asia-close-ssh-to-jumpbox
+    serial_groups: [deploy-asia]
+    plan:
+      - do:
+        - get: every-hour
+          trigger: true
+        - get: deployments-src
+      - *asia-close-ssh-to-jumpbox
+
   - name: update-google-asia-worker
     serial_groups: [deploy-asia] # ensure Terraform state files don't get clobbered
     plan:
@@ -200,7 +209,7 @@ resources:
       vars:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
-        trusted_cidr: {{trusted_cidr}}
+        trusted_cidrs: {{trusted_cidrs}}
   - name: asia-natbox-state
     type: gcs-resource
     source:
@@ -276,3 +285,7 @@ resources:
       repository: concourse
       user: concourse
       access_token: {{concourse_config_access_token}}
+  - name: every-hour
+    type: time
+    source:
+      interval: 1h
