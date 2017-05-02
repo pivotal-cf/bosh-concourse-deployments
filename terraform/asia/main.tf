@@ -27,7 +27,7 @@ module "jumpbox" {
   network                      = "${var.network}"
   internal_cidr                = "${var.internal_cidr}"
 
-  trusted_cidr                 = "${var.trusted_cidr}"
+  trusted_cidrs                = "${var.trusted_cidrs}"
   allow_ssh_access_to_jumpbox  = "${var.allow_ssh_access_to_jumpbox}"
   allow_mbus_access_to_jumpbox = "${var.allow_mbus_access_to_jumpbox}"
 }

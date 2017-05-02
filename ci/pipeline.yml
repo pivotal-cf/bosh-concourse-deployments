@@ -188,7 +188,7 @@ jobs:
         file: deployments-src/ci/tasks/wait-for-ssh.yml
     ensure: *close-ssh-to-jumpbox
 
-  - name: close-ssh-to-jumpbox
+  - name: re-terraform
     serial_groups: [deploy]
     plan:
       - do:

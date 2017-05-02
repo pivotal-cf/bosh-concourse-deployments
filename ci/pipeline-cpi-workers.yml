@@ -1,6 +1,6 @@
 ---
 jobs:
-  - name: asia-close-ssh-to-jumpbox
+  - name: re-terraform
     serial_groups: [deploy-asia]
     plan:
       - do:
