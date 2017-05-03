@@ -1,14 +1,5 @@
 ---
 jobs:
-  - name: re-terraform
-    serial_groups: [deploy-asia]
-    plan:
-      - do:
-        - get: every-hour
-          trigger: true
-        - get: deployments-src
-      - *asia-close-ssh-to-jumpbox
-
   - name: update-google-asia-worker
     serial_groups: [deploy-asia] # ensure Terraform state files don't get clobbered
     plan:
@@ -285,7 +276,3 @@ resources:
       repository: concourse
       user: concourse
       access_token: {{concourse_config_access_token}}
-  - name: every-hour
-    type: time
-    source:
-      interval: 1h
