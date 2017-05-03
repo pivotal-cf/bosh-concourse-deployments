@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -eu
+
+: ${GOOGLE_CREDENTIALS:?}
+: ${GOOGLE_PROJECT_ID:?}
+
+GOOGLE_SERVICE_ACCOUNT=$( echo "${GOOGLE_CREDENTIALS}" | jq -r .client_email )
+
+gcloud auth activate-service-account "${GOOGLE_SERVICE_ACCOUNT}" \
+  --key-file <( echo "${GOOGLE_CREDENTIALS}" )
+
+gcloud --project "${GOOGLE_PROJECT_ID}" compute firewall-rules list --format json |\
+   jq .[].name | \
+   xargs  gcloud -q --project "${GOOGLE_PROJECT_ID}" compute firewall-rules delete

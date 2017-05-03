@@ -180,7 +180,7 @@ jobs:
     ensure: *close-ssh-to-jumpbox
 
   - name: open-ssh-for-30m
-    serial_groups: [deploy, deploy-asia]
+    serial_groups: [deploy]
     plan:
       - get: deployments-src
       - *open-ssh-to-jumpbox
@@ -191,10 +191,15 @@ jobs:
   - name: re-terraform
     serial_groups: [deploy]
     plan:
-      - do:
+      - aggregate:
         - get: every-hour
           trigger: true
         - get: deployments-src
+      - task: delete-firewall-rules
+        file: deployments-src/ci/tasks/delete-firewall-rules.yml
+        params:
+          GOOGLE_PROJECT_ID: {{project_id}}
+          GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
       - *close-ssh-to-jumpbox
 
 resource_types:
