@@ -5,6 +5,8 @@ set -eu
 : ${GOOGLE_CREDENTIALS:?}
 : ${GOOGLE_PROJECT_ID:?}
 
+source /root/.bashrc
+
 GOOGLE_SERVICE_ACCOUNT=$( echo "${GOOGLE_CREDENTIALS}" | jq -r .client_email )
 
 gcloud auth activate-service-account "${GOOGLE_SERVICE_ACCOUNT}" \
