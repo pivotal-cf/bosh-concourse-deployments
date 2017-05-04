@@ -66,6 +66,7 @@ pushd "${output_dir}" > /dev/null
     --ops-file "${director_templates_dir}/local-dns.yml" \
     --ops-file "${deployments_dir}/bosh/debug-ops-file.yml" \
     --ops-file "${deployments_dir}/bosh/bootstrap-ops-file.yml" \
+    --ops-file "${director_templates_dir}/uaa.yml" \
     --vars-store "${tmp_dir}/throwaway-var-store" \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
     -l "${terraform_metadata}" \
