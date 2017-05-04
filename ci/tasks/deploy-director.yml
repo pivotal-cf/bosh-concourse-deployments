@@ -14,7 +14,7 @@ inputs:
   - name: director-state
 
 outputs:
-  - name: director-state
+  - name: updated-director-state
 
 params:
   GOOGLE_CREDENTIALS:    ""

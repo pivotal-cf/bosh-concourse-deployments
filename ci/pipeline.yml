@@ -83,7 +83,7 @@ jobs:
           ensure:
             put: director-state
             params:
-              file: director-state/bosh-state.json
+              file: updated-director-state/bosh-state.json
             ensure: &close-ssh-to-jumpbox
               put: terraform
               params:

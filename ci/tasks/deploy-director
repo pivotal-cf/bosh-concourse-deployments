@@ -41,6 +41,8 @@ ssh_key_path="${tmp_dir}/id_rsa.pem"
 echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
 chmod 400 "${ssh_key_path}"
 
+cp ${director_state_dir}/*.json "${output_dir}"
+
 # remove `director_` prefix from keys to conform to bosh-deployment templates
 terraform_metadata="${tmp_dir}/terraform_metadata"
 jq 'with_entries(.key |= sub("^director_"; ""))' "${terraform_config}/metadata" > "${terraform_metadata}"
@@ -71,7 +73,7 @@ pushd "${output_dir}" > /dev/null
     -v "admin_password=${BOSH_CLIENT_SECRET}" \
     -v "default_ca={ \"certificate\": \"${BOSH_CA_CERT}\", \"private_key\": \"${BOSH_CA_KEY}\" }" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
-    --state "${director_state_dir}/bosh-state.json"
+    --state "${output_dir}/bosh-state.json"
     "${director_templates_dir}/bosh.yml"
 popd > /dev/null
 
