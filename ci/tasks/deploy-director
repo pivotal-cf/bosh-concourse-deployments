@@ -73,7 +73,7 @@ pushd "${output_dir}" > /dev/null
     -v "admin_password=${BOSH_CLIENT_SECRET}" \
     -v "default_ca={ \"certificate\": \"${BOSH_CA_CERT}\", \"private_key\": \"${BOSH_CA_KEY}\" }" \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
-    --state "${output_dir}/bosh-state.json"
+    --state bosh-state.json \
     "${director_templates_dir}/bosh.yml"
 popd > /dev/null
 
