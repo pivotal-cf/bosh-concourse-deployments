@@ -15,6 +15,7 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${JUMPBOX_SSH_KEY:?}
 : ${JUMPBOX_SSH_USER:=vcap}
 : ${ADDITIONAL_OPS:=""}
+: ${JUMPBOX_PUBLIC_KEY:?}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
@@ -72,9 +73,11 @@ pushd "${output_dir}" > /dev/null
     --ops-file "${deployments_dir}/bosh/debug-ops-file.yml" \
     --ops-file "${deployments_dir}/bosh/bootstrap-ops-file.yml" \
     --ops-file "${director_templates_dir}/uaa.yml" \
+    --ops-file "${director_templates_dir}/jumpbox-user.yml" \
     --ops-file ../ops-file.yml \
     --vars-store "${tmp_dir}/throwaway-var-store" \
     -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
+    -l <(echo "${JUMPBOX_PUBLIC_KEY}") \
     -l "${terraform_metadata}" \
     -v "admin_user=${BOSH_CLIENT}" \
     -v "admin_password=${BOSH_CLIENT_SECRET}" \

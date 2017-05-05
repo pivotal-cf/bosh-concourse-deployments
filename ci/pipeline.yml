@@ -80,6 +80,7 @@ jobs:
             BOSH_CA_KEY:             {{director_ca_key}}
             JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
+            JUMPBOX_PUBLIC_KEY:      {{jumpbox_public_key}}
             ADDITIONAL_OPS:          {{additional_ops}} # set additional_ops to | if not using
           ensure:
             put: director-state
