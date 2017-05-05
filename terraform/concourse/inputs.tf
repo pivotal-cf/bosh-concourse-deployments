@@ -11,6 +11,10 @@ variable "trusted_cidrs" {
     type = "string"
 }
 
+variable "web_trusted_cidrs" {
+    type = "string"
+}
+
 variable "network" {
     default = "concourse"
 }
