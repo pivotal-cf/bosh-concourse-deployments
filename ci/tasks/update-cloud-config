@@ -38,7 +38,7 @@ cleanup_ssh_tunnel() {
 }
 trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
 
-ssh "${ssh_args}" -D 1080 "${jumpbox_address}" &
+ssh ${ssh_args} -D 1080 ${jumpbox_address} &
 export BOSH_ALL_PROXY=socks5://localhost:1080
 
 echo "Updating cloud config..."
