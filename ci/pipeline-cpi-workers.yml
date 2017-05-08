@@ -74,35 +74,6 @@ jobs:
               params:
                 file: updated-worker-state/worker-state.json
 
-  - name: update-vcloud-v5.5-worker
-    plan:
-      - do:
-        - aggregate:
-          - get: concourse-update-trigger
-            trigger: true
-          - get: deployments-src
-          - get: bosh-cli
-          - get: worker-state
-            resource: vcloud-v5.5-worker-state
-          - get: bosh-cpi-release
-            resource: bosh-vcloud-cpi-release
-          - get: concourse-and-garden
-            params:
-              globs: ['concourse-*.tgz','garden-runc-*.tgz']
-          - get: stemcell
-            resource: vcloud-stemcell
-        - aggregate:
-          - task: update-vcloud-v5.5-worker
-            file: deployments-src/ci/tasks/deploy-worker.yml
-            params:
-              WORKER_SECRETS: {{vcloud-v55-worker-secrets}}
-              ENVIRONMENT_NAME: vcloud-v5.5
-            ensure:
-              put: worker-state
-              resource: vcloud-v5.5-worker-state
-              params:
-                file: updated-worker-state/worker-state.json
-
   - name: prepare-asia-env
     serial_groups: [deploy-asia]
     plan:
@@ -219,12 +190,6 @@ resources:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: worker/vsphere-v5.1-worker-state.json
-  - name: vcloud-v5.5-worker-state
-    type: gcs-resource
-    source:
-      bucket: {{deployments_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: worker/vcloud-v5.5-worker-state.json
   - name: google-asia-worker-state
     type: gcs-resource
     source:
@@ -250,10 +215,6 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
-  - name: vcloud-stemcell
-    type: bosh-io-stemcell
-    source:
-      name: bosh-vcloud-esxi-ubuntu-trusty-go_agent
   - name: bosh-google-cpi-release
     type: bosh-io-release
     source:
@@ -262,10 +223,6 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
-  - name: bosh-vcloud-cpi-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry-incubator/bosh-vcloud-cpi-release
   - name: networking-release
     type: bosh-io-release
     source:
