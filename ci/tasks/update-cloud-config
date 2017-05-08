@@ -32,16 +32,18 @@ jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
 director_internal_ip=$( jq -r -e .director_internal_ip ${terraform_metadata} )
 
 jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
-ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
-ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 25555:${director_internal_ip}:25555 "${jumpbox_address}"
+ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
 cleanup_ssh_tunnel() {
-  ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
+  killall -KILL ssh
 }
 trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
 
+ssh "${ssh_args}" -D 1080 "${jumpbox_address}" &
+export BOSH_ALL_PROXY=socks5://localhost:1080
+
 echo "Updating cloud config..."
 ${bosh_cli} -n update-cloud-config \
-  -e 127.0.0.1 \
+  -e "${director_internal_ip}" \
   -l "${terraform_config}/metadata" \
   ${deployments_dir}/bosh/cloud-config.yml
 
