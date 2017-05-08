@@ -24,7 +24,7 @@ update:
 
 instance_groups:
 - name: concourse_cpi
-  instances: 3
+  instances: 1
   vm_type: concourse_cpi
   stemcell: default
   azs: [us1]

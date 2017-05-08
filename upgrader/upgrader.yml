@@ -8,14 +8,14 @@ name: concourse
 
 releases:
 - name: concourse
-  url: https://bosh.io/d/github.com/concourse/concourse?v=2.7.3
-  sha1: ca38944353c893660a428cc6678941734b51b036
+  url: https://bosh.io/d/github.com/concourse/concourse?v=2.7.4
+  sha1: 59f20ddea3ffd9bcab572abb3e2e1137aa3d6e7a
 - name: garden-runc
-  url: https://github.com/concourse/concourse/releases/download/v2.7.1/garden-runc-1.4.0.tgz
-  sha1: 1d6020e761806d7f355ceda06c889c582b47dc32
+  url: https://github.com/concourse/concourse/releases/download/v2.7.4/garden-runc-1.5.0.tgz
+  sha1: c86150d54162e80597cfa2959137014c41512bbf
 - name: bosh-vsphere-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=39
-  sha1: 2b68e45b553c3867fc4f7021a723eae7ec3c23fd
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=40
+  sha1: f8958a21f8e0b9e57a7168122565fe1c0805aa0a
 
 disk_pools:
 - name: disks
@@ -25,8 +25,8 @@ resource_pools:
 - name: default
   network: private
   stemcell:
-    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.19-vsphere-esxi-ubuntu-trusty-go_agent.tgz
-    sha1: 728d40eb9fdecba7086b08f2db8bd23a29d372b1
+    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.20-vsphere-esxi-ubuntu-trusty-go_agent.tgz
+    sha1: cc46c54c4b93dc0933bf9139b60d6782ffcad7ef
   cloud_properties:
     cpu: 2
     ram: 4_096
