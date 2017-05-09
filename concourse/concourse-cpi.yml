@@ -14,7 +14,7 @@ releases:
 stemcells:
 - alias: default
   os: ubuntu-trusty
-  url: ((stemcell_url))
+  version: ((stemcell_version))
 
 update:
   canaries: 1
