@@ -69,9 +69,6 @@ jobs:
             terraform_source: deployments-src/terraform/concourse
             vars:
               allow_ssh_access_to_jumpbox: 1
-        # We sleep for 90 seconds in order for the terraform changes in the
-        # previous task to propagate (it doesn't happen instantaneously)
-        - *wait-for-ssh
         - task: update-director
           file: deployments-src/ci/tasks/deploy-director.yml
           params:
@@ -139,6 +136,9 @@ jobs:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
       - *open-ssh-to-jumpbox
+      # We sleep for 90 seconds in order for the terraform changes in the
+      # previous task to propagate (it doesn't happen instantaneously)
+      - *wait-for-ssh
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
