@@ -9,8 +9,8 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${GOOGLE_CREDENTIALS:?}
 : ${ENVIRONMENT_NAME:?}
 : ${WORKER_SECRETS:?}
-: ${RUBY_VERSION:="2.3.1"}
-: ${JUMPBOX_SSH_USER:=vcap}
+: ${RUBY_VERSION:?}
+: ${JUMPBOX_SSH_USER:?}
 : ${JUMPBOX_SSH_KEY:?}
 
 set +u

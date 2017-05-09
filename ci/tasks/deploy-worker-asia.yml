@@ -22,8 +22,9 @@ params:
   GOOGLE_CREDENTIALS: ""
   IAAS_CREDENTIALS:   ""
   ENVIRONMENT_NAME:   ""
-  JUMPBOX_SSH_USER:   ""
+  JUMPBOX_SSH_USER:   "jumpbox"
   JUMPBOX_SSH_KEY:    ""
+  RUBY_VERSION:       "2.3.1"
 
 run:
   path: deployments-src/ci/tasks/deploy-worker-asia

@@ -24,7 +24,7 @@ params:
   BOSH_CA_CERT:          ""
   BOSH_CA_KEY:           ""
   JUMPBOX_SSH_KEY:       ""
-  JUMPBOX_SSH_USER:      ""
+  JUMPBOX_SSH_USER:      "jumpbox"
   ADDITIONAL_OPS:        ""
   JUMPBOX_PUBLIC_KEY:    ""
 
