@@ -72,6 +72,7 @@ pushd "${output_dir}" > /dev/null
     --ops-file "${director_templates_dir}/local-dns.yml" \
     --ops-file "${deployments_dir}/bosh/debug-ops-file.yml" \
     --ops-file "${deployments_dir}/bosh/bootstrap-ops-file.yml" \
+    --ops-file "${deployments_dir}/bosh/datadog-ops-file.yml" \
     --ops-file "${director_templates_dir}/uaa.yml" \
     --ops-file "${director_templates_dir}/jumpbox-user.yml" \
     --ops-file ../ops-file.yml \
