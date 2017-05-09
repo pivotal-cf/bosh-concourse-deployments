@@ -114,6 +114,7 @@ jobs:
               GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
               JUMPBOX_SECRETS:    {{jumpbox_secrets}}
               JUMPBOX_PUBLIC_KEY: {{jumpbox_public_key}}
+              TRUSTED_CIDRS:      {{trusted_cidrs}}
             ensure:
               put: asia-jumpbox-state
               params:

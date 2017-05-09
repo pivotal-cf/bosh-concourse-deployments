@@ -9,6 +9,7 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 : ${GOOGLE_CREDENTIALS:?}
 : ${JUMPBOX_SECRETS:?}
 : ${JUMPBOX_PUBLIC_KEY:?}
+: ${TRUSTED_CIDRS:?}
 
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
