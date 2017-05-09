@@ -41,14 +41,16 @@ jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
 director_internal_ip=$( jq -r -e .director_internal_ip ${terraform_metadata} )
 
 jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
-ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
-ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 25555:${director_internal_ip}:25555 "${jumpbox_address}"
+ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
 cleanup_ssh_tunnel() {
-  ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
+  killall -KILL ssh
 }
 trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
 
-export BOSH_ENVIRONMENT="127.0.0.1"
+export BOSH_ENVIRONMENT=${director_internal_ip}
+
+ssh ${ssh_args} -D 1080 ${jumpbox_address} &
+export BOSH_ALL_PROXY=socks5://localhost:1080
 
 echo "Uploading Concourse release..."
 ${bosh_cli} -n --tty upload-release ${release_dir}/concourse-*.tgz

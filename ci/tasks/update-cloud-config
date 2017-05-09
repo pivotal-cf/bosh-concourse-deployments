@@ -41,10 +41,6 @@ trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
 ssh ${ssh_args} -D 1080 ${jumpbox_address} &
 export BOSH_ALL_PROXY=socks5://localhost:1080
 
-# We sleep for 90 seconds in order for the terraform changes in the
-# previous task to propagate (it doesn't happen instantaneously)
-sleep 90
-
 echo "Updating cloud config..."
 ${bosh_cli} -n update-cloud-config \
   -e "${director_internal_ip}" \
