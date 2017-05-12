@@ -105,7 +105,7 @@ pushd "${deployments_dir}" > /dev/null
     -v jumpbox_internal_ip="${jumpbox_internal_ip}" \
     -v natbox_internal_ip="${natbox_internal_ip}" \
     -v internal_gw="${internal_gw}" \
-    -v internal_cidr="${internal_cidr}"
+    -v internal_cidr="${internal_cidr}" \
     "${DEPLOYMENT_CONFIG_PATH}"
   echo "Successfully deployed Concourse!"
 popd > /dev/null
