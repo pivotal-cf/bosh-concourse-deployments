@@ -39,6 +39,10 @@ chmod 400 "${ssh_key_path}"
 terraform_metadata="${terraform_config}/metadata"
 jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
 director_internal_ip=$( jq -r -e .director_internal_ip ${terraform_metadata} )
+jumpbox_internal_ip=$( jq -r -e .jumpbox_internal_ip ${terraform_metadata} )
+natbox_internal_ip=$( jq -r -e .natbox_internal_ip ${terraform_metadata} )
+internal_gw=$( jq -r -e .internal_gw ${terraform_metadata} )
+internal_cidr=$( jq -r -e .internal_cidr ${terraform_metadata} )
 
 jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
 ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
@@ -63,10 +67,16 @@ ${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
 
 stemcell_version=$( cat ${stemcell_dir}/version )
 
+touch ops-file.yml
+if [ -n "${ADDITIONAL_OPS}" ]; then
+  ${bosh_cli} int <(echo "${ADDITIONAL_OPS}") --path /commands | while read -r CMD; do eval $CMD; done
+  ${bosh_cli} int <(echo "${ADDITIONAL_OPS}") --path /ops_file_yml > ops-file.yml
+fi
+
 pushd "${deployments_dir}" > /dev/null
   echo "Building Concourse manifest..."
 
-  ops_flags=""
+  ops_flags="--ops-file ../ops-file.yml"
   CONCOURSE_TEAMS=( $(echo $CONCOURSE_TEAMS | jq -r '.[] | "\"\(.name)\"\n\"\(.vm_type)\"\n\"\(.worker_public_key)\""') )
   while [ -n "${CONCOURSE_TEAMS:-}" ] && [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
     team_name="${CONCOURSE_TEAMS[0]}"
@@ -88,9 +98,14 @@ pushd "${deployments_dir}" > /dev/null
     -v concourse_external_url=${CONCOURSE_EXTERNAL_URL} \
     -v concourse_basic_auth_username=${CONCOURSE_BASIC_AUTH_USERNAME} \
     -v concourse_basic_auth_password=${CONCOURSE_BASIC_AUTH_PASSWORD} \
-    -v stemcell_version='"${stemcell_version}"' \
+    -v stemcell_version="'${stemcell_version}'" \
     -d "${DEPLOYMENT_NAME}" \
     ${ops_flags} \
+    -v director_internal_ip="${director_internal_ip}" \
+    -v jumpbox_internal_ip="${jumpbox_internal_ip}" \
+    -v natbox_internal_ip="${natbox_internal_ip}" \
+    -v internal_gw="${internal_gw}" \
+    -v internal_cidr="${internal_cidr}"
     "${DEPLOYMENT_CONFIG_PATH}"
   echo "Successfully deployed Concourse!"
 popd > /dev/null

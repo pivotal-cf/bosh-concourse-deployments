@@ -15,6 +15,7 @@ inputs:
   - name: ulimit
 
 params:
+  ADDITIONAL_OPS:                ""
   DEPLOYMENT_NAME:               ""
   DEPLOYMENT_CONFIG_PATH:        ""
   CONCOURSE_SECRETS:             ""
