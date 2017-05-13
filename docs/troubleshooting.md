@@ -38,7 +38,7 @@ bosh deployments # find your deployment
 bosh instances -d concourse-cpi # or whatever your deployment is
 bosh ssh -d concourse-cpi \
   concourse_cpi \
-  --gw-user=vcap \
+  --gw-user=jumpbox \
   --gw-host=10.0.0.6 \
   --gw-private-key=$PWD/vcap.pem
 ```

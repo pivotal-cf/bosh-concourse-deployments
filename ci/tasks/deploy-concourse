@@ -76,7 +76,7 @@ fi
 pushd "${deployments_dir}" > /dev/null
   echo "Building Concourse manifest..."
 
-  ops_flags="--ops-file ../ops-file.yml"
+  ops_flags=""
   CONCOURSE_TEAMS=( $(echo $CONCOURSE_TEAMS | jq -r '.[] | "\"\(.name)\"\n\"\(.vm_type)\"\n\"\(.worker_public_key)\""') )
   while [ -n "${CONCOURSE_TEAMS:-}" ] && [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
     team_name="${CONCOURSE_TEAMS[0]}"
@@ -101,6 +101,7 @@ pushd "${deployments_dir}" > /dev/null
     -v stemcell_version="'${stemcell_version}'" \
     -d "${DEPLOYMENT_NAME}" \
     ${ops_flags} \
+    --ops-file ../ops-file.yml \
     -v director_internal_ip="${director_internal_ip}" \
     -v jumpbox_internal_ip="${jumpbox_internal_ip}" \
     -v natbox_internal_ip="${natbox_internal_ip}" \
