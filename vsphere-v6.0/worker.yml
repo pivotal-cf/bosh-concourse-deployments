@@ -75,8 +75,9 @@ cloud_provider:
           datastore_pattern: ((vcenter_datacenter_datastore_pattern))
           persistent_datastore_pattern: ((vcenter_persistent_datacenter_datastore_pattern))
           disk_path: ((vcenter_datacenter_disk_path))
-          clusters: ((vcenter_clusters))
-            resource_pool: ((vcenter_resource_pool))
+          clusters:
+            - ((vcenter_cluster)):
+              resource_pool: ((vcenter_resource_pool))
 
     agent: {mbus: "https://mbus:((vcenter_worker_mbus_password))@0.0.0.0:6868"}
 
