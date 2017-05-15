@@ -77,7 +77,7 @@ cloud_provider:
           disk_path: ((vcenter_datacenter_disk_path))
           clusters:
             - ((vcenter_cluster)):
-              resource_pool: ((vcenter_resource_pool))
+                resource_pool: ((vcenter_resource_pool))
 
     agent: {mbus: "https://mbus:((vcenter_worker_mbus_password))@0.0.0.0:6868"}
 
