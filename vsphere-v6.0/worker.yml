@@ -43,7 +43,7 @@ instance_groups:
     networks:
       - {name: private, static_ips: [((vcenter_worker_ip))]}
     properties:
-      tags: ["vsphere", "vsphere-v5.1"]
+      tags: ["vsphere", "vsphere-v6.0"]
       team: ((vsphere_worker_team))
       baggageclaim:
         forward_address: 127.0.0.1:7788
@@ -76,6 +76,7 @@ cloud_provider:
           persistent_datastore_pattern: ((vcenter_persistent_datacenter_datastore_pattern))
           disk_path: ((vcenter_datacenter_disk_path))
           clusters: ((vcenter_clusters))
+            resource_pool: ((vcenter_resource_pool))
 
     agent: {mbus: "https://mbus:((vcenter_worker_mbus_password))@0.0.0.0:6868"}
 

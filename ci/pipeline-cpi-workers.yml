@@ -45,7 +45,7 @@ jobs:
                   vars:
                     allow_ssh_access_to_jumpbox: 0
 
-  - name: update-vsphere-v5.1-worker
+  - name: update-vsphere-v6.0-worker
     plan:
       - do:
         - aggregate:
@@ -54,7 +54,7 @@ jobs:
           - get: deployments-src
           - get: bosh-cli
           - get: worker-state
-            resource: vsphere-v5.1-worker-state
+            resource: vsphere-v6.0-worker-state
           - get: bosh-cpi-release
             resource: bosh-vsphere-cpi-release
           - get: concourse-and-garden
@@ -63,14 +63,14 @@ jobs:
           - get: stemcell
             resource: vsphere-stemcell
         - aggregate:
-          - task: update-vsphere-v5.1-worker
+          - task: update-vsphere-v6.0-worker
             file: deployments-src/ci/tasks/deploy-worker.yml
             params:
-              WORKER_SECRETS: {{vsphere-v51-worker-secrets}}
-              ENVIRONMENT_NAME: vsphere-v5.1
+              WORKER_SECRETS: {{vsphere-v60-worker-secrets}}
+              ENVIRONMENT_NAME: vsphere-v6.0
             ensure:
               put: worker-state
-              resource: vsphere-v5.1-worker-state
+              resource: vsphere-v6.0-worker-state
               params:
                 file: updated-worker-state/worker-state.json
 
@@ -185,12 +185,12 @@ resources:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: asia/jumpbox-state.json
-  - name: vsphere-v5.1-worker-state
+  - name: vsphere-v6.0-worker-state
     type: gcs-resource
     source:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
-      versioned_file: worker/vsphere-v5.1-worker-state.json
+      versioned_file: worker/vsphere-v6.0-worker-state.json
   - name: google-asia-worker-state
     type: gcs-resource
     source:
