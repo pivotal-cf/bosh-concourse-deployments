@@ -71,7 +71,7 @@ cloud_provider:
       datacenters:
         - name: ((vcenter_datacenter))
           vm_folder: ((vcenter_datacenter_vm_folder))
-          template_folder: ((vcenter_datacenter_template_volder))
+          template_folder: ((vcenter_datacenter_template_folder))
           datastore_pattern: ((vcenter_datacenter_datastore_pattern))
           persistent_datastore_pattern: ((vcenter_persistent_datacenter_datastore_pattern))
           disk_path: ((vcenter_datacenter_disk_path))
