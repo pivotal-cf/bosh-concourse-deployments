@@ -107,7 +107,7 @@ pushd "${deployments_dir}" > /dev/null
     -v natbox_internal_ip="${natbox_internal_ip}" \
     -v internal_gw="${internal_gw}" \
     -v internal_cidr="${internal_cidr}" \
-    --var-store="you-really-need-this-flag-but-not-this-file.yml" \
+    --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
     "${DEPLOYMENT_CONFIG_PATH}"
   echo "Successfully deployed Concourse!"
 popd > /dev/null
