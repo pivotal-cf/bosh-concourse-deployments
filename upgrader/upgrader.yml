@@ -25,8 +25,8 @@ resource_pools:
 - name: default
   network: private
   stemcell:
-    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.20-vsphere-esxi-ubuntu-trusty-go_agent.tgz
-    sha1: cc46c54c4b93dc0933bf9139b60d6782ffcad7ef
+    url: https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-3363.22-vsphere-esxi-ubuntu-trusty-go_agent.tgz
+    sha1: 242ee3350ffd3fb0ad79e81dce59e43d4b7a9bda
   cloud_properties:
     cpu: 2
     ram: 4_096
@@ -112,7 +112,9 @@ instance_groups:
       - name: ((vcenter_datacenter))
         datastore_pattern: ((vcenter_datastore_pattern))
         persistent_datastore_pattern: ((vcenter_datastore_pattern))
-        clusters: [((vcenter_cluster))]
+        clusters:
+          - ((vcenter_cluster)):
+              resource_pool: ((vcenter_resource_pool))
         vm_folder: ((vcenter_vm_folder))
         template_folder: ((vcenter_template_folder))
         disk_path: ((vcenter_disk_path))
