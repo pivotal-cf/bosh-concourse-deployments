@@ -5,7 +5,8 @@ azs:
 vm_types:
 - name: concourse_cpi
   cloud_properties:
-    machine_type: n1-standard-2
+    cpu: 1
+    ram: 2_560
     root_disk_size_gb: 20
     root_disk_type: pd-standard
     tags:
@@ -14,7 +15,8 @@ vm_types:
     target_pool: ((concourse_target_pool))
 - name: concourse_cpi_database
   cloud_properties:
-    machine_type: n1-standard-2
+    cpu: 1
+    ram: 2_560
     root_disk_size_gb: 20
     root_disk_type: pd-standard
     tags:
@@ -38,6 +40,15 @@ vm_types:
     tags:
       - ((nat_traffic_tag))
       - ((concourse_worker_tag))
+- name: concourse_worker_8_24
+  cloud_properties:
+    cpu: 8
+    ram: 24_576
+    root_disk_size_gb: 164
+    root_disk_type: pd-standard
+    tags:
+      - ((nat_traffic_tag))
+      - ((concourse_worker_tag))
 - name: concourse_worker_4_16
   cloud_properties:
     cpu: 4
@@ -50,6 +61,15 @@ vm_types:
 - name: concourse_worker_4_8
   cloud_properties:
     cpu: 4
+    ram: 8_192
+    root_disk_size_gb: 164
+    root_disk_type: pd-standard
+    tags:
+      - ((nat_traffic_tag))
+      - ((concourse_worker_tag))
+- name: concourse_worker_2_8
+  cloud_properties:
+    cpu: 2
     ram: 8_192
     root_disk_size_gb: 164
     root_disk_type: pd-standard
