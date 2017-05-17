@@ -21,6 +21,7 @@ params:
   JUMPBOX_PUBLIC_KEY: ""
   JUMPBOX_SECRETS:    ""
   TRUSTED_CIDRS:      ""
+  MACHINE_TYPE:       "n1-standard-1"
 
 run:
   path: deployments-src/ci/tasks/deploy-jumpbox

@@ -13,8 +13,7 @@ resource_pools:
   stemcell:
     url: file://../../stemcell/stemcell.tgz
   cloud_properties:
-    cpu: 1
-    ram: 4_096
+    machine_type: g1-small
     disk: 10_000
     zone: ((zone))
     tags: ((tags))
