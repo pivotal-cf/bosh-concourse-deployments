@@ -32,7 +32,7 @@ alias bosh=\$HOME/bosh2
 alias bosh2=\$HOME/bosh2
 
 export BOSH_ENVIRONMENT=10.0.0.6
-export BOSH_CA_CERT=/tmp/ca_cert.pem
+export BOSH_CA_CERT=\$HOME/ca_cert.pem
 export BOSH_CLIENT=$BOSH_CLIENT
 export BOSH_CLIENT_SECRET=$BOSH_CLIENT_SECRET
 bosh2 login
