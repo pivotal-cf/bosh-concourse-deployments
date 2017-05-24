@@ -8,6 +8,10 @@ releases:
     url: file://../../concourse-and-garden/concourse-release.tgz
   - name: garden-runc
     url: file://../../concourse-and-garden/garden-runc-release.tgz
+  - name: os-conf
+    version: 11
+    url: https://bosh.io/d/github.com/cloudfoundry/os-conf-release?v=11
+    sha1: 651f10a765a2900a7f69ea07705f3367bd8041eb
 
 resource_pools:
   - name: vms
@@ -60,6 +64,12 @@ instance_groups:
         release: concourse
       - name: garden
         release: garden-runc
+      - name: user_add
+        release: os-conf
+        properties:
+          users:
+          - name: jumpbox
+            public_key: ((jumpbox_ssh.public_key))
 
 cloud_provider:
   template: {name: google_cpi, release: bosh-google-cpi}

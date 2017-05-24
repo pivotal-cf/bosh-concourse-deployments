@@ -32,6 +32,7 @@ jobs:
               WORKER_SECRETS:     {{google-asia-worker-secrets}}
               ENVIRONMENT_NAME:   google-asia-worker
               JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
+              JUMPBOX_PUBLIC_KEY: {{jumpbox_public_key}}
             ensure:
               put: worker-state
               resource: google-asia-worker-state

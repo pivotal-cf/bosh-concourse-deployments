@@ -24,6 +24,7 @@ params:
   ENVIRONMENT_NAME:   ""
   JUMPBOX_SSH_USER:   "jumpbox"
   JUMPBOX_SSH_KEY:    ""
+  JUMPBOX_PUBLIC_KEY: ""
   RUBY_VERSION:       "2.3.1"
 
 run:
