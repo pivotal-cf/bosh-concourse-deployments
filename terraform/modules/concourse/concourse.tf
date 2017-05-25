@@ -67,7 +67,7 @@ resource "google_compute_target_pool" "concourse_target_pool" {
   name = "${var.name}"
 }
 
-resource "google_compute_forwarding_rule" "concourse_fowarding_rule_http" {
+resource "google_compute_forwarding_rule" "concourse_forwarding_rule_http" {
   name       = "${var.name}-forwarding-rule-http"
   target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
   port_range = "80-80"
@@ -76,7 +76,7 @@ resource "google_compute_forwarding_rule" "concourse_fowarding_rule_http" {
   depends_on = [ "google_compute_target_pool.concourse_target_pool" ]
 }
 
-resource "google_compute_forwarding_rule" "concourse_fowarding_rule_https" {
+resource "google_compute_forwarding_rule" "concourse_forwarding_rule_https" {
   name       = "${var.name}-forwarding-rule-https"
   target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
   port_range = "443-443"
@@ -85,7 +85,7 @@ resource "google_compute_forwarding_rule" "concourse_fowarding_rule_https" {
   depends_on = [ "google_compute_target_pool.concourse_target_pool" ]
 }
 
-resource "google_compute_forwarding_rule" "concourse_fowarding_rule_worker" {
+resource "google_compute_forwarding_rule" "concourse_forwarding_rule_worker" {
   name       = "${var.name}-forwarding-rule-worker"
   target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
   port_range = "2222-2222"
