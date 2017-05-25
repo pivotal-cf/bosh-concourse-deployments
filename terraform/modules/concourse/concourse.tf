@@ -72,8 +72,6 @@ resource "google_compute_forwarding_rule" "concourse_forwarding_rule_http" {
   target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
   port_range = "80-80"
   ip_address = "${google_compute_address.concourse.address}"
-
-  depends_on = [ "google_compute_target_pool.concourse_target_pool" ]
 }
 
 resource "google_compute_forwarding_rule" "concourse_forwarding_rule_https" {
@@ -81,8 +79,6 @@ resource "google_compute_forwarding_rule" "concourse_forwarding_rule_https" {
   target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
   port_range = "443-443"
   ip_address = "${google_compute_address.concourse.address}"
-
-  depends_on = [ "google_compute_target_pool.concourse_target_pool" ]
 }
 
 resource "google_compute_forwarding_rule" "concourse_forwarding_rule_worker" {
@@ -90,8 +86,6 @@ resource "google_compute_forwarding_rule" "concourse_forwarding_rule_worker" {
   target     = "${google_compute_target_pool.concourse_target_pool.self_link}"
   port_range = "2222-2222"
   ip_address = "${google_compute_address.concourse.address}"
-
-  depends_on = [ "google_compute_target_pool.concourse_target_pool" ]
 }
 
 output "external_ip" {
