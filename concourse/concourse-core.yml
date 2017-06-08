@@ -6,8 +6,6 @@ releases:
   version: 2.5.1
 - name: garden-runc
   version: 1.0.4
-- name: slack-notification-resource
-  version: 9
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
