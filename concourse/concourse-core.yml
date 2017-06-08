@@ -85,10 +85,6 @@ instance_groups:
       consumes:
         baggageclaim:
           from: baggage-claim-cpi
-      properties:
-        additional_resource_types: &additional_resource_types
-        - type: slack-notification
-          image: /var/vcap/packages/slack-notification-resource
     - name: garden
       release: garden-runc
       properties: &garden
@@ -103,9 +99,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-cpi
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker-brats
   instances: 1
@@ -123,9 +116,6 @@ instance_groups:
       properties:
         tags:
         - worker-brats
-        additional_resource_types: &additional_resource_types
-        - type: slack-notification
-          image: /var/vcap/packages/slack-notification-resource
     - name: garden
       release: garden-runc
       properties: &garden
@@ -140,9 +130,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-brats
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker_integration-1
   instances: 1
@@ -160,7 +147,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-1
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -170,7 +156,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-1
-    - {release: slack-notification-resource, name: slack-notification-resource}
   networks:
     - name: concourse
 
@@ -190,7 +175,6 @@ instance_groups:
           - bosh-integration
           - bosh-integration-2
           - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -200,8 +184,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-2
-    - name: slack-notification-resource
-      release: slack-notification-resource
   networks:
     - name: concourse
 
@@ -221,7 +203,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-3
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -231,9 +212,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-3
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
   networks:
     - name: concourse
 
@@ -255,7 +233,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-4
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -265,9 +242,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-4
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker_integration-5
   instances: 1
@@ -287,7 +261,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-5
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -297,9 +270,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-5
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker_integration-6
   instances: 1
@@ -319,7 +289,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-6
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -329,9 +298,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-6
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker_integration-7
   instances: 1
@@ -351,7 +317,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-7
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -361,9 +326,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-7
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker_integration-8
   instances: 1
@@ -383,7 +345,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-8
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -393,9 +354,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-8
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker_integration-9
   instances: 1
@@ -415,7 +373,6 @@ instance_groups:
         - bosh-integration
         - bosh-integration-9
         - fly-integration
-        additional_resource_types: *additional_resource_types
     - name: garden
       release: garden-runc
       properties: *garden
@@ -425,9 +382,6 @@ instance_groups:
       provides:
         baggageclaim:
           as: baggage-claim-9
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: windows_worker
   stemcell: windows
