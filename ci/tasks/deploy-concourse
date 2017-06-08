@@ -75,8 +75,9 @@ fi
 pushd "${deployments_dir}" > /dev/null
   echo "Building Concourse manifest..."
 
+  ops_flags=""
+
   if [ -n "${CONCOURSE_TEAMS}" ]; then
-    ops_flags=""
     CONCOURSE_TEAMS=( $(echo $CONCOURSE_TEAMS | jq -r '.[] | "\"\(.name)\"\n\"\(.vm_type)\"\n\"\(.worker_public_key)\""') )
     while [ -n "${CONCOURSE_TEAMS:-}" ] && [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
       team_name="${CONCOURSE_TEAMS[0]}"
