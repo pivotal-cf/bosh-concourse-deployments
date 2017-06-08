@@ -11,7 +11,7 @@ releases:
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
-  version: "0+dev.1"
+  version: "2.4.1"
 
 stemcells:
 - alias: default
