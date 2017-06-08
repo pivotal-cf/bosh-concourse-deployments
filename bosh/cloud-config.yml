@@ -22,6 +22,25 @@ vm_types:
     tags:
       - ((concourse_db_tag))
       - ((nat_traffic_tag))
+- name: concourse_core
+  cloud_properties:
+    cpu: 1
+    ram: 2_560
+    root_disk_size_gb: 20
+    root_disk_type: pd-standard
+    tags:
+      - ((concourse_atc_tag))
+      - ((nat_traffic_tag))
+    target_pool: ((concourse_target_pool))
+- name: concourse_core_database
+  cloud_properties:
+    cpu: 1
+    ram: 2_560
+    root_disk_size_gb: 20
+    root_disk_type: pd-standard
+    tags:
+      - ((concourse_db_tag))
+      - ((nat_traffic_tag))
 - name: concourse_worker_8_16
   cloud_properties:
     cpu: 8
