@@ -23,6 +23,7 @@ concourse_and_garden_release_dir="$( cd "${workspace_dir}/concourse-and-garden" 
 concourse_windows_release_dir="$( cd "${workspace_dir}/concourse-windows" && pwd )"
 ulimit_release_dir="$( cd "${workspace_dir}/ulimit" && pwd )"
 stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
+windows_stemcell_dir="$( cd "${workspace_dir}/windows-stemcell" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
 
@@ -66,6 +67,8 @@ echo "Uploading ulimit release..."
 ( cd $ulimit_release_dir; ${bosh_cli} -n --tty upload-release )
 echo "Uploading stemcell..."
 ${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
+echo "Uploading Windows stemcell..."
+${bosh_cli} -n --tty upload-stemcell ${windows_stemcell_dir}/*.tgz
 
 stemcell_version=$( cat ${stemcell_dir}/version )
 
