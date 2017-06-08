@@ -146,7 +146,54 @@ jobs:
           ADDITIONAL_OPS:                {{concourse_additional_ops}} # set concourse_additional_ops to | if not using
           DEPLOYMENT_NAME:               concourse-cpi
           DEPLOYMENT_CONFIG_PATH:        concourse/concourse-cpi.yml
-          CONCOURSE_SECRETS:             {{concourse_secrets}}
+          CONCOURSE_SECRETS:             {{cpi_concourse_secrets}}
+          BOSH_CLIENT:                   {{director_admin_username}}
+          BOSH_CLIENT_SECRET:            {{director_admin_password}}
+          BOSH_CA_CERT:                  {{director_ca_cert}}
+          JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
+          CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
+          CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
+          CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
+          CONCOURSE_TEAMS:               {{concourse_teams}}
+      - task: set-teams
+        file: deployments-src/ci/tasks/set-teams.yml
+        params:
+          CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
+          CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
+          CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password}}
+          CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
+          CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
+          CONCOURSE_TEAMS:                {{concourse_teams}}
+      - put: concourse-update-trigger
+        params:
+          file: concourse-and-garden/tag
+    ensure: *close-ssh-to-jumpbox
+
+  - name: update-concourse-core
+    serial_groups: [deploy]
+    plan:
+      - aggregate:
+        - get: deployments-src
+        - get: stemcell
+        - get: bosh-cli
+        - get: concourse-and-garden
+          version:
+            tag: v2.5.1
+          params:
+            globs: ['concourse-*.tgz','garden-runc-*.tgz']
+        - get: ulimit
+      - *open-ssh-to-jumpbox
+      # We sleep for 90 seconds in order for the terraform changes in the
+      # previous task to propagate (it doesn't happen instantaneously)
+      - *wait-for-ssh
+      - task: deploy-concourse
+        file: deployments-src/ci/tasks/deploy-concourse.yml
+        params:
+          ADDITIONAL_OPS:                {{concourse_additional_ops}} # set concourse_additional_ops to | if not using
+          DEPLOYMENT_NAME:               concourse-core
+          DEPLOYMENT_CONFIG_PATH:        concourse/concourse-core.yml
+          CONCOURSE_SECRETS:             {{core_concourse_secrets}}
           BOSH_CLIENT:                   {{director_admin_username}}
           BOSH_CLIENT_SECRET:            {{director_admin_password}}
           BOSH_CA_CERT:                  {{director_ca_cert}}

@@ -29,7 +29,7 @@ jobs:
             file: deployments-src/ci/tasks/deploy-worker-asia.yml
             params:
               GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-              WORKER_SECRETS:     {{google-asia-worker-secrets}}
+              WORKER_SECRETS:     {{cpi-google-asia-worker-secrets}}
               ENVIRONMENT_NAME:   google-asia-worker
               JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
               JUMPBOX_PUBLIC_KEY: {{jumpbox_public_key}}
@@ -67,7 +67,7 @@ jobs:
           - task: update-vsphere-v6.0-worker
             file: deployments-src/ci/tasks/deploy-worker.yml
             params:
-              WORKER_SECRETS: {{vsphere-v60-worker-secrets}}
+              WORKER_SECRETS: {{cpi-vsphere-v60-worker-secrets}}
               ENVIRONMENT_NAME: vsphere-v6.0
             ensure:
               put: worker-state

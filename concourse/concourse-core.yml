@@ -1,0 +1,447 @@
+---
+name: concourse-core
+
+releases:
+- name: concourse
+  version: 2.5.1
+- name: garden-runc
+  version: 1.0.4
+- name: slack-notification-resource
+  version: 9
+
+# github.com/greenhouse-org/concourse-windows-release
+- name: concourse-windows-worker
+  version: "0+dev.1"
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: 3421.4
+# Windows Stemcell for AWS: https://s3.amazonaws.com/bosh-windows-stemcells/light-bosh-stemcell-*-aws-xen-hvm-windows2012R2-go_agent.tgz
+- alias: windows
+  os: windows2012R2
+  version: "1015.0"
+
+update:
+  canaries: 1
+  max_in_flight: 8
+  canary_watch_time: 30000 - 90000
+  update_watch_time: 30000 - 90000
+  serial: false
+
+instance_groups:
+- name: atc
+  instances: 1
+  vm_type: concourse_core
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: atc
+      release: concourse
+      properties:
+        external_url: ((atc_external_url))
+        publicly_viewable: true
+        postgresql_database: &atc_db ((database_name))
+        github_auth:
+          client_id: ((github_auth_client_id))
+          client_secret: ((github_auth_client_secret))
+          authorize: ((github_auth_authorize_organizations))
+    - name: tsa
+      release: concourse
+      properties:
+        authorized_keys: ((tsa_authorized_keys))
+        host_key: ((tsa_host_key))
+
+- name: database
+  instances: 1
+  vm_type: concourse_core_database
+  stemcell: default
+  azs: [us1]
+  persistent_disk_pool: persistent
+  networks:
+    - name: concourse
+  jobs:
+    - name: postgresql
+      release: concourse
+      properties:
+        listen_host: 127.0.0.1
+        databases:
+          - name: *atc_db
+            role: ((database_role))
+            password: ((database_password))
+
+- name: worker
+  instances: 4
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-cpi
+      properties:
+        additional_resource_types: &additional_resource_types
+        - type: slack-notification
+          image: /var/vcap/packages/slack-notification-resource
+    - name: garden
+      release: garden-runc
+      properties: &garden
+        garden:
+          listen_network: tcp
+          listen_address: 0.0.0.0:7777
+          allow_host_access: true
+          btrfs_store_size_mb: 1000000
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-cpi
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker-brats
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-brats
+      properties:
+        tags:
+        - worker-brats
+        additional_resource_types: &additional_resource_types
+        - type: slack-notification
+          image: /var/vcap/packages/slack-notification-resource
+    - name: garden
+      release: garden-runc
+      properties: &garden
+        garden:
+          listen_network: tcp
+          listen_address: 0.0.0.0:7777
+          allow_host_access: true
+          btrfs_store_size_mb: 1000000
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-brats
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_integration-1
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-1
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-1
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-1
+    - {release: slack-notification-resource, name: slack-notification-resource}
+  networks:
+    - name: concourse
+
+- name: worker_integration-2
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-2
+      properties:
+        tags:
+          - bosh-integration
+          - bosh-integration-2
+          - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-2
+    - name: slack-notification-resource
+      release: slack-notification-resource
+  networks:
+    - name: concourse
+
+- name: worker_integration-3
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-3
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-3
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-3
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker_integration-4
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-4
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-4
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-4
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_integration-5
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-5
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-5
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-5
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_integration-6
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-6
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-6
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-6
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_integration-7
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-7
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-7
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-7
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_integration-8
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-8
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-8
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-8
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_integration-9
+  instances: 1
+  vm_type: concourse_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggage-claim-9
+      properties:
+        tags:
+        - bosh-integration
+        - bosh-integration-9
+        - fly-integration
+        additional_resource_types: *additional_resource_types
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggage-claim-9
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: windows_worker
+  stemcell: windows
+  vm_type: concourse_worker_8_16
+  azs: [us1]
+  networks:
+  - name: concourse
+  jobs:
+  - name: concourse_windows
+    release: concourse-windows-worker
+  instances: 1
+  properties:
+    concourse_windows:
+      tsa_host: ((concourse_core_url))
+      tsa_public_key: ((tsa_host_public_key))
+      tsa_worker_private_key: ((tsa_worker_private_key))
+
