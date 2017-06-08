@@ -8,17 +8,17 @@ releases:
   version: 1.0.4
 
 # github.com/greenhouse-org/concourse-windows-release
-- name: concourse-windows-worker
-  version: "2.4.0"
+#- name: concourse-windows-worker
+#  version: "2.4.0"
 
 stemcells:
 - alias: default
   os: ubuntu-trusty
   version: 3421.4
 # Windows Stemcell for AWS: https://s3.amazonaws.com/bosh-windows-stemcells/light-bosh-stemcell-*-aws-xen-hvm-windows2012R2-go_agent.tgz
-- alias: windows
-  os: windows2012R2
-  version: latest
+#- alias: windows
+#  os: windows2012R2
+#  version: latest
 
 update:
   canaries: 1
@@ -381,19 +381,19 @@ instance_groups:
         baggageclaim:
           as: baggage-claim-9
 
-- name: windows_worker
-  stemcell: windows
-  vm_type: concourse_worker_8_16
-  azs: [us1]
-  networks:
-  - name: concourse
-  jobs:
-  - name: concourse_windows
-    release: concourse-windows-worker
-  instances: 1
-  properties:
-    concourse_windows:
-      tsa_host: ((concourse_core_url))
-      tsa_public_key: ((tsa_host_public_key))
-      tsa_worker_private_key: ((tsa_worker_private_key))
+#- name: windows_worker
+#  stemcell: windows
+#  vm_type: concourse_worker_8_16
+#  azs: [us1]
+#  networks:
+#  - name: concourse
+#  jobs:
+#  - name: concourse_windows
+#    release: concourse-windows-worker
+#  instances: 1
+#  properties:
+#    concourse_windows:
+#      tsa_host: ((concourse_core_url))
+#      tsa_public_key: ((tsa_host_public_key))
+#      tsa_worker_private_key: ((tsa_worker_private_key))
 
