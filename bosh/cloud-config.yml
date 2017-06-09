@@ -107,7 +107,7 @@ vm_types:
 - name: compilation
   cloud_properties:
     machine_type: n1-highcpu-4
-    root_disk_size_gb: 15
+    root_disk_size_gb: 164
     root_disk_type: pd-ssd
 
 compilation:
