@@ -98,7 +98,7 @@ pushd "${deployments_dir}" > /dev/null
       ops_flags="${ops_flags} --ops-file ${ops_path}"
       CONCOURSE_TEAMS=("${CONCOURSE_TEAMS[@]:4}")
     done
-   fi
+  fi
 
   echo "Deploying Concourse..."
   ${bosh_cli} -n --tty deploy \

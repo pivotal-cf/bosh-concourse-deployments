@@ -383,7 +383,7 @@ instance_groups:
 
 - name: windows_worker
   stemcell: windows
-  vm_type: concourse_worker_ssd_8_16
+  vm_type: concourse_worker_8_16
   azs: [us1]
   networks:
   - name: concourse

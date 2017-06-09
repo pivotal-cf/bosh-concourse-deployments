@@ -131,7 +131,11 @@ jobs:
       - aggregate:
         - get: deployments-src
         - get: stemcell
+        - get: windows-stemcell
         - get: bosh-cli
+        - get: concourse-windows
+          params:
+            globs: ['release.tgz']
         - get: concourse-and-garden
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
@@ -176,7 +180,11 @@ jobs:
       - aggregate:
         - get: deployments-src
         - get: stemcell
+        - get: windows-stemcell
         - get: bosh-cli
+        - get: concourse-windows
+          params:
+            globs: ['release.tgz']
         - get: concourse-and-garden
           version:
             tag: v2.5.1
@@ -190,7 +198,6 @@ jobs:
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
-          ADDITIONAL_OPS:                {{concourse_additional_ops}} # set concourse_additional_ops to | if not using
           DEPLOYMENT_NAME:               concourse-core
           DEPLOYMENT_CONFIG_PATH:        concourse/concourse-core.yml
           CONCOURSE_SECRETS:             {{core_concourse_secrets}}
@@ -202,19 +209,20 @@ jobs:
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
-          CONCOURSE_TEAMS:               {{concourse_teams}}
-      - task: set-teams
-        file: deployments-src/ci/tasks/set-teams.yml
-        params:
-          CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
-          CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
-          CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password}}
-          CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
-          CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
-          CONCOURSE_TEAMS:                {{concourse_teams}}
-      - put: concourse-update-trigger
-        params:
-          file: concourse-and-garden/tag
+          ADDITIONAL_OPS:                |
+          CONCOURSE_TEAMS:               |
+#      - task: set-teams
+#        file: deployments-src/ci/tasks/set-teams.yml
+#        params:
+#          CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
+#          CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
+#          CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password}}
+#          CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
+#          CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
+#          CONCOURSE_TEAMS:                {{concourse_teams}}
+#      - put: concourse-update-trigger
+#        params:
+#          file: concourse-and-garden/tag
     ensure: *close-ssh-to-jumpbox
 
   - name: open-ssh-for-30m
@@ -321,6 +329,11 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-google-kvm-ubuntu-trusty-go_agent
+  - name: windows-stemcell
+    type: s3
+    source:
+      bucket: bosh-windows-stemcells
+      regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
   - name: bosh-google-cpi-release
     type: bosh-io-release
     source:
@@ -333,8 +346,15 @@ resources:
     type: github-release
     source:
       repository: concourse
-      user: concourse
+      owner: concourse
       access_token: {{concourse_config_access_token}}
+  - name: concourse-windows
+    type: github-release
+    source:
+      repository: concourse-windows-release
+      owner: pivotal-cf-experimental
+      access_token: {{concourse_config_access_token}}
+      pre_release: true
   - name: ulimit
     type: git
     source:
