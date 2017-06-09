@@ -55,7 +55,7 @@ vm_types:
     cpu: 8
     ram: 16_384
     root_disk_size_gb: 164
-    root_disk_type: pd-standard
+    root_disk_type: pd-ssd
     tags:
       - ((nat_traffic_tag))
       - ((concourse_worker_tag))
