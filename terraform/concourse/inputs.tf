@@ -11,11 +11,7 @@ variable "trusted_cidrs" {
     type = "string"
 }
 
-variable "bosh_cpi_web_trusted_cidrs" {
-    type = "string"
-}
-
-variable "bosh_core_web_trusted_cidrs" {
+variable "web_trusted_cidrs" {
     type = "string"
 }
 

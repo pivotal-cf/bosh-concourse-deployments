@@ -50,13 +50,5 @@ module "concourse" {
 
   name                         = "${var.name}-concourse"
   network                      = "${google_compute_network.bosh.name}"
-  trusted_cidrs                = ["${split(",", var.bosh_cpi_web_trusted_cidrs)}"]
-}
-
-module "concourse_core" {
-  source                       = "../modules/concourse/"
-
-  name                         = "${var.name}-concourse-core"
-  network                      = "${google_compute_network.bosh.name}"
-  trusted_cidrs                = ["${split(",", var.bosh_core_web_trusted_cidrs)}"]
+  trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}"]
 }

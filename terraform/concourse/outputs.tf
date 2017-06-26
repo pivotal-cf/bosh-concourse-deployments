@@ -66,22 +66,22 @@ output "director_internal_tag" {
   value = "${module.director.internal_tag}"
 }
 
-# Concourse BOSH CPI outputs
-output "bosh_cpi" {
-  value = {
-    external_ip = "${module.concourse.external_ip}"
-    atc_tag = "${module.concourse.atc_tag}"
-    db_tag = "${module.concourse.db_tag}"
-    target_pool = "${module.concourse.target_pool}"
-  }
+output "concourse_external_ip" {
+  value = "${module.concourse.external_ip}"
 }
 
-# Concourse BOSH core outputs
-output "bosh_core" {
-  value = {
-    external_ip = "${module.concourse_core.external_ip}"
-    atc_tag = "${module.concourse_core.atc_tag}"
-    db_tag = "${module.concourse_core.db_tag}"
-    target_pool = "${module.concourse_core.target_pool}"
-  }
+output "concourse_atc_tag" {
+  value = "${module.concourse.atc_tag}"
+}
+
+output "concourse_worker_tag" {
+  value = "${module.concourse.worker_tag}"
+}
+
+output "concourse_db_tag" {
+  value = "${module.concourse.db_tag}"
+}
+
+output "concourse_target_pool" {
+  value = "${module.concourse.target_pool}"
 }
