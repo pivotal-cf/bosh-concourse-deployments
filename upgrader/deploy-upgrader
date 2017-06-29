@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -eu
+
+: ${concourse_external_url=$(lpass show --note bosh-concourse-upgrader-create-env \
+  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["external_url"]' )}
+: ${concourse_teams=$(lpass show --note bosh-concourse-upgrader-create-env \
+  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["concourse_teams"]' )}
+: ${concourse_github_client_id=$(lpass show --note bosh-concourse-upgrader-create-env \
+  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["github_auth_client_id"]' )}
+: ${concourse_github_client_secret=$(lpass show --note bosh-concourse-upgrader-create-env \
+  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["github_auth_client_secret"]' )}
+
+bosh2 create-env ./upgrader.yml -l <( lpass show --notes "bosh-concourse-upgrader-create-env" )
+
+wget -O ./fly "${concourse_external_url}/api/v1/cli?arch=amd64&platform=darwin"
+chmod +x ./fly
+
+./fly -t upgrader login -c "${concourse_external_url}"
+
+# Split JSON input into plain-text key value pairs
+IFS=$'\n' concourse_teams=( $(echo $concourse_teams | jq -r '.[] | "\"\(.name)\"\n\"\(.github_team)\""') )
+while [ -n "${concourse_teams:-}" ] && [ ${#concourse_teams} -ne 0 ]; do
+  yes | ./fly -t upgrader set-team \
+    --team-name="${concourse_teams[0]}" \
+    --github-auth-client-id="${concourse_github_client_id}" \
+    --github-auth-client-secret="${concourse_github_client_secret}" \
+    --github-auth-team="${concourse_teams[1]}"
+  concourse_teams=("${concourse_teams[@]:2}")
+done
+
+echo "Finished successfully"
