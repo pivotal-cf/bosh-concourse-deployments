@@ -82,7 +82,7 @@ jobs:
             JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
             JUMPBOX_PUBLIC_KEY:      {{jumpbox_public_key}}
-            ADDITIONAL_OPS:          {{director_additional_ops}} # set director_additional_ops to | if not using
+            ADDITIONAL_OPS:          {{director_additional_ops_base64}} # set director_additional_ops to | if not using
           ensure:
             put: director-state
             params:
