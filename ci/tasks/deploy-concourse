@@ -73,7 +73,7 @@ ${bosh_cli} -n --tty upload-stemcell ${windows_stemcell_dir}/*.tgz
 stemcell_version=$( cat ${stemcell_dir}/version )
 
 touch ops-file.yml
-if [ -n "${ADDITIONAL_OPS}" -a -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]; then
+if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]]; then
   ${bosh_cli} int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /commands | while read -r CMD; do eval $CMD; done
   ${bosh_cli} int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /ops_file_yml > ops-file.yml
 fi
@@ -83,7 +83,7 @@ pushd "${deployments_dir}" > /dev/null
 
   ops_flags=""
 
-  if [ -n "${CONCOURSE_TEAMS}" ]; then
+  if [[ -n "${CONCOURSE_TEAMS}" ]]; then
     CONCOURSE_TEAMS=( $(echo $CONCOURSE_TEAMS | jq -r '.[] | "\"\(.name)\"\n\"\(.vm_type)\"\n\"\(.worker_public_key)\""') )
     while [ -n "${CONCOURSE_TEAMS:-}" ] && [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
       team_name="${CONCOURSE_TEAMS[0]}"

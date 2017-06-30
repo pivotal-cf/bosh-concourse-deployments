@@ -8,7 +8,7 @@ set -eu
 : ${CONCOURSE_BUCKET_NAME:?}
 ${TRACE:=false}
 
-if [ $TRACE = true ]; then
+if [[ $TRACE = true ]]; then
   set -x
 fi
 

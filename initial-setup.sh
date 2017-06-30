@@ -2,7 +2,7 @@
 
 jumpbox_ip=$1
 
-if [ -z "${jumpbox_ip}" ]; then
+if [[ -z "${jumpbox_ip}" ]]; then
   echo "Provide the jumpbox IP Address"
   exit 1
 fi
@@ -23,7 +23,7 @@ eval $(lpass show --note bosh-concourse-upgrader-cpi-pipeline \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts "BOSH_CLIENT=#{data["director_admin_username"]}"; puts "BOSH_CLIENT_SECRET=#{data["director_admin_password"]}"')
 
 cat > /tmp/bosh.env <<EOF
-if [ ! -x \$HOME/bosh2 ]; then
+if [[ ! -x \$HOME/bosh2 ]]; then
   wget -O \$HOME/bosh2 https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.26-linux-amd64
   chmod +x \$HOME/bosh2
 fi
