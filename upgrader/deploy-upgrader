@@ -30,3 +30,4 @@ while [ -n "${concourse_teams:-}" ] && [ ${#concourse_teams} -ne 0 ]; do
 done
 
 echo "Finished successfully"
+echo "Remember to commit the statefile changes when deploy is finished!"
