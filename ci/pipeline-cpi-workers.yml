@@ -47,6 +47,7 @@ jobs:
                     allow_ssh_access_to_jumpbox: 0
 
   - name: update-vsphere-v6.0-worker
+    serial: true
     plan:
       - do:
         - aggregate:
