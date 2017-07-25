@@ -10,9 +10,7 @@ inputs:
   - name: deployments-src
   - name: terraform
   - name: concourse-and-garden
-  - name: concourse-windows
   - name: stemcell
-  - name: windows-stemcell
   - name: bosh-cli
   - name: ulimit
 

@@ -20,10 +20,8 @@ workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
 # inputs
 terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
 concourse_and_garden_release_dir="$( cd "${workspace_dir}/concourse-and-garden" && pwd )"
-concourse_windows_release_dir="$( cd "${workspace_dir}/concourse-windows" && pwd )"
 ulimit_release_dir="$( cd "${workspace_dir}/ulimit" && pwd )"
 stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
-windows_stemcell_dir="$( cd "${workspace_dir}/windows-stemcell" && pwd )"
 bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
 
@@ -61,14 +59,10 @@ echo "Uploading Concourse release..."
 ${bosh_cli} -n --tty upload-release ${concourse_and_garden_release_dir}/concourse-*.tgz
 echo "Uploading Garden release..."
 ${bosh_cli} -n --tty upload-release ${concourse_and_garden_release_dir}/garden-runc-*.tgz
-echo "Uploading Concourse Windows release..."
-${bosh_cli} -n --tty upload-release ${concourse_windows_release_dir}/release.tgz
 echo "Uploading ulimit release..."
 ( cd $ulimit_release_dir; ${bosh_cli} -n --tty upload-release )
 echo "Uploading stemcell..."
 ${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
-echo "Uploading Windows stemcell..."
-${bosh_cli} -n --tty upload-stemcell ${windows_stemcell_dir}/*.tgz
 
 stemcell_version=$( cat ${stemcell_dir}/version )
 
