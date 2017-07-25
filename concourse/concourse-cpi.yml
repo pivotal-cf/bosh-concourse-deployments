@@ -76,4 +76,33 @@ instance_groups:
             role: atc
             password: ((concourse_db_password))
 
+- name: shared_worker
+  instances: 1
+  vm_type: concourse_worker_8_24
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim: {from: shared_baggageclaim}
+      properties:
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+    - name: garden
+      release: garden-runc
+      properties:
+        garden:
+          listen_network: tcp
+          listen_address: 127.0.0.1:7777
+    - name: baggageclaim
+      release: concourse
+      provides:
+        baggageclaim: {as: shared_baggageclaim}
+      properties: {}
+
 # worker instances will be added via worker-ops.yml
