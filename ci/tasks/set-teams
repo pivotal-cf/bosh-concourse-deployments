@@ -17,13 +17,14 @@ yes | ./fly -t concourse login \
   -u "${CONCOURSE_BASIC_AUTH_USERNAME}" \
   -p "${CONCOURSE_BASIC_AUTH_PASSWORD}"
 
-# Split JSON input into plain-text key value pairs
-IFS=$'\n' CONCOURSE_TEAMS=( $(echo $CONCOURSE_TEAMS | jq -r '.[] | "\"\(.name)\"\n\"\(.github_team)\""') )
-while [ -n "${CONCOURSE_TEAMS:-}" ] && [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
-  yes | ./fly -t concourse set-team \
-    --team-name="${CONCOURSE_TEAMS[0]}" \
-    --github-auth-client-id="${CONCOURSE_GITHUB_CLIENT_ID}" \
-    --github-auth-client-secret="${CONCOURSE_GITHUB_CLIENT_SECRET}" \
-    --github-auth-team="${CONCOURSE_TEAMS[1]}"
-  CONCOURSE_TEAMS=("${CONCOURSE_TEAMS[@]:2}")
-done
+if [[ -n "${CONCOURSE_TEAMS}" ]]; then
+  for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
+    team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
+
+    yes | ./fly -t concourse set-team \
+      --team-name="$( echo "$team" | jq -r .name )" \
+      --github-auth-team="$( echo "$team" | jq -r .github_team )" \
+      --github-auth-client-id="${CONCOURSE_GITHUB_CLIENT_ID}" \
+      --github-auth-client-secret="${CONCOURSE_GITHUB_CLIENT_SECRET}"
+  done
+fi

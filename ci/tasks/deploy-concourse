@@ -77,22 +77,22 @@ pushd "${deployments_dir}" > /dev/null
 
   ops_flags=""
 
+
   if [[ -n "${CONCOURSE_TEAMS}" ]]; then
-    CONCOURSE_TEAMS=( $(echo $CONCOURSE_TEAMS | jq -r '.[] | "\"\(.name)\"\n\"\(.vm_type)\"\n\"\(.worker_public_key)\""') )
-    while [ -n "${CONCOURSE_TEAMS:-}" ] && [ ${#CONCOURSE_TEAMS} -ne 0 ]; do
-      if [[ -n "${CONCOURSE_TEAMS[1]}" ]]; then
-        team_name="${CONCOURSE_TEAMS[0]}"
-        vm_type="${CONCOURSE_TEAMS[1]}"
-        worker_public_key="${CONCOURSE_TEAMS[2]} ${CONCOURSE_TEAMS[3]}"
+    for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
+      team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
+      if [[ -n "$(echo "$team" | jq -r .vm_type)" ]]; then
+        team_name="$(echo "$team" | jq -r .name)"
+
         ops_path=${tmp_dir}/${team_name}-ops.yml
-        ${bosh_cli} int ./concourse/worker-ops.yml \
-          -v team="${team_name}" \
-          -v vm_type="${vm_type}" \
-          -v worker_public_key="${worker_public_key}" \
-          > "${ops_path}"
+
+        ${bosh_cli} int \
+          -l <( echo "$team" ) \
+          -v team="$team_name"
+          ./concourse/worker-ops.yml > "${ops_path}"
+
         ops_flags="${ops_flags} --ops-file ${ops_path}"
       fi
-      CONCOURSE_TEAMS=("${CONCOURSE_TEAMS[@]:4}")
     done
   fi
 
