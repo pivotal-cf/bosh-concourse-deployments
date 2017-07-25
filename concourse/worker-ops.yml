@@ -1,4 +1,3 @@
----
 - type: replace
   path: /instance_groups/-
   value:
@@ -31,9 +30,3 @@
         provides:
           baggageclaim: {as: ((team))_baggageclaim}
         properties: {}
-
-- type: replace
-  path: /instance_groups/name=concourse_cpi/jobs/name=tsa/properties/team_authorized_keys/-
-  value:
-    team: ((team))
-    ssh_key: ((worker_public_key))

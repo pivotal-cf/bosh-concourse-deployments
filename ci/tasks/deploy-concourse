@@ -13,6 +13,7 @@ set -eu
 : ${CONCOURSE_EXTERNAL_URL:?}
 : ${CONCOURSE_BASIC_AUTH_USERNAME:?}
 : ${CONCOURSE_BASIC_AUTH_PASSWORD:?}
+: ${CONCOURSE_TEAMS:-"[]"}
 
 deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
 workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
@@ -75,24 +76,21 @@ fi
 pushd "${deployments_dir}" > /dev/null
   echo "Building Concourse manifest..."
 
-  ops_flags=""
-  if [[ -n "${CONCOURSE_TEAMS}" ]]; then
-    for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
-      team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
-      if [[ -n "$(echo "$team" | jq -r .vm_type)" ]]; then
-        team_name="$(echo "$team" | jq -r .name)"
+  for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
+    team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
+    if [[ -n "$(echo "$team" | jq -r .vm_type)" ]]; then
+      team_name="$(echo "$team" | jq -r .name)"
+      ${bosh_cli} int \
+        -l <( echo "$team" | jq '. + {"team": .name}' ) \
+        ./concourse/worker-ops.yml >> "worker-ops.yml"
+    fi
 
-        ops_path=${tmp_dir}/${team_name}-ops.yml
-
-        ${bosh_cli} int \
-          -l <( echo "$team" ) \
-          -v team="$team_name" \
-          ./concourse/worker-ops.yml > "${ops_path}"
-
-        ops_flags="${ops_flags} -o ${ops_path}"
-      fi
-    done
-  fi
+    if [[ -n "$(echo "$team" | jq -r .worker_public_key)" ]]; then
+      ${bosh_cli} int \
+        -l <( echo "$team" | jq '. + {"team": .name}' ) \
+        ./concourse/team-authorized-public-key-ops.yml >> "worker-ops.yml"
+    fi
+  done
 
   echo "Deploying Concourse..."
   ${bosh_cli} -n --tty deploy \
@@ -102,7 +100,7 @@ pushd "${deployments_dir}" > /dev/null
     -v concourse_basic_auth_password=${CONCOURSE_BASIC_AUTH_PASSWORD} \
     -v stemcell_version="'${stemcell_version}'" \
     -d "${DEPLOYMENT_NAME}" \
-    ${ops_flags} \
+    -o "worker-ops.yml" \
     --ops-file ../ops-file.yml \
     -v director_internal_ip="${director_internal_ip}" \
     -v jumpbox_internal_ip="${jumpbox_internal_ip}" \
