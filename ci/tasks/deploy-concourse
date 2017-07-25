@@ -76,8 +76,6 @@ pushd "${deployments_dir}" > /dev/null
   echo "Building Concourse manifest..."
 
   ops_flags=""
-
-
   if [[ -n "${CONCOURSE_TEAMS}" ]]; then
     for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
       team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
@@ -88,10 +86,10 @@ pushd "${deployments_dir}" > /dev/null
 
         ${bosh_cli} int \
           -l <( echo "$team" ) \
-          -v team="$team_name"
+          -v team="$team_name" \
           ./concourse/worker-ops.yml > "${ops_path}"
 
-        ops_flags="${ops_flags} --ops-file ${ops_path}"
+        ops_flags="${ops_flags} -o ${ops_path}"
       fi
     done
   fi
