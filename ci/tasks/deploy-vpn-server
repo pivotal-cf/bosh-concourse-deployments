@@ -27,9 +27,8 @@ ssh_key_path="${tmp_dir}/id_rsa.pem"
 echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
 chmod 400 "${ssh_key_path}"
 
-terraform_metadata="terraform/metadata"
-jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
-director_internal_ip=$( jq -r -e .director_internal_ip ${terraform_metadata} )
+jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip terraform/metadata )
+director_internal_ip=$( jq -r -e .director_internal_ip terraform/metadata )
 
 jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
 ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
@@ -64,7 +63,7 @@ pushd deployments-src > /dev/null
     -v vpn_network="$VPN_NETWORK" \
     -v vpn_network_mask="$VPN_NETWORK_MASK" \
     -v vpn_network_mask_bits="$VPN_NETWORK_MASK_BITS" \
-    -l "$terraform_metadata" \
+    -l ../terraform/metadata \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml"
     vpn/manifest.yml
   echo "Successfully deployed OpenVPN Server!"
