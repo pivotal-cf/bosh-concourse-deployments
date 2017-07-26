@@ -1,5 +1,5 @@
 ---
-name: openvpn-server
+name: openvpn
 
 releases:
 - name: openvpn
