@@ -103,3 +103,6 @@ output "db_tag" {
 output "target_pool" {
   value = "${var.name}"
 }
+output "atc_internal_ip" {
+  value = "${cidrhost(var.internal_cidr,7)}"
+}

@@ -1,0 +1,138 @@
+---
+name: openvpn-server
+
+releases:
+- name: openvpn
+  version: latest
+- name: networking
+  version: latest
+- name: ssoca
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: ((stemcell_version))
+
+update:
+  serial: false
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 30000 - 90000
+  update_watch_time: 30000 - 90000
+
+instance_groups:
+- name: openvpn
+  instances: 1
+  stemcell: default
+  vm_type: openvpn_server
+  azs: [us1]
+  networks:
+  - name: concourse
+    default: [dns, gateway]
+  - name: vip
+    static_ips:
+    - ((vpn_server_external_ip))
+  jobs:
+  - name: iptables
+    release: networking
+    properties:
+      iptables:
+        nat:
+          POSTROUTING:
+          - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((atc_internal_ip))/32 -j MASQUERADE
+  - name: openvpn
+    release: openvpn
+    properties:
+      push_routes:
+      - ((atc_internal_ip)) 255.255.255.255
+      server: ((vpn_network)) ((vpn_network_mask))
+      tls_server: ((server_key_pair))
+      dh_pem: |
+        -----BEGIN DH PARAMETERS-----
+        MIIBCAKCAQEA/oih/YXvkf13npOIF5LW170/V5j4R20NjL/IzgdZUYMlsQtm5zMZ
+        LwA8Vk1v9UnSWkopAGuJ8gZxz4qKk2p2MLzHSDwXC5khGrrJlHfjn7H0lYilyFqn
+        2YhmfCQ7z7ih0jUS/iNf/+xUmfoJn/2OMEY3gmcAxAbtVRqNtGFwsTjtap3Rgbt9
+        /j7Xbrsp3JqSeWN3VSqMzAgUrjkkkv52HcDo4zA1KfN7m+ROj/uGxcrmvZr7G0RK
+        9yJ2f8I1x8EW3p+CmWhHcmoNyxxlfRHIsZ+82+BIessN99pSxCbjWvhggntFLRwC
+        fcrq5wk9ei7dzYjZHSPHqvhmmZgWKJZYQwIBAg==
+        -----END DH PARAMETERS-----
+  - name: ssoca
+    release: ssoca
+    properties:
+      env:
+        banner: ssoca -e bosh-cpi openvpn connect --sudo
+        name: "bosh-cpi"
+        title: "bosh-cpi"
+        # probably want to use a domain
+        url: "https://((vpn_server_external_ip))"
+      # https cert; might want a public one later
+      server:
+        port: 443
+        certificate: ((ssoca_server_tls.certificate))
+        private_key: ((ssoca_server_tls.private_key))
+      auth:
+        type: github
+        options:
+          client_id: ((github_client_id))
+          client_secret: ((github_client_secret))
+          jwt: ((ssoca_jwt))
+      certauths:
+      - name: default
+        type: memory
+        # the openvpn CA's certificate and private_key so we can sign client certificates
+        options: ((ca))
+      services:
+      - type: openvpn
+        require:
+        - authenticated: ~
+        - or:
+          - scope: { present: cloudfoundry/cf-bosh-cpi }
+        options:
+          certauth: default
+          # a new certificate will be required every 6 hours
+          validity: 6h
+          # the base openvpn profile; probably don't need to mess with these
+          profile: |
+            client
+            dev tun
+            proto tcp
+            remote ((vpn_server_external_ip)) 1194
+            resolv-retry 10
+            nobind
+            persist-key
+            persist-tun
+            mute-replay-warnings
+            remote-cert-tls server
+            verb 3
+            mute 20
+            tls-client
+            cipher AES-256-CBC
+            keysize 256
+
+variables:
+- name: ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: ca
+- name: server_key_pair
+  type: certificate
+  options:
+    ca: ca
+    common_name: openvpn
+    alternative_names:
+    - ((atc_internal_ip))
+    extended_key_usage:
+    - server_auth
+- name: ssoca_server_tls
+  type: certificate
+  options:
+    ca: ca
+    common_name: ((vpn_server_external_ip))
+    alternative_names:
+    - ((vpn_server_external_ip))
+    extended_key_usage:
+    - server_auth
+- name: ssoca_jwt
+  type: rsa

@@ -52,3 +52,12 @@ module "concourse" {
   network                      = "${google_compute_network.bosh.name}"
   trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}"]
 }
+
+# VPN Server External IP
+resource "google_compute_address" "vpn_server" {
+  name = "${var.name}-vpn-ip"
+}
+
+output "vpn_server_external_ip" {
+  value = "${google_compute_address.vpn_server.address}"
+}

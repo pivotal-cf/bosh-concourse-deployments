@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -eu
+
+: ${BOSH_CLIENT:?}
+: ${BOSH_CLIENT_SECRET:?}
+: ${BOSH_CA_CERT:?}
+: ${JUMPBOX_SSH_USER:?}
+: ${JUMPBOX_SSH_KEY:?}
+: ${SSOCA_GITHUB_CLIENT_ID:?}
+: ${SSOCA_GITHUB_CLIENT_SECRET:?}
+: ${VPN_NETWORK:?}
+: ${VPN_NETWORK_MASK:?}
+: ${VPN_NETWORK_MASK_BITS:?}
+
+bosh_cli=$( echo bosh-cli/bosh-cli-* )
+chmod +x "${bosh_cli}"
+alias bosh2="${bosh_cli}"
+
+tmp_dir="$( mktemp -d /tmp/deploy-vpn-server-XXXXXXXX)"
+cleanup_tmp_dir() {
+  rm -rf "${tmp_dir}" || true
+}
+trap "{ cleanup_tmp_dir; }" EXIT # will be overridden by future trap calls
+
+ssh_key_path="${tmp_dir}/id_rsa.pem"
+echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
+chmod 400 "${ssh_key_path}"
+
+terraform_metadata="terraform/metadata"
+jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
+director_internal_ip=$( jq -r -e .director_internal_ip ${terraform_metadata} )
+
+jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
+ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
+cleanup_ssh_tunnel() {
+  killall -KILL ssh
+}
+trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
+
+export BOSH_ENVIRONMENT=${director_internal_ip}
+
+ssh ${ssh_args} -D 1080 ${jumpbox_address} &
+export BOSH_ALL_PROXY=socks5://localhost:1080
+
+# DONE >
+echo "Uploading OpenVPN release..."
+bosh2 -n --tty upload-release openvpn-release/openvpn-*.tgz
+echo "Uploading Networking release..."
+bosh2 -n --tty upload-release networking-release/networking-*.tgz
+echo "Uploading SSOCA release..."
+( cd ssoca; bosh2 -n --tty upload-release )
+echo "Uploading stemcell..."
+bosh2 -n --tty upload-stemcell stemcell/*.tgz
+
+stemcell_version=$( cat stemcell/version )
+
+pushd deployments-src > /dev/null
+  echo "Deploying OpenVPN Server..."
+  bosh2 -n --tty deploy -d openvpn \
+    -v stemcell_version="$stemcell_version" \
+    -v github_client_id="${SSOCA_GITHUB_CLIENT_ID}" \
+    -v github_client_secret="${SSOCA_GITHUB_CLIENT_SECRET}" \
+    -v vpn_network="$VPN_NETWORK" \
+    -v vpn_network_mask="$VPN_NETWORK_MASK" \
+    -v vpn_network_mask_bits="$VPN_NETWORK_MASK_BITS" \
+    -l "$terraform_metadata" \
+    --vars-store="you-really-need-this-flag-but-not-this-file.yml"
+    vpn/manifest.yml
+  echo "Successfully deployed OpenVPN Server!"
+popd > /dev/null

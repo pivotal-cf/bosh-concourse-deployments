@@ -172,6 +172,35 @@ jobs:
           file: concourse-and-garden/tag
     ensure: *close-ssh-to-jumpbox
 
+  - name: update-vpn-server
+    serial_groups: [deploy]
+    plan:
+      - aggregate:
+        - get: deployments-src
+        - get: stemcell
+        - get: bosh-cli
+        - get: networking-release
+        - get: openvpn-release
+        - get: ssoca
+      - *open-ssh-to-jumpbox
+      # We sleep for 90 seconds in order for the terraform changes in the
+      # previous task to propagate (it doesn't happen instantaneously)
+      - *wait-for-ssh
+      - task: deploy-vpn-server
+        file: deployments-src/ci/tasks/deploy-vpn-server.yml
+        params:
+          BOSH_CLIENT:                {{director_admin_username}}
+          BOSH_CLIENT_SECRET:         {{director_admin_password}}
+          BOSH_CA_CERT:               {{director_ca_cert}}
+          JUMPBOX_SSH_KEY:            {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:           {{jumpbox_ssh_user}}
+          SSOCA_GITHUB_CLIENT_ID:     {{ssoca_github_client_id}}
+          SSOCA_GITHUB_CLIENT_SECRET: {{ssoca_github_client_secret}}
+          VPN_NETWORK:                {{vpn_network}}
+          VPN_NETWORK_MASK:           {{vpn_network_mask}}
+          VPN_NETWORK_MASK_BITS:      {{vpn_network_mask_bits}}
+    ensure: *close-ssh-to-jumpbox
+
   - name: open-ssh-for-30m
     serial_groups: [deploy]
     plan:
@@ -290,6 +319,15 @@ resources:
       repository: concourse
       owner: concourse
       access_token: {{concourse_config_access_token}}
+  - name: openvpn-release
+    type: bosh-io-release
+    source:
+      repository: dpb587/openvpn-bosh-release
+  - name: ssoca
+    type: git
+    source:
+      uri: https://github.com/dpb587/ssoca-bosh-release.git
+      branch: master
   - name: ulimit
     type: git
     source:

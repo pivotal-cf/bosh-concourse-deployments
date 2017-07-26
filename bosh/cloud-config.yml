@@ -3,6 +3,7 @@ azs:
   cloud_properties: {zone: ((zone))}
 
 vm_types:
+# Used by Concourse ATC and TSA VM
 - name: concourse_cpi
   cloud_properties:
     cpu: 1
@@ -13,6 +14,7 @@ vm_types:
       - ((concourse_atc_tag))
       - ((nat_traffic_tag))
     target_pool: ((concourse_target_pool))
+# Used by Concourse database VM
 - name: concourse_cpi_database
   cloud_properties:
     cpu: 1
@@ -22,25 +24,7 @@ vm_types:
     tags:
       - ((concourse_db_tag))
       - ((nat_traffic_tag))
-- name: concourse_core
-  cloud_properties:
-    cpu: 1
-    ram: 2_560
-    root_disk_size_gb: 20
-    root_disk_type: pd-standard
-    tags:
-#      - ((concourse_atc_tag))
-      - ((nat_traffic_tag))
-    target_pool: ((concourse_target_pool))
-- name: concourse_core_database
-  cloud_properties:
-    cpu: 1
-    ram: 2_560
-    root_disk_size_gb: 20
-    root_disk_type: pd-standard
-    tags:
-      - ((concourse_db_tag))
-      - ((nat_traffic_tag))
+# Concourse Worker vm types
 - name: concourse_worker_8_16
   cloud_properties:
     cpu: 8
@@ -95,6 +79,16 @@ vm_types:
     tags:
       - ((nat_traffic_tag))
       - ((concourse_worker_tag))
+# Used by OpenVPN Server
+- name: openvpn_server
+  cloud_properties:
+    cpu: 1
+    ram: 2_560
+    root_disk_size_gb: 20
+    root_disk_type: pd-standard
+    tags:
+    - openvpn-server
+
 - name: compilation
   cloud_properties:
     machine_type: n1-highcpu-4
