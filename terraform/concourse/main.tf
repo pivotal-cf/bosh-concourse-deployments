@@ -52,6 +52,7 @@ module "concourse" {
   network                      = "${google_compute_network.bosh.name}"
   internal_cidr                = "${var.internal_cidr}"
   trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}"]
+  vpn_server_tag               = "${var.vpn_server_tag}"
 }
 
 output "reserved_range" {
@@ -61,11 +62,29 @@ output "static_range" {
   value = "${cidrhost(var.internal_cidr,11)}-${cidrhost(var.internal_cidr,20)}"
 }
 
-# VPN Server External IP
+# VPN Server
+// Allow External access to VPN server
+resource "google_compute_firewall" "openvpn_server_external" {
+  name    = "${var.vpn_server_tag}-external"
+  network = "${var.network}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["443", "1194"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["${var.vpn_server_tag}"]
+}
+
 resource "google_compute_address" "vpn_server" {
   name = "${var.name}-vpn-ip"
 }
 
 output "vpn_server_external_ip" {
   value = "${google_compute_address.vpn_server.address}"
+}
+
+output "vpn_server_tag" {
+  value = "${var.vpn_server_tag}"
 }

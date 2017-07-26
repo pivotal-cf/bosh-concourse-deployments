@@ -4,6 +4,7 @@ variable "trusted_cidrs" {
   type = "list"
 }
 variable "internal_cidr" {}
+variable "vpn_server_tag" {}
 
 resource "google_compute_address" "concourse" {
   name = "${var.name}-ip"
@@ -47,6 +48,7 @@ resource "google_compute_firewall" "concourse-external" {
   }
 
   source_ranges = ["${var.trusted_cidrs}"]
+  source_tags = ["${var.vpn_server_tag}"]
   target_tags = ["${google_compute_firewall.bosh-atc-to-db.source_tags[0]}"]
 }
 

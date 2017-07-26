@@ -53,3 +53,7 @@ variable "allow_ssh_access_to_jumpbox" {
   default = 0
   description = "Allow SSH access from `trusted_cidrs` to the Jumpbox. Set to 1 to enable."
 }
+
+variable "vpn_server_tag" {
+  default = "openvpn-server"
+}

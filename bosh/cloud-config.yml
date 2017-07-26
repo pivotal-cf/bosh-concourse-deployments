@@ -87,7 +87,7 @@ vm_types:
     root_disk_size_gb: 20
     root_disk_type: pd-standard
     tags:
-    - openvpn-server
+    - ((vpn_server_tag))
 
 - name: compilation
   cloud_properties:
