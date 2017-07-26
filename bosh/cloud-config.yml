@@ -103,19 +103,26 @@ compilation:
   network: concourse
 
 networks:
-  - name: concourse
-    type: dynamic
-    subnets:
-    - az: us1
-      cloud_properties:
-        network_name: ((network))
-        subnetwork_name: ((subnetwork))
-        tags:
-          - ((director_internal_tag))
-  - name: vip
-    type: vip
+- name: concourse
+  type: manual
+  subnets:
+  - az: us1
+    range: ((internal_cidr))
+    gateway: ((internal_gw))
+    dns: [8.8.8.8]
+    reserved:
+    - ((reserved_range))
+    static:
+    - ((static_range))
+    cloud_properties:
+      network_name: ((network))
+      subnetwork_name: ((subnetwork))
+      tags:
+        - ((director_internal_tag))
+- name: vip
+  type: vip
 
 disk_types:
-  - name: persistent
-    disk_size: 500_000
-    cloud_properties: {type: pd-standard}
+- name: persistent
+  disk_size: 500_000
+  cloud_properties: {type: pd-standard}

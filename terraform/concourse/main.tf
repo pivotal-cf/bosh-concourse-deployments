@@ -54,6 +54,13 @@ module "concourse" {
   trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}"]
 }
 
+output "reserved_range" {
+  value = "${cidrhost(var.internal_cidr,2)}-${cidrhost(var.internal_cidr,10)}"
+}
+output "static_range" {
+  value = "${cidrhost(var.internal_cidr,11)}-${cidrhost(var.internal_cidr,20)}"
+}
+
 # VPN Server External IP
 resource "google_compute_address" "vpn_server" {
   name = "${var.name}-vpn-ip"
