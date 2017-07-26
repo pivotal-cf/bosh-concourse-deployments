@@ -45,13 +45,13 @@ export BOSH_ALL_PROXY=socks5://localhost:1080
 
 # DONE >
 echo "Uploading OpenVPN release..."
-bosh2 -n --tty upload-release openvpn-release/openvpn-*.tgz
+bosh2 -n --tty upload-release openvpn-release/release.tgz
 echo "Uploading Networking release..."
-bosh2 -n --tty upload-release networking-release/networking-*.tgz
+bosh2 -n --tty upload-release networking-release/release.tgz
 echo "Uploading SSOCA release..."
 ( cd ssoca; bosh2 -n --tty upload-release )
 echo "Uploading stemcell..."
-bosh2 -n --tty upload-stemcell stemcell/*.tgz
+bosh2 -n --tty upload-stemcell stemcell/stemcell.tgz
 
 stemcell_version=$( cat stemcell/version )
 
