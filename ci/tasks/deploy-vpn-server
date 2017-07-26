@@ -15,7 +15,7 @@ set -eu
 
 bosh_cli=$( echo bosh-cli/bosh-cli-* )
 chmod +x "${bosh_cli}"
-alias bosh2="${bosh_cli}"
+mv "${bosh_cli}" /usr/local/bin/bosh2
 
 tmp_dir="$( mktemp -d /tmp/deploy-vpn-server-XXXXXXXX)"
 cleanup_tmp_dir() {
