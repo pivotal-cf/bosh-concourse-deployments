@@ -45,7 +45,7 @@ instance_groups:
     release: openvpn
     properties:
       push_routes:
-      - ((atc_internal_ip)) 255.255.255.255
+      - ((concourse_external_ip)) 255.255.255.255
       server: ((vpn_network)) ((vpn_network_mask))
       tls_server: ((server_key_pair))
       dh_pem: |
