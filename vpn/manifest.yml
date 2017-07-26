@@ -40,7 +40,7 @@ instance_groups:
       iptables:
         nat:
           POSTROUTING:
-          - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((atc_internal_ip))/32 -j MASQUERADE
+          - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((concourse_external_ip))/32 -j MASQUERADE
   - name: openvpn
     release: openvpn
     properties:
