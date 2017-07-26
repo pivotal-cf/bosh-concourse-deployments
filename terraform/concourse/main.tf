@@ -50,6 +50,7 @@ module "concourse" {
 
   name                         = "${var.name}-concourse"
   network                      = "${google_compute_network.bosh.name}"
+  internal_cidr                = "${var.internal_cidr}"
   trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}"]
 }
 

@@ -3,6 +3,7 @@ variable "network" {}
 variable "trusted_cidrs" {
   type = "list"
 }
+variable "internal_cidr" {}
 
 resource "google_compute_address" "concourse" {
   name = "${var.name}-ip"
