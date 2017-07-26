@@ -2,6 +2,7 @@
 
 set -eu
 
+source deployments-src/ci/utils
 : ${CONCOURSE_EXTERNAL_URL:?}
 : ${CONCOURSE_BASIC_AUTH_USERNAME:?}
 : ${CONCOURSE_BASIC_AUTH_PASSWORD:?}
@@ -17,14 +18,8 @@ yes | ./fly -t concourse login \
   -u "${CONCOURSE_BASIC_AUTH_USERNAME}" \
   -p "${CONCOURSE_BASIC_AUTH_PASSWORD}"
 
-if [[ -n "${CONCOURSE_TEAMS}" ]]; then
-  for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
-    team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
-
-    yes | ./fly -t concourse set-team \
-      --team-name="$( echo "$team" | jq -r .name )" \
-      --github-auth-team="$( echo "$team" | jq -r .github_team )" \
-      --github-auth-client-id="${CONCOURSE_GITHUB_CLIENT_ID}" \
-      --github-auth-client-secret="${CONCOURSE_GITHUB_CLIENT_SECRET}"
-  done
-fi
+set_concourse_teams \
+  concourse \
+  "$CONCOURSE_TEAMS" \
+  "${CONCOURSE_GITHUB_CLIENT_ID}" \
+  "${CONCOURSE_GITHUB_CLIENT_SECRET}"

@@ -78,6 +78,8 @@ pushd "${deployments_dir}" > /dev/null
 
   for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
     team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
+
+    # if there is 'vm_type' create worker for team
     if [[ -n "$(echo "$team" | jq -r .vm_type)" ]]; then
       team_name="$(echo "$team" | jq -r .name)"
       ${bosh_cli} int \
@@ -85,6 +87,7 @@ pushd "${deployments_dir}" > /dev/null
         ./concourse/worker-ops.yml >> "worker-ops.yml"
     fi
 
+    # if 'worker_public_key' add to 'tsa.team_authorized_keys'
     if [[ -n "$(echo "$team" | jq -r .worker_public_key)" ]]; then
       ${bosh_cli} int \
         -l <( echo "$team" | jq '. + {"team": .name}' ) \
