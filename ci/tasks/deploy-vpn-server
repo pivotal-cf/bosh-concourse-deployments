@@ -13,51 +13,30 @@ set -eu
 : ${VPN_NETWORK_MASK:?}
 : ${VPN_NETWORK_MASK_BITS:?}
 
-bosh_cli=$( echo bosh-cli/bosh-cli-* )
-chmod +x "${bosh_cli}"
-mv "${bosh_cli}" /usr/local/bin/bosh2
+source deployments-src/ci/utils
 
-tmp_dir="$( mktemp -d /tmp/deploy-vpn-server-XXXXXXXX)"
-cleanup_tmp_dir() {
-  rm -rf "${tmp_dir}" || true
-}
-trap "{ cleanup_tmp_dir; }" EXIT # will be overridden by future trap calls
+export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip terraform/metadata )"
 
-ssh_key_path="${tmp_dir}/id_rsa.pem"
-echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
-chmod 400 "${ssh_key_path}"
+setup_ssh_tunnel \
+  "${JUMPBOX_SSH_KEY}" \
+  "${JUMPBOX_SSH_USER}@$( jq -r -e .jumpbox_external_ip terraform/metadata )" \
 
-jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip terraform/metadata )
-director_internal_ip=$( jq -r -e .director_internal_ip terraform/metadata )
-
-jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
-ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
-cleanup_ssh_tunnel() {
-  killall -KILL ssh
-}
-trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
-
-export BOSH_ENVIRONMENT=${director_internal_ip}
-
-ssh ${ssh_args} -D 1080 ${jumpbox_address} &
-export BOSH_ALL_PROXY=socks5://localhost:1080
-
-# DONE >
 echo "Uploading OpenVPN release..."
 bosh2 -n --tty upload-release openvpn-release/release.tgz
+
 echo "Uploading Networking release..."
 bosh2 -n --tty upload-release networking-release/release.tgz
+
 echo "Uploading SSOCA release..."
 ( cd ssoca; bosh2 -n --tty upload-release )
+
 echo "Uploading stemcell..."
 bosh2 -n --tty upload-stemcell stemcell/stemcell.tgz
-
-stemcell_version=$( cat stemcell/version )
 
 pushd deployments-src > /dev/null
   echo "Deploying OpenVPN Server..."
   bosh2 -n --tty deploy -d openvpn \
-    -v stemcell_version="$stemcell_version" \
+    -v stemcell_version="$( cat stemcell/version )" \
     -v github_client_id="${SSOCA_GITHUB_CLIENT_ID}" \
     -v github_client_secret="${SSOCA_GITHUB_CLIENT_SECRET}" \
     -v vpn_network="$VPN_NETWORK" \

@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+# Oportunistically configure bosh2 for use
+configure_bosh_cli() {
+  local bosh_input="$(realpath bosh-cli/*bosh-cli-* 2>/dev/null || true)"
+  if [[ -n "${bosh_input}" ]]; then
+    export bosh_cli="/usr/local/bin/bosh2"
+    cp "${bosh_input}" "${bosh_cli}"
+    chmod +x "${bosh_cli}"
+  fi
+}
+configure_bosh_cli
+
 set_concourse_teams() {
   local concourse_target=${1?'Concourse target is required.'}
   local concourse_teams=${2?'Concourse teams are required.'}
@@ -15,4 +26,30 @@ set_concourse_teams() {
       --github-auth-client-id="${concourse_github_client_id}" \
       --github-auth-client-secret="${concourse_github_client_secret}"
   done
+}
+
+setup_ssh_tunnel() {
+  : ${BOSH_ENVIRONMENT:?}
+
+  local jumpbox_ssh_key=${1?'Jumpbox SSH key is required.'}
+  local jumpbox_address=${2?'Jumpbox address is required.'}
+
+  local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXXXX)"
+  local cleanup_tmp_dir() {
+    rm -rf "${tmp_dir}" || true
+  }
+  trap "{ cleanup_tmp_dir; }" EXIT # will be overridden by future trap calls
+
+  local ssh_key_path="${tmp_dir}/id_rsa.pem"
+  echo "${jumpbox_ssh_key}" > "${ssh_key_path}"
+  chmod 400 "${ssh_key_path}"
+
+  local ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
+  local cleanup_ssh_tunnel() {
+    killall -KILL ssh
+  }
+  trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
+
+  ssh ${ssh_args} -D 1080 ${jumpbox_address} &
+  export BOSH_ALL_PROXY=socks5://localhost:1080
 }
