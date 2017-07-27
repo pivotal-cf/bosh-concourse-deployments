@@ -12,7 +12,6 @@ set -eu
 source deployments-src/ci/utils
 
 terraform_metadata="$( realpath terraform/metadata )"
-stemcell_version="$( cat stemcell/version )"
 
 export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip $terraform_metadata )"
 
