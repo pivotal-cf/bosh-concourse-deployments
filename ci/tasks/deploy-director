@@ -33,7 +33,6 @@ if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]
 fi
 
 vars_store="$(mktemp /tmp/vars-store-XXXXXX)"
-trap "{ rm -f '$vars_store'; }" EXIT
 
 cp director-state/*.json updated-director-state
 echo "Updating director..."
@@ -58,3 +57,5 @@ bosh2 -n create-env \
   director-templates/bosh.yml
 
 echo "Successfully updated director!"
+
+rm -f "$vars_store"
