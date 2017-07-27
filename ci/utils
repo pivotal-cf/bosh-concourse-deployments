@@ -76,7 +76,7 @@ cleanup_ssh_tunnel() {
   local tmp_dir=${2?'temp dir is required.'}
   local jumpbox_address=${3?'Jumpbox address is required.'}
 
-  ssh "${ssh_args}" -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
+  ssh $ssh_args -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
 }
 
 ssh_tunnel() {
