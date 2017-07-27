@@ -22,6 +22,6 @@ setup_ssh_tunnel \
 echo "Updating cloud config..."
 bosh2 -n update-cloud-config \
   -l "${terraform_metadata}" \
-  deployments_dir/bosh/cloud-config.yml
+  deployments-src/bosh/cloud-config.yml
 
 echo "Successfully updated cloud-config!"

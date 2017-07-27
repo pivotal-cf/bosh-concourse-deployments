@@ -2,42 +2,29 @@
 
 set -eu
 
-deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
-workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
-
 # env
 : ${GOOGLE_CREDENTIALS:?}
 : ${NATBOX_SECRETS:?}
 
-# inputs
-terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
-nat_state_dir="$( cd "${workspace_dir}/natbox-state" && pwd )"
-bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
-chmod +x "${bosh_cli}"
-
-# outputs
-output_dir="$( cd "${workspace_dir}/updated-natbox-state" && pwd )"
+source deployments-src/ci/utils
 
 tmp_dir="$( mktemp -d /tmp/deploy-natbox-XXXXXXXX)"
-cleanup_tmp_dir() {
-  rm -rf "${tmp_dir}" || true
-}
-trap "{ cleanup_tmp_dir; }" EXIT
+trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT
 
-cp ${nat_state_dir}/*.json "${output_dir}/natbox-state.json"
+cp natbox-state/*.json updated-natbox-state/natbox-state.json
 
 # remove `natbox_` prefix from keys to conform to jumpbox-deployment templates
 terraform_metadata="${tmp_dir}/terraform_metadata"
-jq 'with_entries(.key |= sub("^natbox_"; ""))' "${terraform_config}/metadata" > "${terraform_metadata}"
+jq 'with_entries(.key |= sub("^natbox_"; ""))' "terraform/metadata" > "${terraform_metadata}"
 
-pushd "${workspace_dir}" > /dev/null
+pushd . > /dev/null
   echo "Updating NAT..."
-  ${bosh_cli} -n create-env \
-    --state "${output_dir}/natbox-state.json" \
+  bosh2 -n create-env \
+    --state updated-natbox-state/natbox-state.json \
     -l "${terraform_metadata}" \
     -l <( echo "${NATBOX_SECRETS}" ) \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
-    ${deployments_dir}/natbox/natbox.yml
+    deployments-src/natbox/natbox.yml
 popd > /dev/null
 
 echo "Successfully updated nat!"
