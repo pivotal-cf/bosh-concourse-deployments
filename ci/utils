@@ -51,7 +51,7 @@ setup_ssh_tunnel() {
   chmod 400 "${ssh_key_path}"
 
   local ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
-  trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
+  trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir $tmp_dir; }" EXIT
 
   ssh ${ssh_args} -D 1080 ${jumpbox_address} &
   export BOSH_ALL_PROXY=socks5://localhost:1080

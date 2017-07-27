@@ -15,29 +15,17 @@ set -eu
 : ${CONCOURSE_BASIC_AUTH_PASSWORD:?}
 : ${CONCOURSE_TEAMS:-"[]"}
 
-deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
-workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
+source deployments-src/ci/utils
 
-# inputs
-terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
-concourse_and_garden_release_dir="$( cd "${workspace_dir}/concourse-and-garden" && pwd )"
-ulimit_release_dir="$( cd "${workspace_dir}/ulimit" && pwd )"
-stemcell_dir="$( cd "${workspace_dir}/stemcell" && pwd )"
-bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
-chmod +x "${bosh_cli}"
+terraform_metadata="$( realpath terraform/metadata )"
+stemcell_version="$( cat stemcell/version )"
 
-tmp_dir="$( mktemp -d /tmp/deploy-concourse-XXXXXXXX)"
-cleanup_tmp_dir() {
-  rm -rf "${tmp_dir}" || true
-}
-trap "{ cleanup_tmp_dir; }" EXIT # will be overridden by future trap calls
+export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip $terraform_metadata )"
 
-ssh_key_path="${tmp_dir}/id_rsa.pem"
-echo "${JUMPBOX_SSH_KEY}" > "${ssh_key_path}"
-chmod 400 "${ssh_key_path}"
+setup_ssh_tunnel \
+  "$JUMPBOX_SSH_KEY" \
+  "$JUMPBOX_SSH_USER@$( jq -r -e .jumpbox_external_ip $terraform_metadata )"
 
-terraform_metadata="${terraform_config}/metadata"
-jumpbox_external_ip=$( jq -r -e .jumpbox_external_ip ${terraform_metadata} )
 director_internal_ip=$( jq -r -e .director_internal_ip ${terraform_metadata} )
 jumpbox_internal_ip=$( jq -r -e .jumpbox_internal_ip ${terraform_metadata} )
 natbox_internal_ip=$( jq -r -e .natbox_internal_ip ${terraform_metadata} )
@@ -45,73 +33,65 @@ internal_gw=$( jq -r -e .internal_gw ${terraform_metadata} )
 internal_cidr=$( jq -r -e .internal_cidr ${terraform_metadata} )
 atc_internal_ip=$( jq -r -e .atc_internal_ip ${terraform_metadata} )
 
-jumpbox_address="${JUMPBOX_SSH_USER}@${jumpbox_external_ip}"
-ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
-cleanup_ssh_tunnel() {
-  killall -KILL ssh
-}
-trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir; }" EXIT
-
-export BOSH_ENVIRONMENT=${director_internal_ip}
-
-ssh ${ssh_args} -D 1080 ${jumpbox_address} &
-export BOSH_ALL_PROXY=socks5://localhost:1080
-
 echo "Uploading Concourse release..."
-${bosh_cli} -n --tty upload-release ${concourse_and_garden_release_dir}/concourse-*.tgz
-echo "Uploading Garden release..."
-${bosh_cli} -n --tty upload-release ${concourse_and_garden_release_dir}/garden-runc-*.tgz
-echo "Uploading ulimit release..."
-( cd $ulimit_release_dir; ${bosh_cli} -n --tty upload-release )
-echo "Uploading stemcell..."
-${bosh_cli} -n --tty upload-stemcell ${stemcell_dir}/*.tgz
+bosh2 -n --tty upload-release concourse-and-garden/concourse-*.tgz
 
-stemcell_version=$( cat ${stemcell_dir}/version )
+echo "Uploading Garden release..."
+bosh2 -n --tty upload-release concourse-and-garden/garden-runc-*.tgz
+
+echo "Uploading ulimit release..."
+( cd $(realpath ulimit); bosh2 -n --tty upload-release )
+
+echo "Uploading stemcell..."
+bosh2 -n --tty upload-stemcell ${stemcell_dir}/*.tgz
 
 touch ops-file.yml
 if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]]; then
-  ${bosh_cli} int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /commands | while read -r CMD; do eval $CMD; done
-  ${bosh_cli} int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /ops_file_yml > ops-file.yml
+  bosh2 int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /commands | while read -r CMD; do eval $CMD; done
+  bosh2 int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /ops_file_yml > ops-file.yml
 fi
 
-pushd "${deployments_dir}" > /dev/null
-  echo "Building Concourse manifest..."
+create_worker_ops_file() {
+  local concourse_teams=${1?'Concourse teams is required.'}
 
-  for ((i = 0 ; i < $(echo "$CONCOURSE_TEAMS" | jq -r length) ; i++ )); do
-    team="$(echo "$CONCOURSE_TEAMS" | jq -r ".[$i]")"
+  echo "Building Concourse Workers manifest..."
+
+  for ((i = 0 ; i < $(echo "$concourse_teams" | jq -r length) ; i++ )); do
+    team="$(echo "$concourse_teams" | jq -r ".[$i]")"
 
     # if there is 'vm_type' create worker for team
     if [[ -n "$(echo "$team" | jq -r .vm_type)" ]]; then
       team_name="$(echo "$team" | jq -r .name)"
-      ${bosh_cli} int \
+      bosh2 int \
         -l <( echo "$team" | jq '. + {"team": .name}' ) \
-        ./concourse/worker-ops.yml >> "worker-ops.yml"
+        deployments-src/concourse/worker-ops.yml >> worker-ops.yml
     fi
 
     # if 'worker_public_key' add to 'tsa.team_authorized_keys'
     if [[ -n "$(echo "$team" | jq -r .worker_public_key)" ]]; then
-      ${bosh_cli} int \
+      bosh2 int \
         -l <( echo "$team" | jq '. + {"team": .name}' ) \
-        ./concourse/team-authorized-public-key-ops.yml >> "worker-ops.yml"
+        deployments-src/concourse/team-authorized-public-key-ops.yml >> worker-ops.yml
     fi
   done
 
+  realpath worker-ops.yml
+}
+
+worker_ops_path="$( create_worker_ops_file "$CONCOURSE_TEAMS" )"
+
+pushd deployments-src > /dev/null
   echo "Deploying Concourse..."
-  ${bosh_cli} -n --tty deploy \
+  bosh2 -n --tty deploy \
     -l <(echo "${CONCOURSE_SECRETS}") \
     -v concourse_external_url=${CONCOURSE_EXTERNAL_URL} \
     -v concourse_basic_auth_username=${CONCOURSE_BASIC_AUTH_USERNAME} \
     -v concourse_basic_auth_password=${CONCOURSE_BASIC_AUTH_PASSWORD} \
     -v stemcell_version="'${stemcell_version}'" \
     -d "${DEPLOYMENT_NAME}" \
-    -o "worker-ops.yml" \
-    --ops-file ../ops-file.yml \
-    -v director_internal_ip="${director_internal_ip}" \
-    -v jumpbox_internal_ip="${jumpbox_internal_ip}" \
-    -v natbox_internal_ip="${natbox_internal_ip}" \
-    -v internal_gw="${internal_gw}" \
-    -v internal_cidr="${internal_cidr}" \
-    -v atc_internal_ip="${atc_internal_ip}" \
+    -o "$worker_ops_path" \
+    -o ../ops-file.yml \
+    -l "$terraform_metadata" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
     "${DEPLOYMENT_CONFIG_PATH}"
   echo "Successfully deployed Concourse!"

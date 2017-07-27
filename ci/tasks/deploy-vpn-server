@@ -15,11 +15,14 @@ set -eu
 
 source deployments-src/ci/utils
 
-export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip terraform/metadata )"
+terraform_metadata="$( realpath terraform/metadata )"
+stemcell_version="$( cat stemcell/version )"
+
+export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip $terraform_metadata )"
 
 setup_ssh_tunnel \
-  "${JUMPBOX_SSH_KEY}" \
-  "${JUMPBOX_SSH_USER}@$( jq -r -e .jumpbox_external_ip terraform/metadata )" \
+  "$JUMPBOX_SSH_KEY" \
+  "$JUMPBOX_SSH_USER@$( jq -r -e .jumpbox_external_ip $terraform_metadata )"
 
 echo "Uploading OpenVPN release..."
 bosh2 -n --tty upload-release openvpn-release/release.tgz
@@ -36,13 +39,13 @@ bosh2 -n --tty upload-stemcell stemcell/stemcell.tgz
 pushd deployments-src > /dev/null
   echo "Deploying OpenVPN Server..."
   bosh2 -n --tty deploy -d openvpn \
-    -v stemcell_version="$( cat stemcell/version )" \
-    -v github_client_id="${SSOCA_GITHUB_CLIENT_ID}" \
-    -v github_client_secret="${SSOCA_GITHUB_CLIENT_SECRET}" \
+    -v stemcell_version="$stemcell_version" \
+    -v github_client_id="$SSOCA_GITHUB_CLIENT_ID" \
+    -v github_client_secret="$SSOCA_GITHUB_CLIENT_SECRET" \
     -v vpn_network="$VPN_NETWORK" \
     -v vpn_network_mask="$VPN_NETWORK_MASK" \
     -v vpn_network_mask_bits="$VPN_NETWORK_MASK_BITS" \
-    -l ../terraform/metadata \
+    -l "$terraform_metadata" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
     vpn/manifest.yml
   echo "Successfully deployed OpenVPN Server!"
