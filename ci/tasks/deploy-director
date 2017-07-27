@@ -19,17 +19,12 @@ source deployments-src/ci/utils
 BOSH_CA_CERT="$( read_with_escaped_newlines "${BOSH_CA_CERT}" )"
 BOSH_CA_KEY="$( read_with_escaped_newlines "${BOSH_CA_KEY}" )"
 
-tmp_dir="$( mktemp -d /tmp/deploy-XXXXXX)"
-trap "{ cleanup_tmp_dir '$tmp_dir'; }" EXIT # will be overridden by future trap calls
-
-# remove `director_` prefix from keys to conform to bosh-deployment templates
-terraform_metadata="${tmp_dir}/terraform_metadata"
-jq 'with_entries(.key |= sub("^director_"; ""))' terraform/metadata > "${terraform_metadata}"
+remove_terraform_prefix terraform/metadata director_ > metadata
 
 ssh_tunnel \
    "${JUMPBOX_SSH_KEY}" \
-   "${JUMPBOX_SSH_USER}@$(jq -r -e .jumpbox_external_ip $terraform_metadata)" \
-   "$(jq -r -e .internal_ip $terraform_metadata)"
+   "${JUMPBOX_SSH_USER}@$(jq -r -e .jumpbox_external_ip metadata)" \
+   "$(jq -r -e .internal_ip metadata)"
 
 touch ops-file.yml
 if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]]; then
@@ -42,16 +37,16 @@ echo "Updating director..."
 bosh2 -n create-env \
   -o director-templates/gcp/cpi.yml \
   -o director-templates/local-dns.yml \
-  -o "${deployments_dir}/bosh/debug-ops-file.yml" \
-  -o "${deployments_dir}/bosh/bootstrap-ops-file.yml" \
-  -o "${deployments_dir}/bosh/datadog-ops-file.yml" \
+  -o deployments-src/bosh/debug-ops-file.yml \
+  -o deployments-src/bosh/bootstrap-ops-file.yml \
+  -o deployments-src/bosh/datadog-ops-file.yml \
   -o director-templates/uaa.yml \
   -o director-templates/jumpbox-user.yml \
   -o ops-file.yml \
-  --vars-store "${tmp_dir}/throwaway-var-store" \
+  --vars-store /dev/null \
   -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
   -l <(echo "${JUMPBOX_PUBLIC_KEY}") \
-  -l "${terraform_metadata}" \
+  -l metadata \
   -v "admin_user=${BOSH_CLIENT}" \
   -v "admin_password=${BOSH_CLIENT_SECRET}" \
   -v "default_ca={ \"certificate\": \"${BOSH_CA_CERT}\", \"private_key\": \"${BOSH_CA_KEY}\" }" \

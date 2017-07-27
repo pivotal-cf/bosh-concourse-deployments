@@ -10,22 +10,16 @@ set -eu
 
 source deployments-src/ci/utils
 
-tmp_dir="$( mktemp -d /tmp/deploy-jumpbox-XXXXXXXX)"
-trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT
+remove_terraform_prefix terraform/metadata jumpbox_ > metadata
 
 cp jumpbox-state/*.json updated-jumpbox-state
-
-# remove `jumpbox_` prefix from keys to conform to jumpbox-deployment templates
-terraform_metadata="${tmp_dir}/terraform_metadata"
-jq 'with_entries(.key |= sub("^jumpbox_"; ""))' terraform/metadata > "${terraform_metadata}"
-
 echo "Updating jumpbox..."
 bosh2 -n create-env \
   --state updated-jumpbox-state/jumpbox-state.json \
   -o jumpbox-deployment-src/gcp/cpi.yml \
   -o deployments-src/jumpbox/iptables-opts.yml \
   -o deployments-src/jumpbox/custom-type-opts.yml \
-  -l "${terraform_metadata}" \
+  -l metadata \
   -l <( echo "${JUMPBOX_SECRETS}" ) \
   -l <( echo "${JUMPBOX_PUBLIC_KEY}" ) \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \

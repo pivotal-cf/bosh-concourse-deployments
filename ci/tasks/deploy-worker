@@ -12,10 +12,10 @@ source deployments-src/ci/utils
 source /etc/profile.d/chruby.sh
 chruby $RUBY_VERSION
 
-cp worker-state/*.json updated-worker-state/worker-state.json
-
 ln -s $PWD/concourse-and-garden/concourse-*.tgz concourse-and-garden/concourse-release.tgz
 ln -s $PWD/concourse-and-garden/garden-runc-*.tgz concourse-and-garden/garden-runc-release.tgz
+
+cp worker-state/*.json updated-worker-state/worker-state.json
 
 echo "Updating WORKER..."
 bosh2 -n create-env \

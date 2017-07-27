@@ -8,19 +8,14 @@ set -eu
 
 source deployments-src/ci/utils
 
-tmp_dir="$( mktemp -d /tmp/deploy-natbox-XXXXXXXX)"
-trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT
+remove_terraform_prefix terraform/metadata natbox_ > metadata
 
 cp natbox-state/*.json updated-natbox-state/natbox-state.json
-
-# remove `natbox_` prefix from keys to conform to jumpbox-deployment templates
-terraform_metadata="${tmp_dir}/terraform_metadata"
-jq 'with_entries(.key |= sub("^natbox_"; ""))' "terraform/metadata" > "${terraform_metadata}"
 
 echo "Updating NAT..."
 bosh2 -n create-env \
   --state updated-natbox-state/natbox-state.json \
-  -l "${terraform_metadata}" \
+  -l metadata \
   -l <( echo "${NATBOX_SECRETS}" ) \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
   deployments-src/natbox/natbox.yml

@@ -47,8 +47,6 @@ fi
 create_worker_ops_file() {
   local concourse_teams=${1?'Concourse teams is required.'}
 
-  echo "Building Concourse Workers manifest..."
-
   for ((i = 0 ; i < $(echo "$concourse_teams" | jq -r length) ; i++ )); do
     team="$(echo "$concourse_teams" | jq -r ".[$i]")"
 
@@ -71,6 +69,7 @@ create_worker_ops_file() {
   realpath worker-ops.yml
 }
 
+echo "Building Concourse Workers manifest..."
 worker_ops_path="$( create_worker_ops_file "$CONCOURSE_TEAMS" )"
 
 pushd deployments-src > /dev/null
