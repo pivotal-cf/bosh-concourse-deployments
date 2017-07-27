@@ -2,37 +2,27 @@
 
 set -eu
 
-deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
-workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
-
 # env
 : ${ENVIRONMENT_NAME:?}
 : ${WORKER_SECRETS:?}
 : ${RUBY_VERSION:="2.3.1"}
 
 set +u
+source deployments-src/ci/utils
 source /etc/profile.d/chruby.sh
 chruby $RUBY_VERSION
 
-# inputs
-worker_state_dir="$( cd "${workspace_dir}/worker-state" && pwd )"
-bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
-chmod +x "${bosh_cli}"
-
-# outputs
-output_dir="$( cd "${workspace_dir}/updated-worker-state" && pwd )"
-
-cp ${worker_state_dir}/*.json "${output_dir}/worker-state.json"
+cp worker-state/*.json updated-worker-state/worker-state.json
 
 ln -s $PWD/concourse-and-garden/concourse-*.tgz concourse-and-garden/concourse-release.tgz
 ln -s $PWD/concourse-and-garden/garden-runc-*.tgz concourse-and-garden/garden-runc-release.tgz
 
-pushd "${workspace_dir}" > /dev/null
+pushd . > /dev/null
   echo "Updating WORKER..."
-  ${bosh_cli} -n create-env \
-    --state "${output_dir}/worker-state.json" \
+  bosh2 -n create-env \
+    --state updated-worker-state/worker-state.json \
     -l <( echo "${WORKER_SECRETS}" ) \
-    ${deployments_dir}/${ENVIRONMENT_NAME}/worker.yml
+    deployments-src/${ENVIRONMENT_NAME}/worker.yml
 popd > /dev/null
 
 echo "Successfully updated worker!"

@@ -29,11 +29,30 @@ set_concourse_teams() {
 }
 
 cleanup_tmp_dir() {
-  local tmp_dir={1?'temp dir is required.'}
+  local tmp_dir=${1?'temp dir is required.'}
+
   rm -rf "${tmp_dir}" || true
 }
 
-cleanup_ssh_tunnel() {
+setup_tmp_dir() {
+  local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXXXX)"
+  trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT # will be overridden by future trap calls
+
+  echo "$tmp_dir"
+}
+
+ssh_key_file() {
+  local tmp_dir=${1?'temp dir is required.'}
+  local jumpbox_ssh_key=${2?'Jumpbox SSH key is required.'}
+
+  local ssh_key_path="${tmp_dir}/id_rsa.pem"
+  echo "${jumpbox_ssh_key}" > "${ssh_key_path}"
+  chmod 400 "${ssh_key_path}"
+
+  echo "${ssh_key_path}"
+}
+
+cleanup_bosh_ssh_tunnel() {
   killall -KILL ssh
 }
 
@@ -43,16 +62,33 @@ setup_ssh_tunnel() {
   local jumpbox_ssh_key=${1?'Jumpbox SSH key is required.'}
   local jumpbox_address=${2?'Jumpbox address is required.'}
 
-  local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXXXX)"
-  trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT # will be overridden by future trap calls
-
-  local ssh_key_path="${tmp_dir}/id_rsa.pem"
-  echo "${jumpbox_ssh_key}" > "${ssh_key_path}"
-  chmod 400 "${ssh_key_path}"
+  tmp_dir="$( setup_tmp_dir )"
+  ssh_key_path="$( ssh_key_file $tmp_dir $jumpbox_ssh_key )"
 
   local ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
-  trap "{ cleanup_ssh_tunnel; cleanup_tmp_dir $tmp_dir; }" EXIT
+  trap "{ cleanup_bosh_ssh_tunnel; cleanup_tmp_dir $tmp_dir; }" EXIT
 
   ssh ${ssh_args} -D 1080 ${jumpbox_address} &
   export BOSH_ALL_PROXY=socks5://localhost:1080
+}
+
+cleanup_ssh_tunnel() {
+  local ssh_args=${1?'SSH arguments are required.'}
+  local tmp_dir=${2?'temp dir is required.'}
+  local jumpbox_address=${3?'Jumpbox address is required.'}
+
+  ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
+}
+
+ssh_tunnel() {
+  local jumpbox_ssh_key=${1?'Jumpbox SSH key is required.'}
+  local jumpbox_address=${2?'Jumpbox address is required.'}
+  local machine_internal_ip=${3?'Machine internal IP is required.'}
+
+  tmp_dir="$( setup_tmp_dir )"
+  ssh_key_path="$( ssh_key_file $tmp_dir $jumpbox_ssh_key )"
+
+  ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
+  ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:${machine_internal_ip}:6868 "${jumpbox_address}"
+  trap "{ cleanup_ssh_tunnel $ssh_args $tmp_dir $jumpbox_address; cleanup_tmp_dir $tmp_dir; }" EXIT
 }

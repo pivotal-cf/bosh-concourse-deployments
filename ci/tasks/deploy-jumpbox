@@ -2,51 +2,37 @@
 
 set -eu
 
-deployments_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
-workspace_dir="$( cd "${deployments_dir}/.." && pwd )"
-
 # env
 : ${GOOGLE_CREDENTIALS:?}
 : ${JUMPBOX_SECRETS:?}
 : ${JUMPBOX_PUBLIC_KEY:?}
 : ${TRUSTED_CIDRS:?}
 
-# inputs
-terraform_config="$( cd "${workspace_dir}/terraform" && pwd )"
-jumpbox_state_dir="$( cd "${workspace_dir}/jumpbox-state" && pwd )"
-jumpbox_deployment_dir="$( cd "${workspace_dir}/jumpbox-deployment-src" && pwd )"
-bosh_cli=$( echo ${workspace_dir}/bosh-cli/bosh-cli-* )
-chmod +x "${bosh_cli}"
-
-# outputs
-output_dir="$( cd "${workspace_dir}/updated-jumpbox-state" && pwd )"
+source deployments-src/ci/utils
 
 tmp_dir="$( mktemp -d /tmp/deploy-jumpbox-XXXXXXXX)"
-cleanup_tmp_dir() {
-  rm -rf "${tmp_dir}" || true
-}
-trap "{ cleanup_tmp_dir; }" EXIT
+trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT
 
-cp ${jumpbox_state_dir}/*.json "${output_dir}"
+cp jumpbox-state/*.json updated-jumpbox-state
 
 # remove `jumpbox_` prefix from keys to conform to jumpbox-deployment templates
 terraform_metadata="${tmp_dir}/terraform_metadata"
-jq 'with_entries(.key |= sub("^jumpbox_"; ""))' "${terraform_config}/metadata" > "${terraform_metadata}"
+jq 'with_entries(.key |= sub("^jumpbox_"; ""))' terraform/metadata > "${terraform_metadata}"
 
 pushd "${workspace_dir}" > /dev/null
   echo "Updating jumpbox..."
   ${bosh_cli} -n create-env \
-    --state "${output_dir}/jumpbox-state.json" \
-    --ops-file "${jumpbox_deployment_dir}/gcp/cpi.yml" \
-    --ops-file "${deployments_dir}/jumpbox/iptables-opts.yml" \
-    --ops-file "${deployments_dir}/jumpbox/custom-type-opts.yml" \
+    --state updated-jumpbox-state/jumpbox-state.json \
+    -o jumpbox-deployment-src/gcp/cpi.yml \
+    -o deployments-src/jumpbox/iptables-opts.yml \
+    -o deployments-src/jumpbox/custom-type-opts.yml \
     -l "${terraform_metadata}" \
     -l <( echo "${JUMPBOX_SECRETS}" ) \
     -l <( echo "${JUMPBOX_PUBLIC_KEY}" ) \
     -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
     -v "trusted_cidrs='${TRUSTED_CIDRS}'" \
     -v "machine_type='${MACHINE_TYPE}'" \
-    ${jumpbox_deployment_dir}/jumpbox.yml
+    jumpbox-deployment-src/jumpbox.yml
 popd > /dev/null
 
 echo "Successfully updated jumpbox!"
