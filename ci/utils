@@ -56,13 +56,13 @@ setup_ssh_tunnel() {
   local jumpbox_address=${2?'Jumpbox address is required.'}
 
   local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXXXX)"
-  trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT # will be overridden by future trap calls
-  ssh_key_path="$( ssh_key_file $tmp_dir $jumpbox_ssh_key )"
+  trap "{ cleanup_tmp_dir "$tmp_dir"; }" EXIT # will be overridden by future trap calls
+  ssh_key_path="$( ssh_key_file "$tmp_dir" "$jumpbox_ssh_key" )"
 
-  local ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
-  trap "{ cleanup_bosh_ssh_tunnel; cleanup_tmp_dir $tmp_dir; }" EXIT
+  local ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "${ssh_key_path}" -fnNT"
+  trap "{ cleanup_bosh_ssh_tunnel; cleanup_tmp_dir "$tmp_dir"; }" EXIT
 
-  ssh ${ssh_args} -D 1080 ${jumpbox_address} &
+  ssh "${ssh_args}" -D 1080 "${jumpbox_address}" &
   export BOSH_ALL_PROXY=socks5://localhost:1080
 }
 
@@ -71,7 +71,7 @@ cleanup_ssh_tunnel() {
   local tmp_dir=${2?'temp dir is required.'}
   local jumpbox_address=${3?'Jumpbox address is required.'}
 
-  ssh ${ssh_args} -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
+  ssh "${ssh_args}" -S "${tmp_dir}/tunnel-socket" -O exit "${jumpbox_address}"
 }
 
 ssh_tunnel() {
@@ -80,10 +80,10 @@ ssh_tunnel() {
   local machine_internal_ip=${3?'Machine internal IP is required.'}
 
   local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXXXX)"
-  trap "{ cleanup_tmp_dir $tmp_dir; }" EXIT # will be overridden by future trap calls
-  ssh_key_path="$( ssh_key_file $tmp_dir $jumpbox_ssh_key )"
+  trap "{ cleanup_tmp_dir "$tmp_dir"; }" EXIT # will be overridden by future trap calls
+  ssh_key_path="$( ssh_key_file "$tmp_dir" "$jumpbox_ssh_key" )"
 
   ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
-  ssh ${ssh_args} -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:${machine_internal_ip}:6868 "${jumpbox_address}"
-  trap "{ cleanup_ssh_tunnel $ssh_args $tmp_dir $jumpbox_address; cleanup_tmp_dir $tmp_dir; }" EXIT
+  ssh "${ssh_args}" -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:"${machine_internal_ip}":6868 "${jumpbox_address}"
+  trap "{ cleanup_ssh_tunnel $ssh_args "$tmp_dir" "$jumpbox_address"; cleanup_tmp_dir "$tmp_dir"; }" EXIT
 }
