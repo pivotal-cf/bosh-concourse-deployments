@@ -90,5 +90,5 @@ ssh_tunnel() {
 
   ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"
   ssh $ssh_args -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:"${machine_internal_ip}":6868 "${jumpbox_address}"
-  trap "{ cleanup_ssh_tunnel $ssh_args '$tmp_dir' '$jumpbox_address'; rm -rf '$tmp_dir'; }" EXIT
+  trap "{ cleanup_ssh_tunnel '$ssh_args' '$tmp_dir' '$jumpbox_address'; rm -rf '$tmp_dir'; }" EXIT
 }
