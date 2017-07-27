@@ -32,6 +32,9 @@ if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]
   bosh2 int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /ops_file_yml > ops-file.yml
 fi
 
+vars_store="$(mktemp /tmp/vars-store-XXXXXX)"
+trap "{ rm -f '$vars_store'; }" EXIT
+
 cp director-state/*.json updated-director-state
 echo "Updating director..."
 bosh2 -n create-env \
@@ -43,7 +46,7 @@ bosh2 -n create-env \
   -o director-templates/uaa.yml \
   -o director-templates/jumpbox-user.yml \
   -o ops-file.yml \
-  --vars-store /dev/null \
+  --vars-store "$vars_store" \
   -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
   -l <(echo "${JUMPBOX_PUBLIC_KEY}") \
   -l metadata \
