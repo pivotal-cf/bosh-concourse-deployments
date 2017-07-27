@@ -36,7 +36,7 @@ echo "Uploading ulimit release..."
 ( cd $(realpath ulimit); bosh2 -n --tty upload-release )
 
 echo "Uploading stemcell..."
-bosh2 -n --tty upload-stemcell ${stemcell_dir}/*.tgz
+bosh2 -n --tty upload-stemcell stemcell/*.tgz
 
 touch ops-file.yml
 if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]]; then

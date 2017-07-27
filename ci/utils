@@ -11,6 +11,10 @@ configure_bosh_cli() {
 }
 configure_bosh_cli
 
+read_with_escaped_newlines() {
+  echo "$1" | perl -pe 's|\n|\\n|'
+}
+
 set_concourse_teams() {
   local concourse_target=${1?'Concourse target is required.'}
   local concourse_teams=${2?'Concourse teams are required.'}
@@ -55,8 +59,8 @@ setup_ssh_tunnel() {
   local jumpbox_ssh_key=${1?'Jumpbox SSH key is required.'}
   local jumpbox_address=${2?'Jumpbox address is required.'}
 
-  local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXXXX)"
-  trap "{ cleanup_tmp_dir "$tmp_dir"; }" EXIT # will be overridden by future trap calls
+  local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXX)"
+  trap "{ cleanup_tmp_dir '$tmp_dir'; }" EXIT # will be overridden by future trap calls
   ssh_key_path="$( ssh_key_file "$tmp_dir" "$jumpbox_ssh_key" )"
 
   local ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} -fnNT"
@@ -79,8 +83,8 @@ ssh_tunnel() {
   local jumpbox_address=${2?'Jumpbox address is required.'}
   local machine_internal_ip=${3?'Machine internal IP is required.'}
 
-  local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXXXX)"
-  trap "{ cleanup_tmp_dir "$tmp_dir"; }" EXIT # will be overridden by future trap calls
+  local tmp_dir="$( mktemp -d /tmp/deploy-XXXXXX)"
+  trap "{ cleanup_tmp_dir '$tmp_dir'; }" EXIT # will be overridden by future trap calls
   ssh_key_path="$( ssh_key_file "$tmp_dir" "$jumpbox_ssh_key" )"
 
   ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path}"

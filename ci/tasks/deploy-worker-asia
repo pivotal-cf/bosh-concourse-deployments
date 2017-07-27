@@ -32,15 +32,13 @@ ssh_tunnel \
    "${JUMPBOX_SSH_USER}@${jumpbox_external_ip}" \
    "${worker_internal_ip}"
 
-pushd . > /dev/null
-  echo "Updating WORKER..."
-  bosh2 -n create-env \
-    --state updated-worker-state/worker-state.json \
-    -l "${terraform_metadata}" \
-    -l <( echo "${WORKER_SECRETS}" ) \
-    -l <( echo "${JUMPBOX_PUBLIC_KEY}") \
-    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
-    deployments-src/${ENVIRONMENT_NAME}/worker.yml
-popd > /dev/null
+echo "Updating WORKER..."
+bosh2 -n create-env \
+  --state updated-worker-state/worker-state.json \
+  -l "${terraform_metadata}" \
+  -l <( echo "${WORKER_SECRETS}" ) \
+  -l <( echo "${JUMPBOX_PUBLIC_KEY}") \
+  -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
+  deployments-src/${ENVIRONMENT_NAME}/worker.yml
 
 echo "Successfully updated worker!"

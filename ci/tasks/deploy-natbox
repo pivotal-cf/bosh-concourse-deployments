@@ -17,14 +17,12 @@ cp natbox-state/*.json updated-natbox-state/natbox-state.json
 terraform_metadata="${tmp_dir}/terraform_metadata"
 jq 'with_entries(.key |= sub("^natbox_"; ""))' "terraform/metadata" > "${terraform_metadata}"
 
-pushd . > /dev/null
-  echo "Updating NAT..."
-  bosh2 -n create-env \
-    --state updated-natbox-state/natbox-state.json \
-    -l "${terraform_metadata}" \
-    -l <( echo "${NATBOX_SECRETS}" ) \
-    -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
-    deployments-src/natbox/natbox.yml
-popd > /dev/null
+echo "Updating NAT..."
+bosh2 -n create-env \
+  --state updated-natbox-state/natbox-state.json \
+  -l "${terraform_metadata}" \
+  -l <( echo "${NATBOX_SECRETS}" ) \
+  -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
+  deployments-src/natbox/natbox.yml
 
 echo "Successfully updated nat!"

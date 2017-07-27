@@ -17,12 +17,10 @@ cp worker-state/*.json updated-worker-state/worker-state.json
 ln -s $PWD/concourse-and-garden/concourse-*.tgz concourse-and-garden/concourse-release.tgz
 ln -s $PWD/concourse-and-garden/garden-runc-*.tgz concourse-and-garden/garden-runc-release.tgz
 
-pushd . > /dev/null
-  echo "Updating WORKER..."
-  bosh2 -n create-env \
-    --state updated-worker-state/worker-state.json \
-    -l <( echo "${WORKER_SECRETS}" ) \
-    deployments-src/${ENVIRONMENT_NAME}/worker.yml
-popd > /dev/null
+echo "Updating WORKER..."
+bosh2 -n create-env \
+  --state updated-worker-state/worker-state.json \
+  -l <( echo "${WORKER_SECRETS}" ) \
+  deployments-src/${ENVIRONMENT_NAME}/worker.yml
 
 echo "Successfully updated worker!"
