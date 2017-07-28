@@ -50,7 +50,7 @@ destroy_stale_teams() {
 
   echo "Destroying stale Concourse teams..."
 
-  fly -t $concourse_target teams \
+  ./fly -t $concourse_target teams \
     | xargs -n 1 -I team echo '{"name": "team"}' \
     > /tmp/current-teams.json
   local current_teams="$( cat /tmp/current-teams.json | jq -s . )"
@@ -61,7 +61,7 @@ destroy_stale_teams() {
     local found=$( echo "$concourse_teams" | jq -r --arg t $team_name '. | map(select(.name == $t))[0] != null' )
     if [[ "$found" == "false" && "$team_name" != "main" ]]; then
       echo -e "\nDestroying '$team_name' team!!!"
-      echo "$team_name" | fly -t "$concourse_target" destroy-team -n "$team_name"
+      echo "$team_name" | ./fly -t "$concourse_target" destroy-team -n "$team_name"
     fi
   done
 }
