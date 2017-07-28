@@ -30,8 +30,6 @@ set_concourse_teams \
   "${concourse_github_client_id}" \
   "${concourse_github_client_secret}"
 
-echo '# Generated $( date )' >> ./upgrader-state.json
-
 echo "Finished successfully"
 echo "Remember to commit the statefile changes when deploy is finished!"
 
