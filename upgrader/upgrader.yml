@@ -1,9 +1,4 @@
 ---
-
-# TO UPDATE:
-#   bosh create-env ./upgrader.yml -l <( lpass show --notes "bosh-concourse-upgrader-create-env" )
-#   Remember to commit the statefile changes when deploy is finished!
-
 name: concourse
 
 releases:

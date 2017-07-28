@@ -17,6 +17,7 @@ jobs:
             params:
               globs: ['concourse-*.tgz','garden-runc-*.tgz']
           - get: stemcell
+          - get: os-conf-release
         - &asia-open-ssh-to-jumpbox
           put: terraform
           params:
@@ -131,7 +132,6 @@ jobs:
               allow_mbus_access_to_natbox: 0
               allow_mbus_access_to_jumpbox: 0
 
-
   - name: open-ssh-for-30m
     serial_groups: [deploy-asia]
     plan:
@@ -231,6 +231,10 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry/networking-release
+  - name: os-conf-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/os-conf-release
   - name: concourse-and-garden
     type: github-release
     source:

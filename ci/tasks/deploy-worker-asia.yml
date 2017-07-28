@@ -11,6 +11,7 @@ inputs:
   - name: bosh-cpi-release
   - name: bosh-cli
   - name: concourse-and-garden
+  - name: os-conf-release
   - name: worker-state
   - name: stemcell
   - name: terraform
