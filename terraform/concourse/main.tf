@@ -70,6 +70,6 @@ module "concourse" {
   name                         = "${var.name}-concourse"
   network                      = "${google_compute_network.bosh.name}"
   internal_cidr                = "${var.internal_cidr}"
-  trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}, ${google_compute_address.vpn_server.address}"]
+  trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}", "${google_compute_address.vpn_server.address}"]
   vpn_server_tag               = "${var.vpn_server_tag}"
 }
