@@ -1,11 +1,7 @@
 #!/bin/bash
 set -eu
 
-jumpbox_ip=$1
-if [[ -z "${jumpbox_ip}" ]]; then
-  echo "Provide the jumpbox IP Address"
-  exit 1
-fi
+jumpbox_ip="${1?Provide the jumpbox IP Address}"
 
 BOSH_CONCOURSE_UPGRADER_SECURE_NOTE=bosh-concourse-upgrader-cpi-pipeline
 
@@ -42,7 +38,12 @@ export BOSH_GW_PRIVATE_KEY="$tmp_dir/vcap.pem"
 ssh \
   -M -S "${tmp_dir}/tunnel-socket" \
   -i "$tmp_dir/vcap.pem" -fnNT -D 1080 jumpbox@"$jumpbox_ip"
-trap "{ ssh -S '$tmp_dir/tunnel-socket' -O exit jumpbox@$jumpbox_ip; rm -rf '$tmp_dir'; }" EXIT
+trap "{ ssh -S '$tmp_dir/tunnel-socket' -O exit jumpbox@'$jumpbox_ip'; rm -rf '$tmp_dir'; }" EXIT
 export BOSH_ALL_PROXY=socks5://localhost:1080
 
-$SHELL
+$SHELL --rcfile <(cat ~/.bashrc - <<'EOF'
+prompt_command () {
+    PS1="\n$(battery_char) $(clock_char) ${purple}\h ${yellow}→ ${yellow}jumpbox ${yellow}→ ${red}bosh_director ${reset_color}in ${green}\w\n${bold_cyan}$(scm_char)${green}$(scm_prompt_info) ${green}→${reset_color} "
+}
+EOF
+)
