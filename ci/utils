@@ -28,14 +28,41 @@ set_concourse_teams() {
   local concourse_github_client_id=${3?'Concourse GitHub Client ID is required.'}
   local concourse_github_client_secret=${4?'Concourse GitHub Client Secret is required.'}
 
-  for ((i = 0 ; i < $(echo "$concourse_teams" | jq -r length) ; i++ )); do
-    team="$(echo "$concourse_teams" | jq -r ".[$i]")"
+  destroy_stale_teams "$concourse_target" "$concourse_teams"
 
+  echo "Setting Concourse teams..."
+
+  for ((i = 0 ; i < $(echo "$concourse_teams" | jq -r length) ; i++ )); do
+    local team="$(echo "$concourse_teams" | jq -r ".[$i]")"
+
+    echo -e "\nAdding '$( echo "$team" | jq -r .name )' team!"
     yes | ./fly -t $concourse_target set-team \
       --team-name="$( echo "$team" | jq -r .name )" \
       --github-auth-team="$( echo "$team" | jq -r .github_team )" \
       --github-auth-client-id="${concourse_github_client_id}" \
       --github-auth-client-secret="${concourse_github_client_secret}"
+  done
+}
+
+destroy_stale_teams() {
+  local concourse_target=${1?'Concourse target is required.'}
+  local concourse_teams=${2?'Concourse teams are required.'}
+
+  echo "Destroying stale Concourse teams..."
+
+  fly -t $concourse_target teams \
+    | xargs -n 1 -I team echo '{"name": "team"}' \
+    > /tmp/current-teams.json
+  local current_teams="$( cat /tmp/current-teams.json | jq -s . )"
+
+  for ((i = 0; i < $(echo "$current_teams" | jq -r length) ; i++ )); do
+    local team_name="$(echo "$current_teams" | jq -r ".[$i].name")"
+
+    local found=$( echo "$concourse_teams" | jq -r --arg t $team_name '. | map(select(.name == $t))[0] != null' )
+    if [[ "$found" == "false" && "$team_name" != "main" ]]; then
+      echo -e "\nDestroying '$team_name' team!!!"
+      echo "$team_name" | fly -t "$concourse_target" destroy-team -n "$team_name"
+    fi
   done
 }
 
