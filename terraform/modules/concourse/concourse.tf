@@ -48,7 +48,6 @@ resource "google_compute_firewall" "concourse-external" {
   }
 
   source_ranges = ["${var.trusted_cidrs}"]
-  source_tags = ["${var.vpn_server_tag}"]
   target_tags = ["${google_compute_firewall.bosh-atc-to-db.source_tags[0]}"]
 }
 
@@ -105,7 +104,4 @@ output "db_tag" {
 }
 output "target_pool" {
   value = "${var.name}"
-}
-output "atc_internal_ip" {
-  value = "${cidrhost(var.internal_cidr,11)}"
 }

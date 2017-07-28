@@ -58,10 +58,6 @@ output "director_internal_ip" {
   value = "${module.director.internal_ip}"
 }
 
-output "atc_internal_ip" {
-  value = "${module.concourse.atc_internal_ip}"
-}
-
 output "director_tags" {
   value = ["${module.director.tag}", "${module.concourse_subnet.nat_traffic_tag}"]
 }
@@ -88,4 +84,12 @@ output "concourse_db_tag" {
 
 output "concourse_target_pool" {
   value = "${module.concourse.target_pool}"
+}
+
+output "vpn_server_external_ip" {
+  value = "${google_compute_address.vpn_server.address}"
+}
+
+output "vpn_server_tag" {
+  value = "${var.vpn_server_tag}"
 }

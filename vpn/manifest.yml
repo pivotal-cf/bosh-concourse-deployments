@@ -39,8 +39,6 @@ instance_groups:
     properties:
       iptables:
         nat:
-          PREROUTING:
-          - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((concourse_external_ip))/32 -j DNAT --to-destination ((atc_internal_ip))
           POSTROUTING:
           - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((concourse_external_ip))/32 -j MASQUERADE
   - name: openvpn
@@ -124,7 +122,7 @@ variables:
     ca: ca
     common_name: openvpn
     alternative_names:
-    - ((atc_internal_ip))
+    - ((vpn_server_external_ip))
     extended_key_usage:
     - server_auth
 - name: ssoca_server_tls

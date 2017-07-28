@@ -32,8 +32,6 @@ instance_groups:
   networks:
   - name: concourse
     default: [dns, gateway]
-    static_ips:
-    - ((atc_internal_ip))
   jobs:
     - name: atc
       release: concourse

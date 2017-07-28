@@ -77,16 +77,9 @@ compilation:
 
 networks:
 - name: concourse
-  type: manual
+  type: dynamic
   subnets:
   - az: us1
-    range: ((internal_cidr))
-    gateway: ((internal_gw))
-    dns: [8.8.8.8]
-    reserved:
-    - ((reserved_range))
-    static:
-    - ((static_range))
     cloud_properties:
       network_name: ((network))
       subnetwork_name: ((subnetwork))
