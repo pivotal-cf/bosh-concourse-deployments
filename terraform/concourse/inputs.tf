@@ -11,6 +11,7 @@ variable "trusted_cidrs" {
     type = "string"
 }
 
+# web_trusted_cidrs will be deprecated when the VPN is fully setup
 variable "web_trusted_cidrs" {
     type = "string"
 }

@@ -125,6 +125,9 @@ variables:
     - ((vpn_server_external_ip))
     extended_key_usage:
     - server_auth
+- name: ssoca_jwt
+  type: rsa
+# Use valid certificates
 - name: ssoca_server_tls
   type: certificate
   options:
@@ -134,5 +137,3 @@ variables:
     - ((vpn_server_external_ip))
     extended_key_usage:
     - server_auth
-- name: ssoca_jwt
-  type: rsa
