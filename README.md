@@ -173,7 +173,7 @@ After deploying the worker, authenticate with Concourse and confirm worker has r
 
 ### Troubleshooting
 
-Refer to the _Troubleshooting_ document under `docs/`.
+Refer to the _Troubleshooting_ document under [docs/](`docs/`).
 
 ## Figures
 

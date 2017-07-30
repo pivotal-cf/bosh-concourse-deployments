@@ -8,6 +8,7 @@ set -eu
 : ${JUMPBOX_SSH_USER:?}
 : ${JUMPBOX_SSH_KEY:?}
 : ${VPN_SECRETS:?}
+: ${CONCOURSE_TEAMS:-"[]"}
 
 source deployments-src/ci/utils
 
@@ -32,11 +33,27 @@ echo "Uploading SSOCA release..."
 echo "Uploading stemcell..."
 bosh2 -n --tty upload-stemcell stemcell/stemcell.tgz
 
+generate_ops_file() {
+  local team=${1?'Concourse team is required.'}
+  local ops_file=${2?'Ops file is required.'}
+
+  bosh2 int \
+    -o openvpn-team-ops.yml \
+    -v github_team="$( echo $team | jq .github_team )" \
+    >> "$ops_file"
+}
+
+pushd vpn > /dev/null
+  iterate_teams "$CONCOURSE_TEAMS" \
+    generate_ops_file /tmp/ssoca-teams-ops.yml
+popd > /dev/null
+
 pushd deployments-src > /dev/null
   echo "Deploying OpenVPN Server..."
   bosh2 -n --tty deploy -d openvpn \
-    -l <(echo "${VPN_SECRETS}") \
     -v stemcell_version="$stemcell_version" \
+    -o /tmp/ssoca-teams-ops.yml \
+    -l <(echo "${VPN_SECRETS}") \
     -l "$terraform_metadata" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
     vpn/manifest.yml

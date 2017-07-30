@@ -1,0 +1,4 @@
+- type: replace
+  path: /instance_groups/name=openvpn/jobs/name=ssoca/services/type=openvpn/require/or/-
+  value:
+    scope: { present: ((github_team)) } # in the format ORG/TEAM

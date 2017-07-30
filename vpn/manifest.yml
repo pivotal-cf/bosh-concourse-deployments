@@ -84,8 +84,7 @@ instance_groups:
       - type: openvpn
         require:
         - authenticated: ~
-        - or:
-          - scope: { present: cloudfoundry/cf-bosh-cpi }
+        - or: [] # github team in the format ORG/TEAM
         options:
           certauth: default
           # a new certificate will be required every 6 hours

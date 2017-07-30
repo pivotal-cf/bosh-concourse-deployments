@@ -22,26 +22,28 @@ remove_terraform_prefix() {
   jq --arg prefix "$prefix" 'with_entries(.key |= sub("^" + $prefix; ""))' "$terraform_metadata"
 }
 
-set_concourse_teams() {
-  local concourse_target=${1?'Concourse target is required.'}
-  local concourse_teams=${2?'Concourse teams are required.'}
-  local concourse_github_client_id=${3?'Concourse GitHub Client ID is required.'}
-  local concourse_github_client_secret=${4?'Concourse GitHub Client Secret is required.'}
-
-  destroy_stale_teams "$concourse_target" "$concourse_teams"
-
-  echo "Setting Concourse teams..."
+iterate_teams() {
+  local concourse_teams=${1?'Concourse teams are required.'}
+  local function=${2?'BASH function is required.'}
 
   for ((i = 0 ; i < $(echo "$concourse_teams" | jq -r length) ; i++ )); do
     local team="$(echo "$concourse_teams" | jq -r ".[$i]")"
-
-    echo -e "\nAdding '$( echo "$team" | jq -r .name )' team!"
-    yes | ./fly -t $concourse_target set-team \
-      --team-name="$( echo "$team" | jq -r .name )" \
-      --github-auth-team="$( echo "$team" | jq -r .github_team )" \
-      --github-auth-client-id="${concourse_github_client_id}" \
-      --github-auth-client-secret="${concourse_github_client_secret}"
+    eval $function "$team" "$@:3"
   done
+}
+
+set_team() {
+  local team=${1?'Concourse team is required.'}
+  local concourse_target=${2?'Concourse target is required.'}
+  local concourse_github_client_id=${3?'Concourse GitHub Client ID is required.'}
+  local concourse_github_client_secret=${4?'Concourse GitHub Client Secret is required.'}
+
+  echo -e "\nAdding '$( echo "$team" | jq -r .name )' team!"
+  yes | ./fly -t $concourse_target set-team \
+    --team-name="$( echo "$team" | jq -r .name )" \
+    --github-auth-team="$( echo "$team" | jq -r .github_team )" \
+    --github-auth-client-id="${concourse_github_client_id}" \
+    --github-auth-client-secret="${concourse_github_client_secret}"
 }
 
 destroy_stale_teams() {
