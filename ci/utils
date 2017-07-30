@@ -51,7 +51,8 @@ destroy_stale_teams() {
   echo "Destroying stale Concourse teams..."
 
   ./fly -t $concourse_target teams \
-    | xargs -n 1 -I team echo '{"name": "team"}' \
+    | awk '{$1=$1}1' \
+    | xargs -I team echo '{"name": "team"}' \
     > /tmp/current-teams.json
   local current_teams="$( cat /tmp/current-teams.json | jq -s . )"
 
