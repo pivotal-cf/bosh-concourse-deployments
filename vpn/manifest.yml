@@ -63,14 +63,12 @@ instance_groups:
       env:
         banner: ssoca -e bosh-cpi openvpn connect --sudo
         name: "bosh-cpi"
-        title: "bosh-cpi"
-        # probably want to use a domain
-        url: "https://((vpn_server_external_ip))"
-      # https cert; might want a public one later
+        title: "BOSH CPI VPN"
+        url: "((ssoca_external_url))"
       server:
         port: 443
-        certificate: ((ssoca_server_tls.certificate))
-        private_key: ((ssoca_server_tls.private_key))
+        certificate: ((ssoca_server_tls_certificate))
+        private_key: ((ssoca_server_tls_private_key))
       auth:
         type: github
         options:
@@ -127,13 +125,3 @@ variables:
     - server_auth
 - name: ssoca_jwt
   type: rsa
-# Use valid certificates
-- name: ssoca_server_tls
-  type: certificate
-  options:
-    ca: ca
-    common_name: ((vpn_server_external_ip))
-    alternative_names:
-    - ((vpn_server_external_ip))
-    extended_key_usage:
-    - server_auth
