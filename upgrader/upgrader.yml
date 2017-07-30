@@ -3,8 +3,8 @@ name: concourse
 
 releases:
 - name: concourse
-  url: https://bosh.io/d/github.com/concourse/concourse?v=3.3.2
-  sha1: 2c876303dc6866afb845e728eab58abae8ff3be2
+  url: https://bosh.io/d/github.com/concourse/concourse?v=3.3.3
+  sha1: 54caee9700434f446587c33dce1a4cf44df3c668
 - name: garden-runc
   url: https://github.com/concourse/concourse/releases/download/v3.0.1/garden-runc-1.6.0.tgz
   sha1: 58fbc64aff303e6d76899441241dd5dacef50cb7

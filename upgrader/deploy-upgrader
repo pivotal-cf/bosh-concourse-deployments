@@ -24,7 +24,7 @@ chmod +x ./fly
 
 ./fly -t upgrader login -c "${concourse_external_url}"
 
-destroy_stale_teams concourse "$concourse_teams"
+destroy_stale_teams upgrader "$concourse_teams"
 
 iterate_teams "$concourse_teams" \
   set_team upgrader "${concourse_github_client_id}" "${concourse_github_client_secret}"

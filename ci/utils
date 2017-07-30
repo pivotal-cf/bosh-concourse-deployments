@@ -28,7 +28,7 @@ iterate_teams() {
 
   for ((i = 0 ; i < $(echo "$concourse_teams" | jq -r length) ; i++ )); do
     local team="$(echo "$concourse_teams" | jq -r ".[$i]")"
-    eval $function "$team" "$@:3"
+    $function "$team" "${@:3}"
   done
 }
 
