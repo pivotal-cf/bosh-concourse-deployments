@@ -16,16 +16,12 @@ inputs:
   - name: terraform
 
 params:
-  JUMPBOX_SSH_USER:           ""
-  JUMPBOX_SSH_KEY:            ""
-  BOSH_CLIENT:                ""
-  BOSH_CLIENT_SECRET:         ""
-  BOSH_CA_CERT:               ""
-  SSOCA_GITHUB_CLIENT_ID:     ""
-  SSOCA_GITHUB_CLIENT_SECRET: ""
-  VPN_NETWORK:                ""
-  VPN_NETWORK_MASK:           ""
-  VPN_NETWORK_MASK_BITS:      ""
+  JUMPBOX_SSH_USER:   ""
+  JUMPBOX_SSH_KEY:    ""
+  BOSH_CLIENT:        ""
+  BOSH_CLIENT_SECRET: ""
+  BOSH_CA_CERT:       ""
+  VPN_SECRETS:        ""
 
 run:
   path: deployments-src/ci/tasks/deploy-vpn-server

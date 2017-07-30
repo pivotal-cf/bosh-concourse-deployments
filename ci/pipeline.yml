@@ -189,16 +189,12 @@ jobs:
       - task: deploy-vpn-server
         file: deployments-src/ci/tasks/deploy-vpn-server.yml
         params:
-          BOSH_CLIENT:                {{director_admin_username}}
-          BOSH_CLIENT_SECRET:         {{director_admin_password}}
-          BOSH_CA_CERT:               {{director_ca_cert}}
-          JUMPBOX_SSH_KEY:            {{jumpbox_ssh_key}}
-          JUMPBOX_SSH_USER:           {{jumpbox_ssh_user}}
-          SSOCA_GITHUB_CLIENT_ID:     {{ssoca_github_client_id}}
-          SSOCA_GITHUB_CLIENT_SECRET: {{ssoca_github_client_secret}}
-          VPN_NETWORK:                {{vpn_network}}
-          VPN_NETWORK_MASK:           {{vpn_network_mask}}
-          VPN_NETWORK_MASK_BITS:      {{vpn_network_mask_bits}}
+          BOSH_CLIENT:        {{director_admin_username}}
+          BOSH_CLIENT_SECRET: {{director_admin_password}}
+          BOSH_CA_CERT:       {{director_ca_cert}}
+          JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:   {{jumpbox_ssh_user}}
+          VPN_SECRETS:        {{cpi_vpn_secrets}}
     ensure: *close-ssh-to-jumpbox
 
   - name: open-ssh-for-30m
