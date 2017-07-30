@@ -43,12 +43,12 @@ generate_ops_file() {
     >> "$ops_file"
 }
 
-pushd vpn > /dev/null
-  iterate_teams "$CONCOURSE_TEAMS" \
-    generate_ops_file /tmp/ssoca-teams-ops.yml
-popd > /dev/null
-
 pushd deployments-src > /dev/null
+  pushd vpn > /dev/null
+    iterate_teams "$CONCOURSE_TEAMS" \
+      generate_ops_file /tmp/ssoca-teams-ops.yml
+  popd > /dev/null
+
   echo "Deploying OpenVPN Server..."
   bosh2 -n --tty deploy -d openvpn \
     -v stemcell_version="$stemcell_version" \
