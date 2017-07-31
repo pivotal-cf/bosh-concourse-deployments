@@ -70,9 +70,10 @@ output "director_internal_tag" {
 output "bosh_cpi" {
   value = {
     external_ip = "${module.concourse.external_ip}"
-    atc_tag = "${module.concourse.atc_tag}"
-    db_tag = "${module.concourse.db_tag}"
+    atc_tag     = "${module.concourse.atc_tag}"
+    db_tag      = "${module.concourse.db_tag}"
     target_pool = "${module.concourse.target_pool}"
+    worker_tag  = "${module.concourse.worker_tag}"
   }
 }
 
@@ -80,9 +81,10 @@ output "bosh_cpi" {
 output "bosh_core" {
   value = {
     external_ip = "${module.concourse_core.external_ip}"
-    atc_tag = "${module.concourse_core.atc_tag}"
-    db_tag = "${module.concourse_core.db_tag}"
+    atc_tag     = "${module.concourse_core.atc_tag}"
+    db_tag      = "${module.concourse_core.db_tag}"
     target_pool = "${module.concourse_core.target_pool}"
+    worker_tag  = "${module.concourse_core.worker_tag}"
   }
 }
 
