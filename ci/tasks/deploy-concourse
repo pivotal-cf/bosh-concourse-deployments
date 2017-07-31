@@ -29,6 +29,9 @@ setup_ssh_tunnel \
 echo "Uploading Concourse release..."
 bosh2 -n --tty upload-release concourse-and-garden/concourse-*.tgz
 
+echo "Uploading Concourse Windows release..."
+bosh2 -n --tty upload-release concourse-windows/release.tgz
+
 echo "Uploading Garden release..."
 bosh2 -n --tty upload-release concourse-and-garden/garden-runc-*.tgz
 
@@ -37,6 +40,9 @@ echo "Uploading ulimit release..."
 
 echo "Uploading stemcell..."
 bosh2 -n --tty upload-stemcell stemcell/*.tgz
+
+echo "Uploading Windows stemcell..."
+bosh2 -n --tty upload-stemcell windows-stemcell/*.tgz
 
 touch ops-file.yml
 if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]]; then
