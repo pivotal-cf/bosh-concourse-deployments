@@ -37,19 +37,15 @@ generate_ops_file() {
   local team=${1?'Concourse team is required.'}
   local ops_file=${2?'Ops file is required.'}
 
-  echo "OPS FILE: $ops_file"
-
   bosh2 int \
     -v github_team="$( echo $team | jq .github_team )" \
     openvpn-team-ops.yml \
     >> "$ops_file"
 }
 
-pushd deployments-src > /dev/null
-  pushd vpn > /dev/null
-    iterate_teams "$CONCOURSE_TEAMS" \
-      generate_ops_file /tmp/ssoca-teams-ops.yml
-  popd > /dev/null
+pushd deployments-src/vpn > /dev/null
+  iterate_teams "$CONCOURSE_TEAMS" \
+    generate_ops_file /tmp/ssoca-teams-ops.yml
 
   echo "Deploying OpenVPN Server..."
   bosh2 -n --tty deploy -d openvpn \
@@ -58,6 +54,6 @@ pushd deployments-src > /dev/null
     -l <(echo "${VPN_SECRETS}") \
     -l "$terraform_metadata" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
-    vpn/manifest.yml
+    manifest.yml
   echo "Successfully deployed OpenVPN Server!"
 popd > /dev/null
