@@ -37,9 +37,11 @@ generate_ops_file() {
   local team=${1?'Concourse team is required.'}
   local ops_file=${2?'Ops file is required.'}
 
+  echo "OPS FILE: $ops_file"
+
   bosh2 int \
-    -o openvpn-team-ops.yml \
     -v github_team="$( echo $team | jq .github_team )" \
+    openvpn-team-ops.yml \
     >> "$ops_file"
 }
 

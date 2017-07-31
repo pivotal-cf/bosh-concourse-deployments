@@ -22,6 +22,7 @@ params:
   BOSH_CLIENT_SECRET: ""
   BOSH_CA_CERT:       ""
   VPN_SECRETS:        ""
+  CONCOURSE_TEAMS:    ""
 
 run:
   path: deployments-src/ci/tasks/deploy-vpn-server
