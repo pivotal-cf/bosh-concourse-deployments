@@ -72,7 +72,7 @@ instance_groups:
 
 - name: worker
   instances: 4
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -100,7 +100,7 @@ instance_groups:
 
 - name: worker-brats
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -131,7 +131,7 @@ instance_groups:
 
 - name: worker_integration-1
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   jobs:
@@ -159,7 +159,7 @@ instance_groups:
 
 - name: worker_integration-2
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   jobs:
@@ -187,7 +187,7 @@ instance_groups:
 
 - name: worker_integration-3
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   jobs:
@@ -215,7 +215,7 @@ instance_groups:
 
 - name: worker_integration-4
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -243,7 +243,7 @@ instance_groups:
 
 - name: worker_integration-5
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -271,7 +271,7 @@ instance_groups:
 
 - name: worker_integration-6
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -299,7 +299,7 @@ instance_groups:
 
 - name: worker_integration-7
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -327,7 +327,7 @@ instance_groups:
 
 - name: worker_integration-8
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -355,7 +355,7 @@ instance_groups:
 
 - name: worker_integration-9
   instances: 1
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
   networks:
@@ -383,7 +383,7 @@ instance_groups:
 
 - name: windows_worker
   stemcell: windows
-  vm_type: concourse_worker_8_16
+  vm_type: concourse_core_worker_8_16
   azs: [us1]
   networks:
   - name: concourse
@@ -396,4 +396,3 @@ instance_groups:
       tsa_host: ((concourse_core_url))
       tsa_public_key: ((tsa_host_public_key))
       tsa_worker_private_key: ((tsa_worker_private_key))
-

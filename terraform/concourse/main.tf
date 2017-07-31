@@ -73,3 +73,13 @@ module "concourse" {
   trusted_cidrs                = ["${split(",", var.web_trusted_cidrs)}", "${google_compute_address.vpn_server.address}/32"]
   vpn_server_tag               = "${var.vpn_server_tag}"
 }
+
+module "concourse_core" {
+  source                       = "../modules/concourse/"
+
+  name                         = "${var.name}-concourse-core"
+  network                      = "${google_compute_network.bosh.name}"
+  internal_cidr                = ""
+  trusted_cidrs                = ["${split(",", var.bosh_core_web_trusted_cidrs)}"]
+  vpn_server_tag               = ""
+}

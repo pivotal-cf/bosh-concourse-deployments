@@ -12,7 +12,11 @@ variable "trusted_cidrs" {
 }
 
 # web_trusted_cidrs will be deprecated when the VPN is fully setup
-variable "web_trusted_cidrs" {
+variable "bosh_cpi_web_trusted_cidrs" {
+    type = "string"
+}
+
+variable "bosh_core_web_trusted_cidrs" {
     type = "string"
 }
 

@@ -11,9 +11,9 @@ vm_types:
     root_disk_size_gb: 20
     root_disk_type: pd-standard
     tags:
-      - ((concourse_atc_tag))
+      - ((bosh_cpi.atc_tag))
       - ((nat_traffic_tag))
-    target_pool: ((concourse_target_pool))
+    target_pool: ((bosh_cpi.target_pool))
 # Used by Concourse database VM
 - name: concourse_cpi_database
   cloud_properties:
@@ -22,7 +22,26 @@ vm_types:
     root_disk_size_gb: 20
     root_disk_type: pd-standard
     tags:
-      - ((concourse_db_tag))
+      - ((bosh_cpi.db_tag))
+      - ((nat_traffic_tag))
+- name: concourse_core
+  cloud_properties:
+    cpu: 1
+    ram: 2_560
+    root_disk_size_gb: 20
+    root_disk_type: pd-standard
+    tags:
+      - ((bosh_core.atc_tag))
+      - ((nat_traffic_tag))
+    target_pool: ((bosh_core.target_pool))
+- name: concourse_core_database
+  cloud_properties:
+    cpu: 1
+    ram: 2_560
+    root_disk_size_gb: 20
+    root_disk_type: pd-standard
+    tags:
+      - ((bosh_core.db_tag))
       - ((nat_traffic_tag))
 # Concourse Worker vm types
 - name: concourse_worker_8_16
@@ -33,7 +52,16 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
-      - ((concourse_worker_tag))
+      - ((bosh_cpi.worker_tag))
+- name: concourse_worker_8_20
+  cloud_properties:
+    cpu: 8
+    ram: 20_480
+    root_disk_size_gb: 164
+    root_disk_type: pd-standard
+    tags:
+      - ((nat_traffic_tag))
+      - ((bosh_cpi.worker_tag))
 - name: concourse_worker_8_24
   cloud_properties:
     cpu: 8
@@ -42,7 +70,16 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
-      - ((concourse_worker_tag))
+      - ((bosh_cpi.worker_tag))
+- name: concourse_worker_4_16
+  cloud_properties:
+    cpu: 4
+    ram: 16_384
+    root_disk_size_gb: 164
+    root_disk_type: pd-standard
+    tags:
+      - ((nat_traffic_tag))
+      - ((bosh_cpi.worker_tag))
 - name: concourse_worker_2_8
   cloud_properties:
     cpu: 2
@@ -51,7 +88,17 @@ vm_types:
     root_disk_type: pd-standard
     tags:
       - ((nat_traffic_tag))
-      - ((concourse_worker_tag))
+      - ((bosh_cpi.worker_tag))
+- name: concourse_core_worker_8_16
+  cloud_properties:
+    cpu: 8
+    ram: 16_384
+    root_disk_size_gb: 164
+    root_disk_type: pd-standard
+    tags:
+      - ((nat_traffic_tag))
+      - ((bosh_core.worker_tag))
+
 # Used by OpenVPN Server
 - name: openvpn_server
   cloud_properties:
