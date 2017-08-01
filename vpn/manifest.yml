@@ -40,12 +40,12 @@ instance_groups:
       iptables:
         nat:
           POSTROUTING:
-          - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((concourse_external_ip))/32 -j MASQUERADE
+          - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((bosh_cpi.external_ip))/32 -j MASQUERADE
   - name: openvpn
     release: openvpn
     properties:
       push_routes:
-      - ((concourse_external_ip)) 255.255.255.255
+      - ((bosh_cpi.external_ip)) 255.255.255.255
       server: ((vpn_network)) ((vpn_network_mask))
       tls_server: ((server_key_pair))
       dh_pem: |
