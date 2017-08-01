@@ -4,7 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: alpine
+    repository: boshcpi/bosh-concourse-deployments
 
 inputs:
   - name: deployments-src
