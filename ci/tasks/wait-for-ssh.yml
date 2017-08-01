@@ -7,11 +7,11 @@ image_resource:
     repository: boshcpi/bosh-concourse-deployments
 
 inputs:
-  - name: terraform
   - name: deployments-src
 
 params:
-  SLEEP_TIME:  "1800"
+  SLEEP_TIME:   "1800"
+  JUMPBOX_HOST: ""
 
 run:
   path: deployments-src/ci/tasks/wait-for-ssh

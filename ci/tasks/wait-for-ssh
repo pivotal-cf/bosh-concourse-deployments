@@ -4,11 +4,9 @@ set -eu -o pipefail
 
 # env
 : ${SLEEP_TIME:?}
+: ${JUMPBOX_HOST:?}
 
-# inputs
-jumpbox_external_ip=$(jq -r -e .jumpbox_external_ip terraform/metadata)
-
-echo "Your jumpbox address is '${jumpbox_external_ip}'."
+echo "Your jumpbox address is '${JUMPBOX_HOST}'."
 echo "We'll leave the SSH port open for $(( ${SLEEP_TIME} / 60 )) minutes."
 echo "Hit cancel once to close the SSH port early"
 echo "😴 ..."
