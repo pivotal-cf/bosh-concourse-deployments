@@ -15,7 +15,7 @@ set -eu
 : ${CONCOURSE_EXTERNAL_URL:?}
 : ${CONCOURSE_BASIC_AUTH_USERNAME:?}
 : ${CONCOURSE_BASIC_AUTH_PASSWORD:?}
-: ${CONCOURSE_TEAMS:-"[]"}
+: ${CONCOURSE_TEAMS:?}
 
 source deployments-src/ci/utils
 
@@ -48,6 +48,8 @@ set -e
 
 create_worker_ops_file() {
   local concourse_teams=${1?'Concourse teams is required.'}
+
+  touch worker-ops.yml
 
   for ((i = 0 ; i < $(echo "$concourse_teams" | jq -r length) ; i++ )); do
     team="$(echo "$concourse_teams" | jq -r ".[$i]")"
