@@ -17,8 +17,8 @@ echo "Updating jumpbox..."
 bosh2 -n create-env \
   --state updated-jumpbox-state/jumpbox-state.json \
   -o jumpbox-deployment-src/gcp/cpi.yml \
-  -o deployments-src/jumpbox/iptables-opts.yml \
-  -o deployments-src/jumpbox/custom-type-opts.yml \
+  -o deployments-src/jumpbox/iptables-ops.yml \
+  -o deployments-src/jumpbox/custom-type-ops.yml \
   -l metadata \
   -l <( echo "${JUMPBOX_SECRETS}" ) \
   -l <( echo "${JUMPBOX_PUBLIC_KEY}" ) \
