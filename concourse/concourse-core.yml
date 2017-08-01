@@ -14,7 +14,7 @@ releases:
 stemcells:
 - alias: default
   os: ubuntu-trusty
-  version: 3421.4
+  version: ((stemcell_version))
 # Windows Stemcell for AWS: https://s3.amazonaws.com/bosh-windows-stemcells/light-bosh-stemcell-*-aws-xen-hvm-windows2012R2-go_agent.tgz
 - alias: windows
   os: windows2012R2
