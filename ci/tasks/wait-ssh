@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+# env
+: ${JUMPBOX_HOST:?}
+
+while ! nc -v -z $JUMPBOX_HOST 22 ; do sleep 1 ; done

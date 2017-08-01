@@ -75,9 +75,9 @@ jobs:
           params:
             GOOGLE_CREDENTIALS:      {{gcp_credentials_json}}
             BOSH_DIRECTOR_SECRETS:   {{bosh_director_secrets}}
-            BOSH_CLIENT:             {{director_admin_username}}
-            BOSH_CLIENT_SECRET:      {{director_admin_password}}
-            BOSH_CA_CERT:            {{director_ca_cert}}
+            BOSH_CLIENT:             {{bosh_client}}
+            BOSH_CLIENT_SECRET:      {{bosh_client_secret}}
+            BOSH_CA_CERT:            {{bosh_ca_cert}}
             BOSH_CA_KEY:             {{director_ca_key}}
             JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
@@ -103,24 +103,17 @@ jobs:
           - get: deployments-src
           - get: bosh-cli
         - *open-ssh-to-jumpbox
-        # We sleep for 90 seconds in order for the terraform changes in the
-        # previous task to propagate (it doesn't happen instantaneously)
         - &wait-for-ssh
           task: wait-for-ssh
-          config:
-            platform: linux
-            image_resource:
-              type: docker-image
-              source: {repository: alpine}
-            run:
-              path: sleep
-              args: [90]
+          file: deployments-src/ci/tasks/wait-ssh.yml
+          params:
+            JUMPBOX_HOST: {{jumpbox_host}}
         - task: update-cloud-config
           file: deployments-src/ci/tasks/update-cloud-config.yml
           params:
-            BOSH_CLIENT:           {{director_admin_username}}
-            BOSH_CLIENT_SECRET:    {{director_admin_password}}
-            BOSH_CA_CERT:          {{director_ca_cert}}
+            BOSH_CLIENT:           {{bosh_client}}
+            BOSH_CLIENT_SECRET:    {{bosh_client_secret}}
+            BOSH_CA_CERT:          {{bosh_ca_cert}}
             JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
           ensure: *close-ssh-to-jumpbox
@@ -141,19 +134,18 @@ jobs:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
       - *open-ssh-to-jumpbox
-      # We sleep for 90 seconds in order for the terraform changes in the
-      # previous task to propagate (it doesn't happen instantaneously)
       - *wait-for-ssh
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
-          ADDITIONAL_OPS:                {{concourse_additional_ops_base64}}
           DEPLOYMENT_NAME:               concourse-cpi
           DEPLOYMENT_CONFIG_PATH:        concourse/concourse-cpi.yml
           CONCOURSE_SECRETS:             {{cpi_concourse_secrets}}
-          BOSH_CLIENT:                   {{director_admin_username}}
-          BOSH_CLIENT_SECRET:            {{director_admin_password}}
-          BOSH_CA_CERT:                  {{director_ca_cert}}
+          BOSH_ENVIRONMENT:              {{bosh_environment}}
+          BOSH_CLIENT:                   {{bosh_client}}
+          BOSH_CLIENT_SECRET:            {{bosh_client_secret}}
+          BOSH_CA_CERT:                  {{bosh_ca_cert}}
+          JUMPBOX_HOST:                  {{jumpbox_host}}
           JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
           JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
@@ -185,15 +177,13 @@ jobs:
         - get: openvpn-release
         - get: ssoca
       - *open-ssh-to-jumpbox
-      # We sleep for 90 seconds in order for the terraform changes in the
-      # previous task to propagate (it doesn't happen instantaneously)
       - *wait-for-ssh
       - task: deploy-vpn-server
         file: deployments-src/ci/tasks/deploy-vpn-server.yml
         params:
-          BOSH_CLIENT:        {{director_admin_username}}
-          BOSH_CLIENT_SECRET: {{director_admin_password}}
-          BOSH_CA_CERT:       {{director_ca_cert}}
+          BOSH_CLIENT:        {{bosh_client}}
+          BOSH_CLIENT_SECRET: {{bosh_client_secret}}
+          BOSH_CA_CERT:       {{bosh_ca_cert}}
           JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
           JUMPBOX_SSH_USER:   {{jumpbox_ssh_user}}
           VPN_SECRETS:        {{cpi_vpn_secrets}}
@@ -207,6 +197,8 @@ jobs:
       - *open-ssh-to-jumpbox
       - task: wait-for-ssh
         file: deployments-src/ci/tasks/wait-for-ssh.yml
+        params:
+          JUMPBOX_HOST: {{jumpbox_host}}
     ensure: *close-ssh-to-jumpbox
 
   - name: re-terraform

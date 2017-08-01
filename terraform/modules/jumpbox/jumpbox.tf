@@ -36,7 +36,7 @@ resource "google_compute_firewall" "jumpbox-ssh" {
   }
 
   source_ranges = ["${var.trusted_cidrs}"]
-  target_tags = ["${var.name}"]
+  target_tags = ["${var.network}-jumpbox"]
 }
 
 // allow 6868 from `trusted_cidrs` to Jumpbox
