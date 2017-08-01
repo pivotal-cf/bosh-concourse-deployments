@@ -83,7 +83,7 @@ pushd deployments-src > /dev/null
     -v concourse_external_url=${CONCOURSE_EXTERNAL_URL} \
     -v concourse_basic_auth_username=${CONCOURSE_BASIC_AUTH_USERNAME} \
     -v concourse_basic_auth_password=${CONCOURSE_BASIC_AUTH_PASSWORD} \
-    -v stemcell_version="\"${stemcell_version}\"" \
+    -v stemcell_version="'${stemcell_version}'" \
     -d "${DEPLOYMENT_NAME}" \
     -o "$worker_ops_path" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \

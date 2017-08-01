@@ -49,7 +49,7 @@ pushd deployments-src/vpn > /dev/null
 
   echo "Deploying OpenVPN Server..."
   bosh2 -n --tty deploy -d openvpn \
-    -v stemcell_version="$stemcell_version" \
+    -v stemcell_version="'$stemcell_version'" \
     -o /tmp/ssoca-teams-ops.yml \
     -l <(echo "${VPN_SECRETS}") \
     -l "$terraform_metadata" \
