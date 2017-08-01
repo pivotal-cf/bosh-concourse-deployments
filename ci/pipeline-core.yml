@@ -1,0 +1,138 @@
+---
+jobs:
+  - name: update-concourse
+    serial_groups: [deploy]
+    plan:
+      - aggregate:
+        - get: deployments-src
+        - get: stemcell
+        - get: windows-stemcell
+        - get: bosh-cli
+        - get: concourse-windows
+          params:
+            globs: ['release.tgz']
+        - get: concourse-and-garden
+          version:
+            tag: v2.5.1
+          params:
+            globs: ['concourse-*.tgz','garden-runc-*.tgz']
+        - get: ulimit
+      - put: terraform
+        params:
+          env_name: bosh-core-concourse
+          terraform_source: deployments-src/terraform/allow_jumpbox
+          vars:
+            allow_ssh_access_to_jumpbox: 1
+      - task: wait-for-ssh
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: alpine}
+          run:
+            path: sleep
+            args: [90]
+      - task: deploy-concourse
+        file: deployments-src/ci/tasks/deploy-concourse.yml
+        params:
+          DEPLOYMENT_NAME:               concourse-core
+          DEPLOYMENT_CONFIG_PATH:        concourse/concourse-core.yml
+          CONCOURSE_SECRETS:             {{concourse_secrets}}
+          BOSH_ENVIRONMENT:              {{bosh_environment}}
+          BOSH_CLIENT:                   {{bosh_client}}
+          BOSH_CLIENT_SECRET:            {{bosh_client_secret}}
+          BOSH_CA_CERT:                  {{bosh_ca_cert}}
+          JUMPBOX_HOST:                  {{jumpbox_host}}
+          JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
+          CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
+          CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
+          CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
+    ensure:
+      put: terraform
+      params:
+        env_name: bosh-core-concourse
+        terraform_source: deployments-src/terraform/allow_jumpbox
+        vars:
+          allow_ssh_access_to_jumpbox: 0
+
+  - name: open-ssh-for-30m
+    serial_groups: [deploy]
+    plan:
+      - get: deployments-src
+      - put: terraform
+        params:
+          env_name: bosh-core-concourse
+          terraform_source: deployments-src/terraform/allow_jumpbox
+          vars:
+            allow_ssh_access_to_jumpbox: 1
+      - task: wait-for-ssh
+        file: deployments-src/ci/tasks/wait-for-ssh.yml
+    ensure:
+      put: terraform
+      params:
+        env_name: bosh-core-concourse
+        terraform_source: deployments-src/terraform/allow_jumpbox
+        vars:
+          allow_ssh_access_to_jumpbox: 0
+
+resource_types:
+  - name: terraform
+    type: docker-image
+    source:
+      repository: ljfranklin/terraform-resource
+  - name: gcs-resource
+    type: docker-image
+    source:
+      repository: frodenas/gcs-resource
+
+resources:
+  - name: deployments-src
+    type: git
+    source:
+      uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
+      branch: master
+  - name: terraform
+    type: terraform
+    source:
+      storage:
+        bucket: {{deployments_bucket_name}}
+        bucket_path: terraform/
+        access_key_id: {{storage_access_key}}
+        secret_access_key: {{storage_secret_key}}
+        endpoint: https://storage.googleapis.com
+      vars:
+        project_id: {{project_id}}
+        gcp_credentials_json: {{gcp_credentials_json}}
+        trusted_cidrs: {{jumpbox_trusted_cidrs}}
+        name: bosh-core
+  - name: bosh-cli
+    type: s3
+    source:
+      bucket: bosh-cli-artifacts
+      regexp: bosh-cli-(\d+\.\d+\.\d+)-linux-amd64
+  - name: stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-google-kvm-ubuntu-trusty-go_agent
+  - name: concourse-and-garden
+    type: github-release
+    source:
+      repository: concourse
+      owner: concourse
+  - name: ulimit
+    type: git
+    source:
+      uri: https://github.com/pivotal-cf/ulimit-release.git
+      branch: master
+  - name: windows-stemcell
+    type: s3
+    source:
+      bucket: bosh-windows-stemcells
+      regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
+  - name: concourse-windows
+    type: github-release
+    source:
+      repository: concourse-windows-release
+      owner: pivotal-cf-experimental
+      pre_release: true

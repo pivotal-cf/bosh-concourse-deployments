@@ -39,7 +39,7 @@ instance_groups:
     - name: atc
       release: concourse
       properties:
-        external_url: ((atc_external_url))
+        external_url: ((concourse_external_url))
         publicly_viewable: true
         postgresql_database: &atc_db ((database_name))
         github_auth:
@@ -393,6 +393,6 @@ instance_groups:
   instances: 1
   properties:
     concourse_windows:
-      tsa_host: ((concourse_core_url))
+      tsa_host: ((concourse_tsa_hostname))
       tsa_public_key: ((tsa_host_public_key))
       tsa_worker_private_key: ((tsa_worker_private_key))
