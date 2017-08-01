@@ -44,37 +44,10 @@ vm_types:
       - ((bosh_core.db_tag))
       - ((nat_traffic_tag))
 # Concourse Worker vm types
-- name: concourse_worker_8_16
-  cloud_properties:
-    cpu: 8
-    ram: 16_384
-    root_disk_size_gb: 164
-    root_disk_type: pd-standard
-    tags:
-      - ((nat_traffic_tag))
-      - ((bosh_cpi.worker_tag))
-- name: concourse_worker_8_20
-  cloud_properties:
-    cpu: 8
-    ram: 20_480
-    root_disk_size_gb: 164
-    root_disk_type: pd-standard
-    tags:
-      - ((nat_traffic_tag))
-      - ((bosh_cpi.worker_tag))
 - name: concourse_worker_8_24
   cloud_properties:
     cpu: 8
     ram: 24_576
-    root_disk_size_gb: 164
-    root_disk_type: pd-standard
-    tags:
-      - ((nat_traffic_tag))
-      - ((bosh_cpi.worker_tag))
-- name: concourse_worker_4_16
-  cloud_properties:
-    cpu: 4
-    ram: 16_384
     root_disk_size_gb: 164
     root_disk_type: pd-standard
     tags:
