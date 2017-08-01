@@ -11,6 +11,8 @@ jobs:
         - get: concourse-windows
           params:
             globs: ['release.tgz']
+          version:
+            tag: 2.4.0
         - get: concourse-and-garden
           version:
             tag: v2.5.1
@@ -118,6 +120,7 @@ resources:
   - name: concourse-and-garden
     type: github-release
     source:
+      access_token: {{concourse_config_access_token}}
       repository: concourse
       owner: concourse
   - name: ulimit
@@ -133,6 +136,7 @@ resources:
   - name: concourse-windows
     type: github-release
     source:
-      repository: concourse-windows-release
+      access_token: {{concourse_config_access_token}}
+      repository: concourse-windows-worker-release
       owner: pivotal-cf-experimental
       pre_release: true
