@@ -9,7 +9,7 @@ tmp_dir="$( mktemp -d /tmp/jumpbox-XXXXXX)"
 # Download director CA Cert
 bosh2 int \
   <( lpass show --note "$BOSH_CONCOURSE_UPGRADER_SECURE_NOTE" ) \
-  --path /director_ca_cert \
+  --path /bosh_ca_cert \
   > "$tmp_dir/ca_cert.pem"
 trap "{ rm -rf '$tmp_dir' }" EXIT
 
@@ -20,13 +20,13 @@ bosh2 int \
   > "$tmp_dir/vcap.pem"
 chmod 600 "$tmp_dir/vcap.pem"
 
-# Download director username and password
+# Download director client and client secret
 export BOSH_CLIENT="$( bosh2 int \
   <( lpass show --note "$BOSH_CONCOURSE_UPGRADER_SECURE_NOTE" ) \
-  --path /director_admin_username )"
+  --path /bosh_client )"
 export BOSH_CLIENT_SECRET="$( bosh2 int \
   <( lpass show --note "$BOSH_CONCOURSE_UPGRADER_SECURE_NOTE" ) \
-  --path /director_admin_password )"
+  --path /bosh_client_secret )"
 
 export BOSH_ENVIRONMENT=10.0.0.6
 export BOSH_CA_CERT="$tmp_dir/ca_cert.pem"
