@@ -13,7 +13,7 @@ variable "allow_mbus_access_to_jumpbox" {
   description = "Set to `1` to allow mbus traffic on 6868 from `trusted_cidrs` to the jumpbox. This should only be done temporarily to upgrade the jumpbox."
 }
 variable "trusted_cidrs" {
-  type = "list"
+  type = "string"
 }
 variable "network" {
   default = "concourse"
@@ -43,6 +43,6 @@ resource "google_compute_firewall" "jumpbox-ssh" {
     ports    = ["22"]
   }
 
-  source_ranges = ["${var.trusted_cidrs}"]
+  source_ranges = ["${split(",", var.trusted_cidrs)}"]
   target_tags = ["${var.network}-jumpbox"]
 }
