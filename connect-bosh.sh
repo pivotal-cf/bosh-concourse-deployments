@@ -1,31 +1,30 @@
 #!/bin/bash
 set -eu
 
-jumpbox_ip="${1?Provide the jumpbox IP Address}"
-
-BOSH_CONCOURSE_UPGRADER_SECURE_NOTE=bosh-concourse-upgrader-cpi-pipeline
+jumpbox_ip="${1?'Provide the jumpbox IP Address'}"
+secure_note="${2?'Provide the LastPass secure note name'}"
 
 tmp_dir="$( mktemp -d /tmp/jumpbox-XXXXXX)"
 # Download director CA Cert
 bosh2 int \
-  <( lpass show --note "$BOSH_CONCOURSE_UPGRADER_SECURE_NOTE" ) \
+  <( lpass show --note "$secure_note" ) \
   --path /bosh_ca_cert \
   > "$tmp_dir/ca_cert.pem"
 trap "{ rm -rf '$tmp_dir' }" EXIT
 
 # Download jumpbox SSH key
 bosh2 int \
-  <( lpass show --note "$BOSH_CONCOURSE_UPGRADER_SECURE_NOTE" ) \
+  <( lpass show --note "$secure_note" ) \
   --path /jumpbox_ssh_key \
   > "$tmp_dir/vcap.pem"
 chmod 600 "$tmp_dir/vcap.pem"
 
 # Download director client and client secret
 export BOSH_CLIENT="$( bosh2 int \
-  <( lpass show --note "$BOSH_CONCOURSE_UPGRADER_SECURE_NOTE" ) \
+  <( lpass show --note "$secure_note" ) \
   --path /bosh_client )"
 export BOSH_CLIENT_SECRET="$( bosh2 int \
-  <( lpass show --note "$BOSH_CONCOURSE_UPGRADER_SECURE_NOTE" ) \
+  <( lpass show --note "$secure_note" ) \
   --path /bosh_client_secret )"
 
 export BOSH_ENVIRONMENT=10.0.0.6
