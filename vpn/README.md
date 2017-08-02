@@ -8,7 +8,12 @@ Authentication to the VPN is handled via SSOCA/GitHub through the same GitHub te
 
 ## Requirements
 
-- OpenVPN client
+- OpenVPN 2.4 client
+
+## Installing OpenVPN 2.4
+
+- OS X: brew install openvpn
+- Ubuntu/Debian and RHEL/CentOS/Fedora: Follow the instructions [here](https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos)
 
 ## Connecting to Concourse through the VPN
 
