@@ -6,6 +6,8 @@ releases:
   version: 2.5.1
 - name: garden-runc
   version: 1.0.4
+- name: ulimit
+  version: latest
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
@@ -40,6 +42,10 @@ instance_groups:
       release: concourse
       properties:
         external_url: ((concourse_external_url))
+        bind_port: 80
+        tls_bind_port: 443
+        tls_cert: ((tls_cert))
+        tls_key: ((tls_key))
         publicly_viewable: true
         postgresql_database: &atc_db ((database_name))
         github_auth:
@@ -51,6 +57,12 @@ instance_groups:
       properties:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_host_key))
+    - name: ulimit
+      release: ulimit
+      properties:
+        nofile:
+          soft: 32768
+          hard: 32768
 
 - name: database
   instances: 1
