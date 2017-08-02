@@ -12,11 +12,11 @@ Authentication to the VPN is handled via SSOCA/GitHub through the same GitHub te
 
 ## Connecting to Concourse through the VPN
 
-1. Navigate to https://vpn-bosh-cpi.ci.cf-app.com/ and follow the instructions on the page in order to authenticate to ssoca.
+1. Navigate to https://vpn-bosh-cpi.ci.cf-app.com and follow the instructions on the page in order to authenticate to ssoca.
 
-2. To initiate a connection to OpenVPN using the ssoca token do:=
+2. Initiate a connection using the ssoca client to the VPN:
 ```bash
 ssoca openvpn connect --sudo
 ```
 
-3. Once connected to the VPN all traffic to bosh-cpi.ci.cf-app.com will be routed to the secure VPN gateway.
+3. Once connected to the VPN all traffic to https://bosh-cpi.ci.cf-app.com will be routed through the secure VPN.
