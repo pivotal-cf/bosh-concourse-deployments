@@ -34,6 +34,9 @@ instance_groups:
     static_ips:
     - ((vpn_server_external_ip))
   jobs:
+  - name: ssoca-openvpn-verify
+    release: ssoca
+    properties: {}
   - name: iptables
     release: networking
     properties:
