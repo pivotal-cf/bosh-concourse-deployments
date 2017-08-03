@@ -9,7 +9,7 @@ fi
 
 # Download director CA Cert
 lpass show --note bosh-concourse-upgrader-cpi-pipeline \
-  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["director_ca_cert"]' \
+  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["bosh_ca_cert"]' \
   > /tmp/ca_cert.pem
 
 # Download jumpbox SSH key
@@ -20,7 +20,7 @@ chmod 600 /tmp/vcap.pem
 
 # Download director username and password
 eval $(lpass show --note bosh-concourse-upgrader-cpi-pipeline \
-  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts "BOSH_CLIENT=#{data["director_admin_username"]}"; puts "BOSH_CLIENT_SECRET=#{data["director_admin_password"]}"')
+  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts "BOSH_ENVIRONMENT=#{data["bosh_environment"]}"; puts "BOSH_CLIENT=#{data["bosh_client"]}"; puts "BOSH_CLIENT_SECRET=#{data["bosh_client_secret"]}"')
 
 cat > /tmp/bosh.env <<EOF
 if [[ ! -x \$HOME/bosh2 ]]; then
@@ -31,12 +31,12 @@ fi
 alias bosh=\$HOME/bosh2
 alias bosh2=\$HOME/bosh2
 
-export BOSH_ENVIRONMENT=10.0.0.6
+export BOSH_ENVIRONMENT=$BOSH_ENVIRONMENT
 export BOSH_CA_CERT=\$HOME/ca_cert.pem
 export BOSH_CLIENT=$BOSH_CLIENT
 export BOSH_CLIENT_SECRET=$BOSH_CLIENT_SECRET
 export BOSH_GW_USER=jumpbox
-export BOSH_GW_HOST=10.0.0.6
+export BOSH_GW_HOST=$BOSH_ENVIRONMENT
 export BOSH_GW_PRIVATE_KEY=\$HOME/vcap.pem
 bosh2 login
 EOF
