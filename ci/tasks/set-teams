@@ -18,7 +18,5 @@ yes | ./fly -t concourse login \
   -u "${CONCOURSE_BASIC_AUTH_USERNAME}" \
   -p "${CONCOURSE_BASIC_AUTH_PASSWORD}"
 
-destroy_stale_teams concourse "$CONCOURSE_TEAMS"
-
 iterate_teams "$CONCOURSE_TEAMS" \
   set_team concourse "${CONCOURSE_GITHUB_CLIENT_ID}" "${CONCOURSE_GITHUB_CLIENT_SECRET}"
