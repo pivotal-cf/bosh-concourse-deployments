@@ -1,0 +1,7 @@
+fly -t upgrader sp \
+  -p concourse \
+  -c "$PWD/ci/pipeline.yml" \
+  -l <(lpass show --note bosh-concourse-upgrader-cpi-pipeline) \
+  -v director_additional_ops_base64=$( bosh2 int <( lpass show --note bosh-concourse-upgrader-cpi-pipeline-additional-ops ) --path /director_additional_ops | base64 ) \
+  -v concourse_additional_ops_base64=$( bosh2 int <( lpass show --note bosh-concourse-upgrader-cpi-pipeline-additional-ops ) --path /concourse_additional_ops | base64 ) \
+  -l <( lpass show --note bosh-concourse-upgrader-vpn )
