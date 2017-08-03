@@ -57,6 +57,10 @@ instance_groups:
         9yJ2f8I1x8EW3p+CmWhHcmoNyxxlfRHIsZ+82+BIessN99pSxCbjWvhggntFLRwC
         fcrq5wk9ei7dzYjZHSPHqvhmmZgWKJZYQwIBAg==
         -----END DH PARAMETERS-----
+      extra_configs:
+      - script-security 2
+      - tls-verify "/var/vcap/packages/ssoca-openvpn-verify/bin/tls-verify 2m"
+      - tls-export-cert /var/vcap/data/ssoca-openvpn-verify/certs
   - name: ssoca
     release: ssoca
     properties:
