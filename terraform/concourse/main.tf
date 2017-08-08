@@ -38,7 +38,6 @@ module "concourse_subnet" {
 
   natbox_tag                  = "${var.name}-natbox"
   nat_traffic_tag             = "${var.name}-nat-traffic"
-  atc_tag                     = "${var.concourse_atc_tag}"
   trusted_cidrs               = ["${split(",", var.trusted_cidrs)}"]
   allow_mbus_access_to_natbox = "${var.allow_mbus_access_to_natbox}"
 }
