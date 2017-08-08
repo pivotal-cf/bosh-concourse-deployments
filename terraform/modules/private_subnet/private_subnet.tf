@@ -9,7 +9,6 @@ variable "trusted_cidrs" {
 }
 variable "nat_traffic_tag" {}
 variable "natbox_tag" {}
-variable "atc_tag" { default = "concourse-concourse-atc"}
 variable "allow_mbus_access_to_natbox" {
     description = "Set to `1` to allow traffic on 6868 from `trusted_cidrs` to the natbox. This should only be done temporarily to upgrade the natbox."
     default = 0
@@ -76,19 +75,6 @@ resource "google_compute_firewall" "nat-traffic" {
 
   source_tags = ["${var.nat_traffic_tag}"]
   target_tags = ["${var.natbox_tag}"]
-}
-
-resource "google_compute_firewall" "nat-atc-traffic" {
-  name    = "${var.name}-nat-to-atc-traffic"
-  network = "${var.network}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["443", "2222"]
-  }
-
-  source_ranges = ["${google_compute_address.nat.address}/32"]
-  target_tags = ["${var.atc_tag}"]
 }
 
 output "region" {
