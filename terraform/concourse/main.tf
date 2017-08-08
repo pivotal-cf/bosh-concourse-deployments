@@ -69,9 +69,8 @@ module "concourse" {
 
   name                         = "${var.name}-concourse"
   network                      = "${google_compute_network.bosh.name}"
-  internal_cidr                = "${var.internal_cidr}"
   trusted_cidrs                = ["${split(",", var.bosh_cpi_web_trusted_cidrs)}", "${google_compute_address.vpn_server.address}/32"]
-  vpn_server_tag               = "${var.vpn_server_tag}"
+  nat_ip                       = "${module.concourse_subnet.natbox_external_ip}"
 }
 
 module "concourse_core" {
@@ -79,7 +78,6 @@ module "concourse_core" {
 
   name                         = "${var.name}-concourse-core"
   network                      = "${google_compute_network.bosh.name}"
-  internal_cidr                = ""
   trusted_cidrs                = ["${split(",", var.bosh_core_web_trusted_cidrs)}"]
-  vpn_server_tag               = ""
+  nat_ip                       = "${module.concourse_subnet.natbox_external_ip}"
 }

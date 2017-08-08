@@ -3,8 +3,7 @@ variable "network" {}
 variable "trusted_cidrs" {
   type = "list"
 }
-variable "internal_cidr" {}
-variable "vpn_server_tag" {}
+variable "nat_ip" {}
 
 resource "google_compute_address" "concourse" {
   name = "${var.name}-ip"
@@ -38,7 +37,7 @@ resource "google_compute_firewall" "concourse-external" {
   target_tags = ["${google_compute_firewall.bosh-atc-to-db.source_tags[0]}"]
 }
 
-// Allow external worker communication
+// Allow internal worker communication
 resource "google_compute_firewall" "concourse-worker" {
   name    = "${var.name}-worker-to-atc"
   network = "${var.network}"
@@ -50,6 +49,20 @@ resource "google_compute_firewall" "concourse-worker" {
 
   source_tags = ["${var.name}-worker"]
   target_tags = ["${var.name}-atc"]
+}
+
+// Allow worker connections coming through NAT
+resource "google_compute_firewall" "nat-atc-traffic" {
+  name    = "${var.name}-nat-to-atc"
+  network = "${var.network}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+
+  source_ranges = ["${nat_ip}/32"]
+  target_tags = ["${var.name}-atc}"]
 }
 
 resource "google_compute_target_pool" "concourse_target_pool" {
