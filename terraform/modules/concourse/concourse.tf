@@ -62,7 +62,7 @@ resource "google_compute_firewall" "nat-atc-traffic" {
   }
 
   source_ranges = ["${var.nat_ip}/32"]
-  target_tags = ["${var.name}-atc}"]
+  target_tags = ["${var.name}-atc"]
 }
 
 resource "google_compute_target_pool" "concourse_target_pool" {
