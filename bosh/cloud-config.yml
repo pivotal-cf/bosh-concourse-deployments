@@ -39,7 +39,7 @@ vm_types:
     cpu: 1
     ram: 2_560
     root_disk_size_gb: 20
-    root_disk_type: pd-standard
+    root_disk_type: pd-ssd
     tags:
       - ((bosh_core.db_tag))
       - ((nat_traffic_tag))
@@ -67,7 +67,7 @@ vm_types:
     cpu: 8
     ram: 16_384
     root_disk_size_gb: 164
-    root_disk_type: pd-standard
+    root_disk_type: pd-ssd
     tags:
       - ((nat_traffic_tag))
       - ((bosh_core.worker_tag))
@@ -112,3 +112,6 @@ disk_types:
 - name: persistent
   disk_size: 500_000
   cloud_properties: {type: pd-standard}
+- name: persistent-ssd
+  disk_size: 500_000
+  cloud_properties: {type: pd-ssd}
