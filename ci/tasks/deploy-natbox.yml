@@ -20,7 +20,6 @@ outputs:
 
 params:
   GOOGLE_CREDENTIALS: ""
-  NATBOX_SECRETS:     ""
 
 run:
   path: deployments-src/ci/tasks/deploy-natbox

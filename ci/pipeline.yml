@@ -26,7 +26,6 @@ jobs:
             natbox-state: concourse-natbox-state
           params:
             GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-            NATBOX_SECRETS:     {{natbox_secrets}}
           ensure:
             put: concourse-natbox-state
             params:
