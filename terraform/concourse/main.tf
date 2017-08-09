@@ -52,6 +52,7 @@ module "jumpbox" {
   trusted_cidrs                = ["${split(",", var.trusted_cidrs)}"]
   allow_ssh_access_to_jumpbox  = "${var.allow_ssh_access_to_jumpbox}"
   allow_mbus_access_to_jumpbox = "${var.allow_mbus_access_to_jumpbox}"
+  allow_internal_management    = 1
 }
 
 module "director" {

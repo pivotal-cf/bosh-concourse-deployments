@@ -7,6 +7,10 @@ variable "allow_mbus_access_to_jumpbox" {
   default = 0
   description = "Set to `1` to allow mbus traffic on 6868 from `trusted_cidrs` to the jumpbox. This should only be done temporarily to upgrade the jumpbox."
 }
+variable "allow_internal_management" {
+  default = 0
+  description = "Set to `1` to allow SSH and RDP traffic from Jumpbox VM to management tagged VMs."
+}
 variable "trusted_cidrs" {
   type = "list"
 }
@@ -60,12 +64,36 @@ resource "google_compute_firewall" "mbus-jumpbox" {
   target_tags = ["${var.name}"]
 }
 
+// allow SSH and RDP from Jumpbox to internal VM's
+resource "google_compute_firewall" "jumpbox-internal-management" {
+  count = "${var.allow_internal_management}"
+
+  name    = "bosh-director-to-internal"
+  network = "${var.network}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22", "3389"]
+  }
+
+  source_tags = ["${var.name}"]
+  target_tags = ["${var.name}-management"]
+}
+
 output "tag" {
   value = "${var.name}"
 }
 
+output "internal_management_tag" {
+  value = "${var.name}-management"
+}
+
 output "internal_ip" {
-  value = "${cidrhost(var.internal_cidr,5)}"
+  value = "${cidrhost(var.internal_cidr, 5)}"
 }
 
 output "external_ip" {

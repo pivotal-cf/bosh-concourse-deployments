@@ -105,6 +105,7 @@ networks:
       subnetwork_name: ((subnetwork))
       tags:
         - ((director_internal_tag))
+        - ((jumpbox_internal_management_tag))
 - name: vip
   type: vip
 

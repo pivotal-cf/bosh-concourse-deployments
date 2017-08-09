@@ -46,6 +46,10 @@ output "jumpbox_tags" {
   value = ["${module.jumpbox.tag}"]
 }
 
+output "jumpbox_internal_management_tag" {
+  value = "${module.jumpbox.internal_management_tag}"
+}
+
 output "jumpbox_internal_ip" {
   value = "${module.jumpbox.internal_ip}"
 }

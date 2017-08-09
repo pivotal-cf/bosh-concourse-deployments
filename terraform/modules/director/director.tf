@@ -39,24 +39,6 @@ resource "google_compute_firewall" "bosh-internal-to-director" {
   target_tags = ["${var.name}"]
 }
 
-// allow SSH from Director to `bosh_internal`
-resource "google_compute_firewall" "bosh-director-to-internal" {
-  name    = "bosh-director-to-internal"
-  network = "${var.network}"
-
-  allow {
-    protocol = "icmp"
-  }
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  source_tags = ["${var.name}"]
-  target_tags = ["${var.name}-internal"]
-}
-
 output "tag" {
   value = "${var.name}"
 }
