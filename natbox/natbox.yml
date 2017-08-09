@@ -66,3 +66,7 @@ cloud_provider:
     ntp:
     - 0.pool.ntp.org
     - 1.pool.ntp.org
+
+variables:
+- name: mbus_bootstrap_password
+  type: password
