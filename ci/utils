@@ -22,6 +22,10 @@ remove_terraform_prefix() {
   jq --arg prefix "$prefix" 'with_entries(.key |= sub("^" + $prefix; ""))' "$terraform_metadata"
 }
 
+yaml_to_json() {
+  ruby -ryaml -rjson -e '$stdout.puts(JSON.pretty_generate(YAML.load($stdin.read)))'
+}
+
 iterate_teams() {
   local concourse_teams=${1?'Concourse teams are required.'}
   local function=${2?'BASH function is required.'}

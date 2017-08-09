@@ -18,8 +18,7 @@ outputs:
 
 params:
   GOOGLE_CREDENTIALS: ""
-  JUMPBOX_PUBLIC_KEY: ""
-  JUMPBOX_SECRETS:    ""
+  TEAMS:              ""
   TRUSTED_CIDRS:      ""
   MACHINE_TYPE:       "n1-standard-1"
 

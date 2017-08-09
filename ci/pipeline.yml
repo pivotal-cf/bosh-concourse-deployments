@@ -36,9 +36,8 @@ jobs:
           input_mapping:
             jumpbox-state: concourse-jumpbox-state
           params:
+            TEAMS:              {{jumpbox_teams}}
             GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-            JUMPBOX_SECRETS:    {{jumpbox_secrets}}
-            JUMPBOX_PUBLIC_KEY: {{jumpbox_public_key}}
             TRUSTED_CIDRS:      {{trusted_cidrs}}
             MACHINE_TYPE:       {{jumpbox_machine_type}}
           ensure:
