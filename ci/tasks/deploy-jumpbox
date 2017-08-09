@@ -35,8 +35,8 @@ bosh2 -n create-env \
   -o deployments-src/jumpbox/iptables-ops.yml \
   -o deployments-src/jumpbox/custom-type-ops.yml \
   -o deployments-src/jumpbox/remove-users-ops.yml \
+  -o <( generate_jumpbox_users_ops_file ) \
   -l metadata \
-  -l <( generate_jumpbox_users_ops_file ) \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
   -v "trusted_cidrs='${TRUSTED_CIDRS}'" \
   -v "machine_type='${MACHINE_TYPE}'" \
