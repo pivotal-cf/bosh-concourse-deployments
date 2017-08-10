@@ -12,6 +12,8 @@ source deployments-src/ci/utils
 
 generate_jumpbox_users_ops_file() {
   echo "$TEAMS" | yaml_to_json | jq '
+    del(.[] | select(.jumpbox == null))
+    |
     map({
       "type": "replace",
       "path": "/instance_groups/name=jumpbox/jobs/name=user_add/properties/users?/-",
