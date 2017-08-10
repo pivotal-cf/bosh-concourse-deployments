@@ -35,7 +35,7 @@ jobs:
           input_mapping:
             jumpbox-state: concourse-jumpbox-state
           params:
-            TEAMS:              {{jumpbox_teams}}
+            TEAMS:              {{bosh_teams}}
             GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
             TRUSTED_CIDRS:      {{trusted_cidrs}}
             MACHINE_TYPE:       {{jumpbox_machine_type}}
@@ -80,6 +80,7 @@ jobs:
             JUMPBOX_SSH_KEY:         {{jumpbox_ssh_key}}
             JUMPBOX_SSH_USER:        {{jumpbox_ssh_user}}
             ADDITIONAL_OPS:          {{director_additional_ops_base64}}
+            BOSH_TEAMS:              {{bosh_teams}}
           ensure:
             put: director-state
             params:

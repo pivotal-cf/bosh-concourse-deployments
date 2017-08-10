@@ -12,8 +12,23 @@ set -eu
 : ${JUMPBOX_SSH_KEY:?}
 : ${JUMPBOX_SSH_USER:?}
 : ${ADDITIONAL_OPS:=""}
+: ${BOSH_TEAMS:"[]"}
 
 source deployments-src/ci/utils
+
+generate_uaa_users_ops_file() {
+  echo "$TEAMS" | yaml_to_json | jq '
+    del(.[] | select(.uaa == null))
+    |
+    map(
+      {
+        "type": "replace",
+        "path": ("/instance_groups/name=bosh/jobs/name=uaa/properties/uaa/clients/"+.name+"?"),
+        "value": .uaa
+      }
+    )
+  '
+}
 
 BOSH_CA_CERT="$( read_with_escaped_newlines "${BOSH_CA_CERT}" )"
 BOSH_CA_KEY="$( read_with_escaped_newlines "${BOSH_CA_KEY}" )"
@@ -43,6 +58,7 @@ bosh2 -n create-env \
   -o deployments-src/bosh/datadog-ops-file.yml \
   -o director-templates/uaa.yml \
   -o director-templates/jumpbox-user.yml \
+  -o <( generate_uaa_users_ops_file ) \
   -o ops-file.yml \
   --vars-store "$vars_store" \
   -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
