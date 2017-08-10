@@ -58,7 +58,7 @@ resource "google_compute_firewall" "nat-atc-traffic" {
 
   allow {
     protocol = "tcp"
-    ports    = ["443"]
+    ports    = ["443", "2222"]
   }
 
   source_ranges = ["${var.nat_ip}/32"]
