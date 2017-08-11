@@ -61,11 +61,15 @@ instance_groups:
         fcrq5wk9ei7dzYjZHSPHqvhmmZgWKJZYQwIBAg==
         -----END DH PARAMETERS-----
       extra_configs:
+      - duplicate-cn
       - script-security 2
       - tls-verify "/var/vcap/packages/ssoca-openvpn-verify/bin/tls-verify 2m"
       - tls-export-cert /var/vcap/data/ssoca-openvpn-verify/certs
   - name: ssoca
     release: ssoca
+    consumes:
+      openvpn:
+        network: vip
     properties:
       env:
         banner: ssoca -e bosh-cpi openvpn connect --sudo
@@ -87,33 +91,9 @@ instance_groups:
         type: memory
         # the openvpn CA's certificate and private_key so we can sign client certificates
         options: ((ca))
-      services:
-      - type: openvpn
+      openvpn_service_link:
         require:
-        - authenticated: ~
         - or: [] # github team in the format ORG/TEAM
-        options:
-          certauth: default
-          # a new certificate will be required every 6 hours
-          validity: 6h
-          # the base openvpn profile; probably don't need to mess with these
-          profile: |
-            client
-            dev tun
-            proto tcp
-            remote ((vpn_server_external_ip)) 1194
-            resolv-retry 10
-            nobind
-            persist-key
-            persist-tun
-            mute-replay-warnings
-            remote-cert-tls server
-            verb 3
-            mute 20
-            tls-client
-            cipher AES-256-CBC
-            keysize 256
-
 variables:
 - name: ca
   type: certificate
