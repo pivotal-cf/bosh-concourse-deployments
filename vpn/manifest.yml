@@ -95,6 +95,8 @@ instance_groups:
           require:
           - or: [] # github team in the format ORG/TEAM
           options:
+            certauth: default
+            validity: 6h
             profile: |
               client
               dev tun
