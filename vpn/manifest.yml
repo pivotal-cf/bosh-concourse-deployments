@@ -68,8 +68,7 @@ instance_groups:
   - name: ssoca
     release: ssoca
     consumes:
-      openvpn:
-        network: vip
+      openvpn: nil
     properties:
       env:
         banner: ssoca -e bosh-cpi openvpn connect --sudo
@@ -91,9 +90,27 @@ instance_groups:
         type: memory
         # the openvpn CA's certificate and private_key so we can sign client certificates
         options: ((ca))
-      openvpn_service_link:
-        require:
-        - or: [] # github team in the format ORG/TEAM
+      services:
+        - type: openvpn
+          require:
+          - or: [] # github team in the format ORG/TEAM
+          options:
+            profile: |
+              client
+              dev tun
+              proto tcp
+              remote ((vpn_server_external_ip)) 1194
+              resolv-retry 10
+              nobind
+              persist-key
+              persist-tun
+              mute-replay-warnings
+              remote-cert-tls server
+              verb 3
+              mute 20
+              tls-client
+              cipher AES-256-CBC
+              keysize 256
 variables:
 - name: ca
   type: certificate
