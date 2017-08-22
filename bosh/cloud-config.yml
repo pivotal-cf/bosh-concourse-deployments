@@ -60,8 +60,8 @@ vm_types:
 # Used by Concourse database VM
 - name: concourse_core_database
   cloud_properties:
-    cpu: 1
-    ram: 2_560
+    cpu: 4
+    ram: 4_096
     root_disk_size_gb: 20
     root_disk_type: pd-ssd
     tags:
