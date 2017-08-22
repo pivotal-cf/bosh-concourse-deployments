@@ -87,6 +87,16 @@ vm_types:
     tags:
       - ((nat_traffic_tag))
       - ((bosh_core.worker_tag))
+- name: concourse_core_deploy
+  cloud_properties:
+    cpu: 1
+    ram: 1_024
+    root_disk_size_gb: 20
+    root_disk_type: pd-standard
+    tags:
+      - ((bosh_core.atc_tag))
+      - ((nat_traffic_tag))
+      - ((director_api_access_tag))
 
 # Used by OpenVPN Server
 - name: openvpn_server
