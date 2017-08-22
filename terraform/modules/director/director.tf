@@ -39,11 +39,28 @@ resource "google_compute_firewall" "bosh-internal-to-director" {
   target_tags = ["${var.name}"]
 }
 
+// allow tagged vms to access director api
+resource "google_compute_firewall" "api-access" {
+  name    = "${var.name}-api-access"
+  network = "${var.network}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8443", "25555"]
+  }
+
+  source_tags = ["${var.name}-api-access"]
+  target_tags = ["${var.name}"]
+}
+
 output "tag" {
   value = "${var.name}"
 }
 output "internal_tag" {
   value = "${var.name}-internal"
+}
+output "api_access_tag" {
+  value = "${var.name}-api-access"
 }
 output "internal_ip" {
   value = "${cidrhost(var.internal_cidr,6)}"

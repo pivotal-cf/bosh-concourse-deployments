@@ -62,6 +62,10 @@ output "director_internal_ip" {
   value = "${module.director.internal_ip}"
 }
 
+output "director_api_access_tag" {
+  value = "${module.director.api_access_tag}"
+}
+
 output "director_tags" {
   value = ["${module.director.tag}", "${module.concourse_subnet.nat_traffic_tag}"]
 }
