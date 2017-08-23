@@ -8,6 +8,12 @@ releases:
   version: 1.0.4
 - name: ulimit
   version: latest
+- name: windows-utilities
+  version: latest
+- name: slack-notification-resource
+  version: 9
+  url: http://bosh.io/d/github.com/cloudfoundry-community/slack-notification-resource-boshrelease?v=9
+  sha1: a64c65d1f23ea089746e698f29dbe522dd716c1b
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
@@ -57,6 +63,7 @@ instance_groups:
       properties:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_host_key))
+        host_public_key: ((tsa_host_public_key))
     - name: ulimit
       release: ulimit
       properties:
@@ -94,13 +101,21 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-cpi
+          from: baggageclaim-worker-default
+      properties:
+        additional_resource_types: &additional_resource_types
+        - type: slack-notification
+          image: /var/vcap/packages/slack-notification-resource
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
     - name: garden
       release: garden-runc
       properties: &garden
         garden:
           listen_network: tcp
-          listen_address: 0.0.0.0:7777
+          listen_address: 127.0.0.1:7777
           allow_host_access: true
           btrfs_store_size_mb: 1000000
     - name: baggageclaim
@@ -108,7 +123,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-cpi
+          as: baggageclaim-worker-default
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: worker-brats
   instances: 1
@@ -122,24 +140,95 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-brats
+          from: baggageclaim-worker-brats
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - worker-brats
     - name: garden
       release: garden-runc
-      properties: &garden
-        garden:
-          listen_network: tcp
-          listen_address: 0.0.0.0:7777
-          allow_host_access: true
-          btrfs_store_size_mb: 1000000
+      properties: *garden
     - name: baggageclaim
       release: concourse
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-brats
+          as: baggageclaim-worker-brats
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker-bosh-load-tests
+  instances: 1
+  vm_type: concourse_core_load_worker
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-bosh-load-tests
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-load-tests
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-bosh-load-tests
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker-gonats
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-gonats
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - worker-gonats
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-gonats
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: worker_integration-1
   instances: 1
@@ -151,8 +240,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-1
+          from: baggageclaim-worker-integration-1
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-1
@@ -165,7 +259,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-1
+          as: baggageclaim-worker-integration-1
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
   networks:
     - name: concourse
 
@@ -179,8 +276,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-2
+          from: baggageclaim-worker-integration-2
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
           - bosh-integration
           - bosh-integration-2
@@ -193,7 +295,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-2
+          as: baggageclaim-worker-integration-2
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
   networks:
     - name: concourse
 
@@ -207,8 +312,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-3
+          from: baggageclaim-worker-integration-3
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-3
@@ -221,7 +331,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-3
+          as: baggageclaim-worker-integration-3
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
   networks:
     - name: concourse
 
@@ -237,8 +350,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-4
+          from: baggageclaim-worker-integration-4
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-4
@@ -251,7 +369,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-4
+          as: baggageclaim-worker-integration-4
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: worker_integration-5
   instances: 1
@@ -265,8 +386,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-5
+          from: baggageclaim-worker-integration-5
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-5
@@ -279,7 +405,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-5
+          as: baggageclaim-worker-integration-5
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: worker_integration-6
   instances: 1
@@ -293,8 +422,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-6
+          from: baggageclaim-worker-integration-6
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-6
@@ -307,7 +441,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-6
+          as: baggageclaim-worker-integration-6
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: worker_integration-7
   instances: 1
@@ -321,8 +458,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-7
+          from: baggageclaim-worker-integration-7
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-7
@@ -335,7 +477,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-7
+          as: baggageclaim-worker-integration-7
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: worker_integration-8
   instances: 1
@@ -349,8 +494,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-8
+          from: baggageclaim-worker-integration-8
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-8
@@ -363,7 +513,10 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-8
+          as: baggageclaim-worker-integration-8
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: worker_integration-9
   instances: 1
@@ -377,8 +530,13 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggage-claim-9
+          from: baggageclaim-worker-integration-9
       properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
         tags:
         - bosh-integration
         - bosh-integration-9
@@ -391,7 +549,44 @@ instance_groups:
       properties: {}
       provides:
         baggageclaim:
-          as: baggage-claim-9
+          as: baggageclaim-worker-integration-9
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker-dns-performance
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-dns-performance
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+          - dns-performance
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-dns-performance
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
 
 - name: windows_worker
   stemcell: windows
@@ -402,6 +597,12 @@ instance_groups:
   jobs:
   - name: concourse_windows
     release: concourse-windows-worker
+  - name: set_password
+    release: windows-utilities
+    properties:
+      set_password:
+        username: "((windows_administrator_username))"
+        password: "((windows_administrator_password))"
   instances: 1
   properties:
     concourse_windows:
