@@ -43,7 +43,7 @@ generate_ops_file() {
 }
 
 pushd deployments-src/vpn > /dev/null
-  iterate_teams "$( echo "$VPN_SECRETS" | jq -r .github_teams | yaml_to_json )" \
+  iterate_teams "$( echo "$VPN_SECRETS" | yaml_to_json | jq -r .github_teams )" \
     generate_ops_file /tmp/ssoca-teams-ops.yml
 
   echo "Deploying OpenVPN Server..."
