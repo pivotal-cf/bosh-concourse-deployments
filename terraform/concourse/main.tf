@@ -78,6 +78,6 @@ module "concourse_core" {
 
   name                         = "${var.name}-concourse-core"
   network                      = "${google_compute_network.bosh.name}"
-  trusted_cidrs                = ["${split(",", var.bosh_core_web_trusted_cidrs)}"]
+  trusted_cidrs                = ["${split(",", var.bosh_core_web_trusted_cidrs)}", "${google_compute_address.vpn_server.address}/32"]
   nat_ip                       = "${module.concourse_subnet.natbox_external_ip}"
 }
