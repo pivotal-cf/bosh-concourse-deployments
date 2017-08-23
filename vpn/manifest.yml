@@ -44,6 +44,7 @@ instance_groups:
         nat:
           POSTROUTING:
           - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((bosh_cpi.external_ip))/32 -j MASQUERADE
+          - -s ((vpn_network))/((vpn_network_mask_bits)) -d ((bosh_core.external_ip))/32 -j MASQUERADE
   - name: openvpn
     release: openvpn
     properties:
