@@ -185,7 +185,6 @@ jobs:
           JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
           JUMPBOX_SSH_USER:   {{jumpbox_ssh_user}}
           VPN_SECRETS:        {{cpi_vpn_secrets}}
-          CONCOURSE_TEAMS:    {{concourse_teams}}
     ensure: *close-ssh-to-jumpbox
 
   - name: open-ssh-for-30m
