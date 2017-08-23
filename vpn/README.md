@@ -1,4 +1,4 @@
-# BOSH CPI VPN
+# BOSH Concourse VPN
 
 Concourse teams are mapped one to one to particular GitHub teams. For example: The `google_cpi` team on Concourse has an equivalent GitHub team that will allow only members of that GitHub team to authenticate on Concourse.
 
@@ -8,30 +8,48 @@ Authentication to the VPN is handled via SSOCA/GitHub through the same GitHub te
 
 ## Requirements
 
-- OpenVPN 2.4 client
+### OpenVPN 2.4+
 
-## Installing OpenVPN 2.4
-
-- OS X: brew install openvpn
+- OS X: `brew install openvpn`
 - Ubuntu/Debian and RHEL/CentOS/Fedora: Follow the instructions [here](https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos)
 - Windows: Download and install from this [page](https://openvpn.net/index.php/open-source/downloads.html)
 
+### ssoca
+
+Binaries and checksums available from https://vpn-bosh-cpi.ci.cf-app.com
+
+
 ## Connecting to Concourse through the VPN
 
-1. Navigate to https://vpn-bosh-cpi.ci.cf-app.com and follow the instructions on the page in order to authenticate to ssoca.
+Follow the platform-specific instructions to setup and connect. Once connected to the VPN, traffic to the [BOSH CPI](https://bosh-cpi.ci.cf-app.com) and [BOSH Core](https://main.bosh-ci.cf-app.com/) Concourse deployments will be routed through the VPN.
 
-2. If not Windows user jump to step 3.
-    - On Windows open your prompt command as Administrator.
-    - Download the [SSOCA CA Certificate](ssoca_ca_cert.pem)
-    - Run SSOCA Windows Client with `--ca-cert` flag:
-      ```bash
-      ssoca env add https://vpn-bosh-cpi.ci.cf-app.com --ca-cert ssoca_ca_cert.pem
-      ```
+### Linux/Mac
 
-2. Initiate a connection using the ssoca client to the VPN:
-    ```bash
-    ssoca openvpn connect --sudo
+1. To configure `ssoca` for the first time:
+    
     ```
-    Note: Windows users don't need `--sudo` given they're running their prompt command as Administrator.
+    ssoca -e bosh-cpi env add https://vpn-bosh-cpi.ci.cf-app.com
+    ```
 
-3. Once connected to the VPN all traffic to https://bosh-cpi.ci.cf-app.com will be routed through the secure VPN.
+2. Once configured, initiate the VPN connection:
+    
+    ```
+    ssoca -e bosh-cpi openvpn connect --sudo
+    ```
+
+**Tip**: if you use [Tunnelblick](https://tunnelblick.net/) you may want to create a profile to allow you to connect/disconnect from Tunnelblick UI instead of through the terminal ([details](https://dpb587.github.io/ssoca/service/openvpn/create-tunnelblick-profile-cmd#usage-details)).
+
+
+### Windows
+
+1. To configure `ssoca` for the first time, download [our CA Certificate](ssoca_ca_cert.pem) and:
+    
+    ```
+    ssoca -e bosh-cpi env add https://vpn-bosh-cpi.ci.cf-app.com --ca-cert=ssoca_ca_cert.pem
+    ```
+    
+2. Once configured, start PowerShell as Administrator and initiate the VPN connection:
+
+    ```
+    ssoca -e bosh-cpi openvpn connect
+    ```
