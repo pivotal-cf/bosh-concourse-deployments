@@ -114,6 +114,7 @@ instance_groups:
       release: garden-runc
       properties: &garden
         garden:
+          network_mtu: 1460
           listen_network: tcp
           listen_address: 127.0.0.1:7777
           allow_host_access: true
