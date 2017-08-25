@@ -36,7 +36,10 @@ echo "Uploading Garden release..."
 bosh2 -n --tty upload-release concourse-and-garden/garden-runc-*.tgz
 
 echo "Uploading ulimit release..."
-( cd $(realpath ulimit); bosh2 -n --tty upload-release )
+( cd ulimit ; bosh2 -n --tty upload-release )
+
+echo "Uploading Windows Utilities stemcell..."
+( cd windows-utilities ; rm -f config/private.yml ; bosh2 -n --tty upload-release )
 
 echo "Uploading stemcell..."
 bosh2 -n --tty upload-stemcell stemcell/*.tgz

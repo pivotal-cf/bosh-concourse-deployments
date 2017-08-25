@@ -11,6 +11,7 @@ inputs:
   - name: terraform
   - name: concourse-and-garden
   - name: concourse-windows
+  - name: windows-utilities
   - name: stemcell
   - name: windows-stemcell
   - name: bosh-cli

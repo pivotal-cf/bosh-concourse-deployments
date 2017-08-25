@@ -19,6 +19,7 @@ jobs:
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
+        - get: windows-utilities
       - put: terraform
         params:
           env_name: bosh-core-concourse
@@ -26,14 +27,9 @@ jobs:
           vars:
             allow_ssh_access_to_jumpbox: 1
       - task: wait-for-ssh
-        config:
-          platform: linux
-          image_resource:
-            type: docker-image
-            source: {repository: alpine}
-          run:
-            path: sleep
-            args: [90]
+        file: deployments-src/ci/tasks/wait-ssh.yml
+        params:
+          JUMPBOX_HOST: {{jumpbox_host}}
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
@@ -50,6 +46,7 @@ jobs:
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
+          IGNORE_UPLOAD_ERRORS:          true
     ensure:
       put: terraform
       params:
@@ -70,6 +67,8 @@ jobs:
             allow_ssh_access_to_jumpbox: 1
       - task: wait-for-ssh
         file: deployments-src/ci/tasks/wait-for-ssh.yml
+        params:
+          JUMPBOX_HOST: {{jumpbox_host}}
     ensure:
       put: terraform
       params:
@@ -128,10 +127,16 @@ resources:
     source:
       uri: https://github.com/pivotal-cf/ulimit-release.git
       branch: master
+  - name: windows-utilities
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
+      branch: master
   - name: windows-stemcell
     type: s3
     source:
-      bucket: bosh-windows-stemcells
+      region_name: us-east-2
+      bucket: bosh-windows-stemcells-production
       regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
   - name: concourse-windows
     type: github-release

@@ -131,6 +131,7 @@ jobs:
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
+        - get: windows-utilities
       - *open-ssh-to-jumpbox
       - *wait-for-ssh
       - task: deploy-concourse
@@ -321,6 +322,11 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/ulimit-release.git
+      branch: master
+  - name: windows-utilities
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
       branch: master
   - name: windows-stemcell
     type: s3
