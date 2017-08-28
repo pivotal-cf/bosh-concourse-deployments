@@ -12,10 +12,10 @@ jobs:
           params:
             globs: ['release.tgz']
           version:
-            tag: 2.4.0
+            tag: 3.4.0
         - get: concourse-and-garden
           version:
-            tag: v2.5.1
+            tag: v3.4.0
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
@@ -92,7 +92,7 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      branch: master
+      branch: bosh-core
   - name: terraform
     type: terraform
     source:
