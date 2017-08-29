@@ -15,7 +15,7 @@ jobs:
             tag: 3.4.0
         - get: concourse-and-garden
           version:
-            tag: v3.4.0
+            tag: v3.4.1
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
