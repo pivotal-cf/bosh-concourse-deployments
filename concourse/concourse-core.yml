@@ -140,7 +140,7 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggageclaim-worker-default
+          from: baggageclaim-worker-btrfs
       properties:
         additional_resource_types: &additional_resource_types
         - type: slack-notification
@@ -165,7 +165,7 @@ instance_groups:
         driver: btrfs
       provides:
         baggageclaim:
-          as: baggageclaim-worker-default
+          as: baggageclaim-worker-btrfs
     - name: slack-notification-resource
       release: slack-notification-resource
       properties: {}
