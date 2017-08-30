@@ -3,7 +3,7 @@ name: concourse-core
 
 releases:
 - name: concourse
-  version: 3.4.1
+  version: 3.0.1
 - name: garden-runc
   version: 1.6.0
 - name: ulimit
@@ -17,7 +17,7 @@ releases:
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
-  version: 3.4.0
+  version: 3.0.1
 
 stemcells:
 - alias: default
