@@ -12,7 +12,7 @@ jobs:
           params:
             globs: ['release.tgz']
           version:
-            tag: 3.4.0
+            tag: 3.4.1
         - get: concourse-and-garden
           version:
             tag: v3.4.1
