@@ -1,0 +1,4 @@
+fly -t gcp-upgrader sp \
+  -p concourse \
+  -c "$PWD/ci/pipeline-core.yml" \
+  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core")
