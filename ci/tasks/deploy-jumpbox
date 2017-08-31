@@ -34,7 +34,6 @@ bosh2 -n create-env \
   --state updated-jumpbox-state/jumpbox-state.json \
   --vars-store "you-really-need-this-flag-but-not-this-file.yml" \
   -o jumpbox-deployment-src/gcp/cpi.yml \
-  -o deployments-src/jumpbox/iptables-ops.yml \
   -o deployments-src/jumpbox/custom-type-ops.yml \
   -o deployments-src/jumpbox/remove-users-ops.yml \
   -o <( generate_jumpbox_users_ops_file ) \
