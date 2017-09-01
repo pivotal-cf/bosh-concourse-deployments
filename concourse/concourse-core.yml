@@ -90,7 +90,7 @@ instance_groups:
             password: ((database_password))
 
 - name: worker
-  instances: 6
+  instances: 8
   vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
