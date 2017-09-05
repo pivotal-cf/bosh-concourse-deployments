@@ -590,6 +590,37 @@ instance_groups:
       release: slack-notification-resource
       properties: {}
 
+- name: worker-uptimer
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-uptimer
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+          - uptimer
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties: {}
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-uptimer
+
 - name: windows_worker
   stemcell: windows
   vm_type: concourse_core_worker_8_16
