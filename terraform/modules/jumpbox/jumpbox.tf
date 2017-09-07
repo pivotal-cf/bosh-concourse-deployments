@@ -11,7 +11,10 @@ variable "allow_internal_management" {
   default = 0
   description = "Set to `1` to allow SSH and RDP traffic from Jumpbox VM to management tagged VMs."
 }
-variable "trusted_cidrs" {
+variable "create_env_trusted_cidrs" {
+  type = "list"
+}
+variable "ssh_trusted_cidrs" {
   type = "list"
 }
 variable "network" {}
@@ -22,7 +25,7 @@ resource "google_compute_address" "jumpbox" {
   name = "${var.name}-ip"
 }
 
-// allow BOSH ports to allow SSH tunneling from `trusted_cidrs` to Director via Jumpbox
+// allow BOSH ports to allow SSH tunneling from `ssh_trusted_cidrs` to Director via Jumpbox
 // This resource will not created by default, set `allow_ssh_access_to_jumpbox=1` to enable
 resource "google_compute_firewall" "jumpbox-ssh" {
   count = "${var.allow_ssh_access_to_jumpbox}"
@@ -39,11 +42,11 @@ resource "google_compute_firewall" "jumpbox-ssh" {
     ports    = ["22"]
   }
 
-  source_ranges = ["${var.trusted_cidrs}"]
+  source_ranges = ["${var.ssh_trusted_cidrs}"]
   target_tags = ["${var.network}-jumpbox"]
 }
 
-// allow 6868 from `trusted_cidrs` to Jumpbox
+// allow 6868 from `create_env_trusted_cidrs` to Jumpbox
 // This resource will not created by default, set `allow_mbus_access_to_jumpbox=1` to enable
 resource "google_compute_firewall" "mbus-jumpbox" {
   count = "${var.allow_mbus_access_to_jumpbox}"
@@ -60,7 +63,7 @@ resource "google_compute_firewall" "mbus-jumpbox" {
     ports    = ["6868"]
   }
 
-  source_ranges = ["${var.trusted_cidrs}"]
+  source_ranges = ["${var.create_env_trusted_cidrs}"]
   target_tags = ["${var.name}"]
 }
 

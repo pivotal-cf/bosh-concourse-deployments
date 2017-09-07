@@ -37,7 +37,7 @@ jobs:
           params:
             TEAMS:              {{bosh_teams}}
             GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-            TRUSTED_CIDRS:      {{trusted_cidrs}}
+            TRUSTED_CIDRS:      {{ssh_trusted_cidrs}}
             MACHINE_TYPE:       {{jumpbox_machine_type}}
           ensure:
             put: concourse-jumpbox-state
@@ -220,6 +220,8 @@ jobs:
           terraform_source: deployments-src/terraform/asia
           vars:
             allow_ssh_access_to_jumpbox: 0
+            ssh_trusted_cidrs: {{create_env_trusted_cidrs}}
+            create_env_trusted_cidrs: {{create_env_trusted_cidrs}}
 
 resource_types:
   - name: terraform
@@ -259,7 +261,8 @@ resources:
       vars:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
-        trusted_cidrs: {{trusted_cidrs}}
+        ssh_trusted_cidrs: {{ssh_trusted_cidrs}}
+        create_env_trusted_cidrs: {{create_env_trusted_cidrs}}
         bosh_cpi_web_trusted_cidrs: {{bosh_cpi_web_trusted_cidrs}}
         bosh_core_web_trusted_cidrs: {{bosh_core_web_trusted_cidrs}}
   - name: concourse-natbox-state

@@ -4,13 +4,13 @@ variable "zone" { default = "us-west1-b" }
 variable "network" {}
 variable "name" {}
 variable "internal_cidr" {}
-variable "trusted_cidrs" {
+variable "create_env_trusted_cidrs" {
   type = "list"
 }
 variable "nat_traffic_tag" {}
 variable "natbox_tag" {}
 variable "allow_mbus_access_to_natbox" {
-    description = "Set to `1` to allow traffic on 6868 from `trusted_cidrs` to the natbox. This should only be done temporarily to upgrade the natbox."
+    description = "Set to `1` to allow traffic on 6868 from `create_env_trusted_cidrs` to the natbox. This should only be done temporarily to upgrade the natbox."
     default = 0
 }
 
@@ -26,7 +26,7 @@ resource "google_compute_address" "nat" {
   region = "${var.region}"
 }
 
-// allow 6868 from `trusted_cidrs` to Natbox
+// allow 6868 from `create_env_trusted_cidrs` to Natbox
 // This resource will not created by default, set `allow_mbus_access_to_natbox=1` to enable
 resource "google_compute_firewall" "mbus-natbox" {
   count = "${var.allow_mbus_access_to_natbox}"
@@ -43,7 +43,7 @@ resource "google_compute_firewall" "mbus-natbox" {
     ports    = ["6868"]
   }
 
-  source_ranges = ["${var.trusted_cidrs}"]
+  source_ranges = ["${var.create_env_trusted_cidrs}"]
   target_tags = ["${var.natbox_tag}"]
 }
 
