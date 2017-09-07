@@ -7,7 +7,11 @@ variable "gcp_credentials_json" {
     type = "string"
 }
 
-variable "trusted_cidrs" {
+variable "ssh_trusted_cidrs" {
+    type = "string"
+}
+
+variable "create_env_trusted_cidrs" {
     type = "string"
 }
 
