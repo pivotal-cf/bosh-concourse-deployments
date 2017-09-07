@@ -30,7 +30,7 @@ stemcells:
 
 update:
   canaries: 1
-  max_in_flight: 8
+  max_in_flight: 2
   canary_watch_time: 30000 - 90000
   update_watch_time: 30000 - 90000
   serial: false
