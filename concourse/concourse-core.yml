@@ -155,7 +155,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-brats
