@@ -15,7 +15,7 @@ module "asia_subnet" {
 
   natbox_tag                  = "${var.name}-natbox"
   nat_traffic_tag             = "${var.name}-nat-traffic"
-  trusted_cidrs               = "${split(",", var.trusted_cidrs)}"
+  create_env_trusted_cidrs    = "${split(",", var.create_env_trusted_cidrs)}"
   allow_mbus_access_to_natbox = "${var.allow_mbus_access_to_natbox}"
 }
 
@@ -39,7 +39,8 @@ module "jumpbox" {
   network                      = "${var.network}"
   internal_cidr                = "${var.internal_cidr}"
 
-  trusted_cidrs                = "${split(",", var.trusted_cidrs)}"
+  ssh_trusted_cidrs            = "${split(",", var.ssh_trusted_cidrs)}"
+  create_env_trusted_cidrs     = "${split(",", var.create_env_trusted_cidrs)}"
   allow_ssh_access_to_jumpbox  = "${var.allow_ssh_access_to_jumpbox}"
   allow_mbus_access_to_jumpbox = "${var.allow_mbus_access_to_jumpbox}"
 }
