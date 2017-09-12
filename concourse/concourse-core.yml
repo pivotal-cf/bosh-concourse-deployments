@@ -131,7 +131,7 @@ instance_groups:
 
 - name: worker-brats
   instances: 1
-  vm_type: concourse_core_worker_8_16
+  vm_type: concourse_core_worker_12_16
   stemcell: default
   azs: [us1]
   networks:
