@@ -1,30 +1,39 @@
-#
-# copied from ljfranklin/deployments
+FROM ubuntu:14.04
 
-FROM alpine:latest
+RUN locale-gen en_US.UTF-8
+RUN dpkg-reconfigure locales
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
-RUN apk update && \
-    apk --no-cache add \
-    ca-certificates wget bash git openssh perl \
-    # needed to render bosh templates
-    ruby ruby-dev python \
-    # needed to run Google CPI packaging scripts
-    make alpine-sdk
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates wget bash git openssh-client perl \
+    curl ruby ruby-dev python && \
+    apt-get clean
 
-RUN wget -q -O /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && \
-    chmod +x /usr/local/bin/jq
+ENV JQ_VERSION=1.5 GCLOUD_SDK_VERSION=171.0.0
 
-# the Google CPI Go blob are dynamically linked against glibc
-RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub && \
-  wget -q -O /tmp/glibc.apk https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk && \
-  apk add /tmp/glibc.apk && \
-  rm -rf /tmp/glibc.apk
+# Import stedolan PGP key (jq)
+RUN wget -nv https://raw.githubusercontent.com/stedolan/jq/master/sig/jq-release.key && \
+    gpg --import jq-release.key && \
+    gpg --fingerprint 0x71523402 | grep 'Key fingerprint = 4FD7 01D6 FA9B 3D2D F5AC  935D AF19 040C 7152 3402' && \
+    if [ "$?" != "0" ]; then echo "Invalid PGP key!"; exit 1; fi
+
+# Install jq
+RUN cd /tmp && \
+    wget -nv https://github.com/stedolan/jq/releases/download/jq-$JQ_VERSION/jq-linux64 && \
+    wget -nv https://raw.githubusercontent.com/stedolan/jq/master/sig/v$JQ_VERSION/jq-linux64.asc && \
+    gpg --verify jq-linux64.asc jq-linux64 && \
+    chmod +x jq-linux64 && \
+    mv jq-linux64 /usr/local/bin/jq
 
 # Install Google Cloud CLI
-RUN wget -q -O /usr/gcloud.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-153.0.0-linux-x86_64.tar.gz && \
-  tar -C /usr/ -xzvf /usr/gcloud.tar.gz && \
-  /usr/google-cloud-sdk/install.sh --usage-reporting false --path-update false --command-completion false -q
+RUN wget -q -O /usr/gcloud.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-$GCLOUD_SDK_VERSION-linux-x86_64.tar.gz && \
+    ( \
+      echo '25461c08e8c4e235d83ab1a5b00690e14b837e06a10b25102d1682d138c4392d' /usr/gcloud.tar.gz | \
+      sha256sum -c - \
+    ) && \
+    tar -C /usr/ -xzvf /usr/gcloud.tar.gz && \
+    /usr/google-cloud-sdk/install.sh --usage-reporting false --path-update false --command-completion false -q
 
 RUN echo source /usr/google-cloud-sdk/path.bash.inc > /root/.bashrc
-
-RUN gem install json --no-rdoc --no-ri # json is not a default gem in alpine
