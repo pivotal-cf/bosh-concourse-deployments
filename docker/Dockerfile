@@ -8,7 +8,7 @@ ENV LC_ALL en_US.UTF-8
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     ca-certificates wget bash git openssh-client perl \
-    curl ruby ruby-dev python && \
+    curl ruby ruby-dev python realpath psmisc && \
     apt-get clean
 
 ENV JQ_VERSION=1.5 GCLOUD_SDK_VERSION=171.0.0
