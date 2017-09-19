@@ -73,9 +73,7 @@ instance_groups:
       openvpn: nil
     properties:
       env:
-        banner: https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/vpn/README.md
-        usage: |
-          ssoca -e bosh openvpn exec --sudo
+        banner: ssoca -e bosh openvpn connect --sudo
         name: "bosh"
         title: "BOSH VPN"
         url: "((ssoca_external_url))"
@@ -99,6 +97,7 @@ instance_groups:
           require:
           - or: [] # github team in the format ORG/TEAM
           options:
+            certauth: default
             validity: 6h
             profile: |
               client
