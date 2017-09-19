@@ -75,9 +75,9 @@ instance_groups:
       env:
         banner: https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/vpn/README.md
         usage: |
-          ssoca -e bosh-cpi openvpn exec --sudo
-        name: "bosh-cpi"
-        title: "BOSH CPI VPN"
+          ssoca -e bosh openvpn exec --sudo
+        name: "bosh"
+        title: "BOSH VPN"
         url: "((ssoca_external_url))"
       server:
         port: 443
