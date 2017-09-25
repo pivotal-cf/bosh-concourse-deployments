@@ -5,7 +5,7 @@ name: concourse-cpi
 
 releases:
 - name: concourse
-  version: latest
+  version: ((concourse_version))
 - name: garden-runc
   version: latest
 - name: ulimit
