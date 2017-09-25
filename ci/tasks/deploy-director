@@ -12,12 +12,12 @@ set -eu
 : ${JUMPBOX_SSH_KEY:?}
 : ${JUMPBOX_SSH_USER:?}
 : ${ADDITIONAL_OPS:=""}
-: ${BOSH_TEAMS:"[]"}
+: ${BOSH_TEAMS:="[]"}
 
 source deployments-src/ci/utils
 
 generate_uaa_users_ops_file() {
-  echo "$TEAMS" | yaml_to_json | jq '
+  echo "$BOSH_TEAMS" | yaml_to_json | jq '
     del(.[] | select(.uaa == null))
     |
     map(
