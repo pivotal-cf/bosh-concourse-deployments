@@ -97,6 +97,7 @@ instance_groups:
       release: garden-runc
       properties:
         garden:
+          max_containers: 500
           listen_network: tcp
           listen_address: 127.0.0.1:7777
     - name: baggageclaim
