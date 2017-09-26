@@ -74,14 +74,14 @@ instance_groups:
         network: vip
     properties:
       env:
-        name: "bosh-cpi"
-        title: "BOSH CPI VPN"
+        name: "bosh"
+        title: "BOSH VPN"
         url: "((ssoca_external_url))"
         metadata:
           ui.link.Team Documentation: https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/vpn/README.md
           ui.link.Need Help?: https://cloudfoundry.slack.com/messages/C094QMKB2/ # cloudfoundry#bosh-cpi-dev
           ui.usage: |
-            ssoca -e bosh-cpi openvpn connect --sudo
+            ssoca -e bosh openvpn connect --sudo
       server:
         port: 443
         certificate: ((ssoca_server_tls_certificate))
