@@ -44,6 +44,7 @@ set_team() {
 
   echo -e "\nAdding '$( echo "$team" | jq -r .name )' team!"
   yes | ./fly -t $concourse_target set-team \
+    --non-interactive \
     --team-name="$( echo "$team" | jq -r .name )" \
     --github-auth-team="$( echo "$team" | jq -r .github_team )" \
     --github-auth-client-id="${concourse_github_client_id}" \

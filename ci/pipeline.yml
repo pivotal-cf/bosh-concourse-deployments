@@ -129,7 +129,7 @@ jobs:
             globs: ['release.tgz']
         - get: concourse-and-garden
           params:
-            globs: ['concourse-*.tgz','garden-runc-*.tgz']
+            globs: ['concourse-*-*.tgz','garden-runc-*.tgz']
         - get: ulimit
         - get: windows-utilities
       - *open-ssh-to-jumpbox
