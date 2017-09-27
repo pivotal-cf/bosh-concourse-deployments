@@ -43,7 +43,7 @@ resource "google_compute_firewall" "jumpbox-ssh" {
   }
 
   source_ranges = ["${var.ssh_trusted_cidrs}"]
-  target_tags = ["${var.network}-jumpbox"]
+  target_tags = ["${var.name}-jumpbox"]
 }
 
 // allow 6868 from `create_env_trusted_cidrs` to Jumpbox

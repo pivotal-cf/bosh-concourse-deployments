@@ -136,7 +136,9 @@ jobs:
         - get: deployments-src
         - *asia-open-ssh-to-jumpbox
         - task: wait-for-ssh
-          file: deployments-src/ci/tasks/wait-for-ssh.yml
+          file: deployments-src/ci/tasks/wait-ssh.yml
+          params:
+            JUMPBOX_HOST: {{asia_jumpbox_host}}
         ensure: *asia-close-ssh-to-jumpbox
 
 resource_types:
