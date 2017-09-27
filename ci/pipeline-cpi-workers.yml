@@ -32,6 +32,7 @@ jobs:
               GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
               WORKER_SECRETS:     {{cpi-google-asia-worker-secrets}}
               ENVIRONMENT_NAME:   google-asia-worker
+              JUMPBOX_SSH_USER:   {{jumpbox_ssh_user}}
               JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
             ensure:
               put: worker-state
