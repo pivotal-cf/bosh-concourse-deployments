@@ -129,41 +129,6 @@ instance_groups:
       release: slack-notification-resource
       properties: {}
 
-- name: worker-units
-  instances: 1
-  vm_type: concourse_core_worker_12_16
-  stemcell: default
-  azs: [us1]
-  networks:
-    - name: concourse
-  jobs:
-    - name: groundcrew
-      release: concourse
-      consumes:
-        baggageclaim:
-          from: baggageclaim-worker-units
-      properties:
-        additional_resource_types: *additional_resource_types
-        baggageclaim:
-          forward_address: 127.0.0.1:7788
-        garden:
-          forward_address: 127.0.0.1:7777
-        tags:
-        - worker-units
-    - name: garden
-      release: garden-runc
-      properties: *garden
-    - name: baggageclaim
-      release: concourse
-      properties:
-        driver: btrfs
-      provides:
-        baggageclaim:
-          as: baggageclaim-worker-units
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
-
 - name: worker-brats
   instances: 1
   vm_type: concourse_core_worker_12_16
