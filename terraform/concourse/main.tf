@@ -6,6 +6,10 @@ provider "google" {
 
 resource "google_compute_network" "bosh" {
   name = "${var.network}"
+
+  lifecycle = {
+    prevent_destroy = true
+  }
 }
 
 # VPN Server
