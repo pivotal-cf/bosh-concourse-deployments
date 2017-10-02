@@ -10,6 +10,8 @@ releases:
   version: latest
 - name: ulimit
   version: latest
+- name: postgres
+  version: ((postgres_version))
 
 stemcells:
 - alias: default
@@ -42,7 +44,11 @@ instance_groups:
         tls_cert: ((tls_cert))
         tls_key: ((tls_key))
         publicly_viewable: true
-        postgresql_database: &atc_db atc
+        postgresql:
+          database: &atc_db atc
+          role:
+            name: atc
+            password: ((concourse_db_password))
         basic_auth_username: ((concourse_basic_auth_username))
         basic_auth_password: ((concourse_basic_auth_password))
     - name: tsa
@@ -68,13 +74,16 @@ instance_groups:
     - name: concourse
       default: [dns, gateway]
   jobs:
-    - name: postgresql
-      release: concourse
+    - name: postgres
+      release: postgres
       properties:
         databases:
-          - name: *atc_db
-            role: atc
-            password: ((concourse_db_password))
+          port: 5432
+          databases:
+            - name: *atc_db
+          roles:
+            - name: atc
+              password: ((concourse_db_password))
 
 - name: shared_worker
   instances: 3

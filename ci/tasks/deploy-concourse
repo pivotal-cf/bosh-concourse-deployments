@@ -21,6 +21,7 @@ source deployments-src/ci/utils
 
 terraform_metadata="$( realpath terraform/metadata )"
 stemcell_version="$( cat stemcell/version )"
+postgres_release_version="$( cat postgres-release/version )"
 concourse_version="$( cat concourse-and-garden/tag | tr -d v )"
 
 setup_ssh_tunnel "$JUMPBOX_SSH_KEY" "$JUMPBOX_SSH_USER@$JUMPBOX_HOST"
@@ -47,6 +48,9 @@ bosh2 -n --tty upload-stemcell stemcell/*.tgz
 
 echo "Uploading Windows stemcell..."
 bosh2 -n --tty upload-stemcell windows-stemcell/*.tgz
+
+echo "Uploading Postgres release..."
+bosh2 -n --tty upload-release postgres-release/release.tgz
 
 set -e
 
@@ -89,6 +93,7 @@ pushd deployments-src > /dev/null
     -v concourse_basic_auth_password=${CONCOURSE_BASIC_AUTH_PASSWORD} \
     -v stemcell_version="'${stemcell_version}'" \
     -v concourse_version="'${concourse_version}'" \
+    -v postgres_version="'${postgres_release_version}'" \
     -d "${DEPLOYMENT_NAME}" \
     -o "$worker_ops_path" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
