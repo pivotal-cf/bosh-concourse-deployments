@@ -7,10 +7,6 @@ provider "google" {
 resource "google_compute_network" "bosh" {
   name                    = "${var.network}"
   auto_create_subnetworks = "false"
-
-  # lifecycle = {
-  #   ignore_changes = ["*"]
-  # }
 }
 
 # VPN Server
