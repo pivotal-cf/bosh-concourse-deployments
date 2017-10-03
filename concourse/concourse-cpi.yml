@@ -69,7 +69,7 @@ instance_groups:
   vm_type: concourse_cpi_database
   stemcell: default
   azs: [us1]
-  persistent_disk_pool: persistent
+  persistent_disk_pool: persistent-ssd
   networks:
     - name: concourse
       default: [dns, gateway]
