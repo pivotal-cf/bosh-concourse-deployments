@@ -687,6 +687,8 @@ instance_groups:
       set_password:
         username: "((windows_administrator_username))"
         password: "((windows_administrator_password))"
+  - name: enable_ssh
+    release: windows-utilities
   instances: 1
   properties:
     concourse_windows:
