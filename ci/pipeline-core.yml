@@ -12,10 +12,10 @@ jobs:
           params:
             globs: ['release.tgz']
           version:
-            tag: 3.4.1
+            tag: 3.5.0
         - get: concourse-and-garden
           version:
-            tag: v3.4.1
+            tag: v3.5.0
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
