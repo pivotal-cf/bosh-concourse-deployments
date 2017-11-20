@@ -3,7 +3,7 @@ name: concourse-core
 
 releases:
 - name: concourse
-  version: 3.5.0
+  version: 3.6.0
 - name: postgres
   version: 20
 - name: garden-runc
@@ -19,7 +19,7 @@ releases:
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
-  version: 3.4.1
+  version: 3.6.0
 
 stemcells:
 - alias: default
