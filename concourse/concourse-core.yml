@@ -4,6 +4,8 @@ name: concourse-core
 releases:
 - name: concourse
   version: 3.5.0
+- name: postgres
+  version: 20
 - name: garden-runc
   version: 1.6.0
 - name: ulimit
@@ -53,7 +55,11 @@ instance_groups:
         tls_cert: ((tls_cert))
         tls_key: ((tls_key))
         publicly_viewable: true
-        postgresql_database: &atc_db ((database_name))
+        postgresql:
+          database: ((database_name))
+          role:
+            name: ((database_role))
+            password: ((database_password))
         github_auth:
           client_id: ((github_auth_client_id))
           client_secret: ((github_auth_client_secret))
@@ -80,13 +86,15 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: postgresql
-      release: concourse
+    - name: postgres
+      release: postgres
       properties:
-        listen_host: 127.0.0.1
         databases:
-          - name: *atc_db
-            role: ((database_role))
+          port: 5432
+          databases:
+          - name: ((database_name))
+          roles:
+          - name: ((database_role))
             password: ((database_password))
 
 - name: worker
