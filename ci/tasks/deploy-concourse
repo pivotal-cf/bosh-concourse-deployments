@@ -33,7 +33,7 @@ echo "Uploading Postgres release..."
 bosh2 -n --tty upload-release postgres-release/*.tgz
 
 echo "Uploading Concourse Windows release..."
-bosh2 -n --tty upload-release concourse-windows/release.tgz
+bosh2 -n --tty upload-release concourse-windows-worker/*.tgz
 
 echo "Uploading Garden release..."
 bosh2 -n --tty upload-release concourse-and-garden/garden-runc-*.tgz

@@ -11,7 +11,7 @@ inputs:
   - name: terraform
   - name: concourse-and-garden
   - name: postgres-release
-  - name: concourse-windows
+  - name: concourse-windows-worker
   - name: windows-utilities
   - name: stemcell
   - name: windows-stemcell

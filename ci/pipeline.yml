@@ -124,7 +124,7 @@ jobs:
         - get: stemcell
         - get: windows-stemcell
         - get: bosh-cli
-        - get: concourse-windows
+        - get: concourse-windows-worker
           params:
             globs: ['release.tgz']
         - get: concourse-and-garden
@@ -336,13 +336,10 @@ resources:
     source:
       bucket: bosh-windows-stemcells
       regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
-  - name: concourse-windows
-    type: github-release
+  - name: concourse-windows-worker
+    type: bosh-io-release
     source:
-      repository: concourse-windows-release
-      owner: pivotal-cf-experimental
-      access_token: {{concourse_config_access_token}}
-      pre_release: true
+      repository: pivotal-cf-experimental/concourse-windows-worker-release
   - name: every-2-hours
     type: time
     source:
