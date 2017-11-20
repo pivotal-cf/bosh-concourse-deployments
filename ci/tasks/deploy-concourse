@@ -29,6 +29,9 @@ setup_ssh_tunnel "$JUMPBOX_SSH_KEY" "$JUMPBOX_SSH_USER@$JUMPBOX_HOST"
 echo "Uploading Concourse release..."
 bosh2 -n --tty upload-release $( ls concourse-and-garden/concourse-*.tgz | tail -n1 )
 
+echo "Uploading Postgres release..."
+bosh2 -n --tty upload-release postgres-release/*.tgz
+
 echo "Uploading Concourse Windows release..."
 bosh2 -n --tty upload-release concourse-windows/release.tgz
 
