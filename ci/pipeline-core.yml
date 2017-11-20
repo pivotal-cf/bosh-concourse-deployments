@@ -8,6 +8,9 @@ jobs:
         - get: stemcell
         - get: windows-stemcell
         - get: bosh-cli
+        - get: postgres-release
+          version:
+            version: 20
         - get: concourse-windows
           params:
             globs: ['release.tgz']
@@ -145,3 +148,7 @@ resources:
       repository: concourse-windows-worker-release
       owner: pivotal-cf-experimental
       pre_release: true
+  - name: postgres-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/postgres-release
