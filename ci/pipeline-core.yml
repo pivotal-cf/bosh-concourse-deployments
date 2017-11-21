@@ -11,11 +11,11 @@ jobs:
         - get: postgres-release
           version:
             version: "22"
-        - get: concourse-windows
+        - get: concourse-windows-worker
           params:
             globs: ['release.tgz']
           version:
-            tag: 3.6.0
+            version: "3.6.0"
         - get: concourse-and-garden
           version:
             tag: v3.6.0
@@ -141,13 +141,10 @@ resources:
       region_name: us-east-2
       bucket: bosh-windows-stemcells-production
       regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
-  - name: concourse-windows
-    type: github-release
+  - name: concourse-windows-worker
+    type: bosh-io-release
     source:
-      access_token: {{concourse_config_access_token}}
-      repository: concourse-windows-worker-release
-      owner: pivotal-cf-experimental
-      pre_release: true
+      repository: pivotal-cf-experimental/concourse-windows-worker-release
   - name: postgres-release
     type: bosh-io-release
     source:
