@@ -645,6 +645,76 @@ instance_groups:
       release: slack-notification-resource
       properties: {}
 
+- name: worker_db-tls-postgres
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-db-tls-postgres
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration-db-tls-postgres
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-db-tls-postgres
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_db-tls-mysql
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-db-tls-mysql
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration-db-tls-mysql
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-db-tls-mysql
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
 - name: worker-dns-performance
   instances: 1
   vm_type: concourse_core_worker_8_16
