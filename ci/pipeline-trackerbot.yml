@@ -30,7 +30,7 @@ jobs:
           export GOPATH=$BUILD_DIR/go
           mkdir -p $GOPATH
 
-          export config_file=$BUILD_DIR/config.yml
+          config_file=$BUILD_DIR/config.yml
           echo '((trackerbot_config))' > $config_file
 
           trackerbot_path=$GOPATH/src/github.com/pivotal-cf-experimental/relint-trackerbot
@@ -39,14 +39,14 @@ jobs:
 
           cp -r relint-trackerbot/* $trackerbot_path/
           pushd $trackerbot_path
-          timeout 2m go run main.go --config-file=$config_file
+          timeout 60m go run main.go --config-file=$config_file
           exit 0
 
 resources:
 - name: interval-trigger
   type: time
   source:
-    interval: 5m
+    interval: 15m
 
 - name: relint-trackerbot
   type: git
