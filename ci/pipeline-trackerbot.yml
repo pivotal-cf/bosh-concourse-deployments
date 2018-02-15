@@ -8,7 +8,6 @@ jobs:
     trigger: true
   - get: relint-trackerbot
   - task: start
-    timeout: 2m
     config:
       platform: linux
       image_resource:
@@ -25,7 +24,7 @@ jobs:
       run:
         path: /bin/bash
         args:
-        - -ec
+        - -c
         - |
           export BUILD_DIR=$(pwd)
           export GOPATH=$BUILD_DIR/go
@@ -40,7 +39,8 @@ jobs:
 
           cp -r relint-trackerbot/* $trackerbot_path/
           pushd $trackerbot_path
-          go run main.go --config-file=$config_file
+          timeout 2m go run main.go --config-file=$config_file
+          exit 0
 
 resources:
 - name: interval-trigger
