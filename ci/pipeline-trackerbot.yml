@@ -1,0 +1,56 @@
+---
+jobs:
+- name: run_bot
+  serial: true
+  build_logs_to_retain: 10
+  plan:
+  - get: interval-trigger
+    trigger: true
+  - get: relint-trackerbot
+  - task: start
+    timeout: 2m
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: bosh/main
+      inputs:
+      - name: relint-trackerbot
+      params:
+        CONCOURSE_HOST: ((concourse_host))
+        CONCOURSE_TEAM: ((concourse_team))
+        TRACKER_API_TOKEN: ((tracker_api_token))
+        TRACKER_PROJECT_ID: ((tracker_project_id))
+      run:
+        path: /bin/bash
+        args:
+        - -ec
+        - |
+          export BUILD_DIR=$(pwd)
+          export GOPATH=$BUILD_DIR/go
+          mkdir -p $GOPATH
+
+          export config_file=$BUILD_DIR/config.yml
+          echo '((trackerbot_config))' > $config_file
+
+          trackerbot_path=$GOPATH/src/github.com/pivotal-cf-experimental/relint-trackerbot
+
+          mkdir -p $trackerbot_path
+
+          cp -r relint-trackerbot/* $trackerbot_path/
+          pushd $trackerbot_path
+          go run main.go --config-file=$config_file
+
+resources:
+- name: interval-trigger
+  type: time
+  source:
+    interval: 5m
+
+- name: relint-trackerbot
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf-experimental/relint-trackerbot.git
+    branch: master
+    private_key: ((private_key))
