@@ -31,7 +31,7 @@ jobs:
           mkdir -p $GOPATH
 
           config_file=$BUILD_DIR/config.yml
-          echo '((trackerbot_config))' > $config_file
+          echo '{"ignore": [], "groups": {}}' > $config_file
 
           trackerbot_path=$GOPATH/src/github.com/pivotal-cf-experimental/relint-trackerbot
 
