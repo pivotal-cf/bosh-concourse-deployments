@@ -132,6 +132,7 @@ jobs:
             globs: ['concourse-*-*.tgz','garden-runc-*.tgz']
         - get: ulimit
         - get: windows-utilities
+        - get: postgres-release
       - *open-ssh-to-jumpbox
       - *wait-for-ssh
       - task: deploy-concourse
@@ -317,6 +318,10 @@ resources:
     type: bosh-io-release
     source:
       repository: dpb587/openvpn-bosh-release
+  - name: postgres-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/postgres-release
   - name: ssoca
     type: git
     source:

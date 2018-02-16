@@ -35,7 +35,6 @@ bosh2 -n create-env \
   --state updated-worker-state/worker-state.json \
   -l metadata \
   -l <( echo "${WORKER_SECRETS}" ) \
-  -l <( echo "${JUMPBOX_PUBLIC_KEY}") \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
   deployments-src/${ENVIRONMENT_NAME}/worker.yml
 

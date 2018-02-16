@@ -73,7 +73,7 @@ main Concourse deployment.
   ```bash
   gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/asia/natbox-state.json
   gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/asia/jumpbox-state.json
-  gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/worker/vsphere-v6.0-worker-state.json
+  gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/worker/vsphere-v6.5-worker-state.json
   gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/worker/vcloud-v5.5-worker-state.json
   gsutil cp -n <( echo '{}' ) gs://${CONCOURSE_BUCKET_NAME}/worker/google-asia-worker-state.json
   ```
@@ -163,7 +163,7 @@ ssh-keygen  -N '' -b 4096 -f /tmp/openstack-cpi-worker -C team_name
   * host_public_key: e.g. "ssh-rsa AAAAB3NTSAHostPublicKey...", provided by BOSH CPI
   * worker_private_key: the private key generated for the worker
 
-You can find a sample of a worker manifest [here](https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/vsphere-v6.0/worker.yml).
+You can find a sample of a worker manifest [here](https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/vsphere-v6.5/worker.yml).
 
 After deploying the worker, authenticate with Concourse and confirm worker has registered:
 

@@ -90,7 +90,7 @@ vm_types:
 - name: concourse_core_load_worker
   cloud_properties:
     cpu: 16
-    ram: 16_384
+    ram: 32_768
     root_disk_size_gb: 164
     root_disk_type: pd-ssd
     tags:
