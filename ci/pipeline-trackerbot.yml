@@ -7,40 +7,75 @@ jobs:
   - get: interval-trigger
     trigger: true
   - get: relint-trackerbot
-  - task: start
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: bosh/main
-      inputs:
-      - name: relint-trackerbot
-      params:
-        CONCOURSE_HOST: ((concourse_host))
-        CONCOURSE_TEAM: ((concourse_team))
-        TRACKER_API_TOKEN: ((tracker_api_token))
-        TRACKER_PROJECT_ID: ((tracker_project_id))
-      run:
-        path: /bin/bash
-        args:
-        - -c
-        - |
-          export BUILD_DIR=$(pwd)
-          export GOPATH=$BUILD_DIR/go
-          mkdir -p $GOPATH
+  - aggregate:
+    - task: start-core
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: bosh/main
+        inputs:
+        - name: relint-trackerbot
+        params:
+          CONCOURSE_HOST: https://main.bosh-ci.cf-app.com/
+          CONCOURSE_TEAM: main
+          TRACKER_API_TOKEN: ((tracker_api_token))
+          TRACKER_PROJECT_ID: ((tracker_project_id))
+        run:
+          path: /bin/bash
+          args:
+          - -c
+          - |
+            export BUILD_DIR=$(pwd)
+            export GOPATH=$BUILD_DIR/go
+            mkdir -p $GOPATH
 
-          config_file=$BUILD_DIR/config.yml
-          echo '{"ignore": [], "groups": {}}' > $config_file
+            config_file=$BUILD_DIR/config.yml
+            echo '{"ignore": [], "groups": {}}' > $config_file
 
-          trackerbot_path=$GOPATH/src/github.com/pivotal-cf-experimental/relint-trackerbot
+            trackerbot_path=$GOPATH/src/github.com/pivotal-cf-experimental/relint-trackerbot
 
-          mkdir -p $trackerbot_path
+            mkdir -p $trackerbot_path
 
-          cp -r relint-trackerbot/* $trackerbot_path/
-          pushd $trackerbot_path
-          timeout 60m go run main.go --config-file=$config_file
-          exit 0
+            cp -r relint-trackerbot/* $trackerbot_path/
+            pushd $trackerbot_path
+            timeout 60m go run main.go --config-file=$config_file
+            exit 0
+    - task: start-cpi
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: bosh/main
+        inputs:
+        - name: relint-trackerbot
+        params:
+          CONCOURSE_HOST: https://bosh-cpi.ci.cf-app.com/
+          CONCOURSE_TEAM: pivotal
+          TRACKER_API_TOKEN: ((tracker_api_token))
+          TRACKER_PROJECT_ID: ((tracker_project_id))
+        run:
+          path: /bin/bash
+          args:
+          - -c
+          - |
+            export BUILD_DIR=$(pwd)
+            export GOPATH=$BUILD_DIR/go
+            mkdir -p $GOPATH
+
+            config_file=$BUILD_DIR/config.yml
+            echo '{"ignore": [], "groups": {}}' > $config_file
+
+            trackerbot_path=$GOPATH/src/github.com/pivotal-cf-experimental/relint-trackerbot
+
+            mkdir -p $trackerbot_path
+
+            cp -r relint-trackerbot/* $trackerbot_path/
+            pushd $trackerbot_path
+            timeout 60m go run main.go --config-file=$config_file
+            exit 0
 
 resources:
 - name: interval-trigger
