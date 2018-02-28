@@ -3,9 +3,11 @@ name: concourse-core
 
 releases:
 - name: concourse
-  version: 2.5.1
+  version: 3.9.1
+- name: postgres
+  version: 26
 - name: garden-runc
-  version: 1.0.4
+  version: 1.11.1
 - name: ulimit
   version: latest
 - name: windows-utilities
@@ -17,7 +19,7 @@ releases:
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
-  version: "2.4.0"
+  version: 3.9.1
 
 stemcells:
 - alias: default
@@ -30,7 +32,7 @@ stemcells:
 
 update:
   canaries: 1
-  max_in_flight: 8
+  max_in_flight: 2
   canary_watch_time: 30000 - 90000
   update_watch_time: 30000 - 90000
   serial: false
@@ -53,7 +55,11 @@ instance_groups:
         tls_cert: ((tls_cert))
         tls_key: ((tls_key))
         publicly_viewable: true
-        postgresql_database: &atc_db ((database_name))
+        postgresql:
+          database: ((database_name))
+          role:
+            name: ((database_role))
+            password: ((database_password))
         github_auth:
           client_id: ((github_auth_client_id))
           client_secret: ((github_auth_client_secret))
@@ -80,17 +86,19 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: postgresql
-      release: concourse
+    - name: postgres
+      release: postgres
       properties:
-        listen_host: 127.0.0.1
         databases:
-          - name: *atc_db
-            role: ((database_role))
+          port: 5432
+          databases:
+          - name: ((database_name))
+          roles:
+          - name: ((database_role))
             password: ((database_password))
 
 - name: worker
-  instances: 4
+  instances: 8
   vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
@@ -114,14 +122,14 @@ instance_groups:
       release: garden-runc
       properties: &garden
         garden:
-          network_mtu: 1460
           listen_network: tcp
           listen_address: 127.0.0.1:7777
           allow_host_access: true
           btrfs_store_size_mb: 1000000
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-default
@@ -131,7 +139,7 @@ instance_groups:
 
 - name: worker-brats
   instances: 1
-  vm_type: concourse_core_worker_8_16
+  vm_type: concourse_core_worker_12_16
   stemcell: default
   azs: [us1]
   networks:
@@ -155,7 +163,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-brats
@@ -189,7 +198,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-bosh-load-tests
@@ -197,9 +207,9 @@ instance_groups:
       release: slack-notification-resource
       properties: {}
 
-- name: worker-gonats
+- name: worker-bosh-load-tests-2
   instances: 1
-  vm_type: concourse_core_worker_8_16
+  vm_type: concourse_core_load_worker
   stemcell: default
   azs: [us1]
   networks:
@@ -209,7 +219,7 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggageclaim-worker-gonats
+          from: baggageclaim-worker-bosh-load-tests-2
       properties:
         additional_resource_types: *additional_resource_types
         baggageclaim:
@@ -217,16 +227,87 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - worker-gonats
+        - bosh-load-tests-2
     - name: garden
       release: garden-runc
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
-          as: baggageclaim-worker-gonats
+          as: baggageclaim-worker-bosh-load-tests-2
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker-bosh-load-tests-3
+  instances: 1
+  vm_type: concourse_core_load_worker
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-bosh-load-tests-3
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-load-tests-3
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-bosh-load-tests-3
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker-bosh-load-tests-4
+  instances: 1
+  vm_type: concourse_core_load_worker
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-bosh-load-tests-4
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-load-tests-4
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-bosh-load-tests-4
     - name: slack-notification-resource
       release: slack-notification-resource
       properties: {}
@@ -257,7 +338,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-1
@@ -293,7 +375,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-2
@@ -329,7 +412,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-3
@@ -367,7 +451,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-4
@@ -403,7 +488,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-5
@@ -439,7 +525,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-6
@@ -475,7 +562,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-7
@@ -511,7 +599,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-8
@@ -547,10 +636,81 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-integration-9
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_db-tls-postgres
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-db-tls-postgres
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration-db-tls-postgres
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-db-tls-postgres
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
+- name: worker_db-tls-mysql
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-db-tls-mysql
+      properties:
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration-db-tls-mysql
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-db-tls-mysql
     - name: slack-notification-resource
       release: slack-notification-resource
       properties: {}
@@ -581,7 +741,8 @@ instance_groups:
       properties: *garden
     - name: baggageclaim
       release: concourse
-      properties: {}
+      properties:
+        driver: btrfs
       provides:
         baggageclaim:
           as: baggageclaim-worker-dns-performance
@@ -604,6 +765,8 @@ instance_groups:
       set_password:
         username: "((windows_administrator_username))"
         password: "((windows_administrator_password))"
+  - name: enable_ssh
+    release: windows-utilities
   instances: 1
   properties:
     concourse_windows:

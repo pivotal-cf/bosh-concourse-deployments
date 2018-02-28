@@ -8,14 +8,17 @@ jobs:
         - get: stemcell
         - get: windows-stemcell
         - get: bosh-cli
-        - get: concourse-windows
+        - get: postgres-release
+          version:
+            version: "26"
+        - get: concourse-windows-worker
           params:
             globs: ['release.tgz']
           version:
-            tag: 2.4.0
+            version: "3.9.1"
         - get: concourse-and-garden
           version:
-            tag: v2.5.1
+            tag: v3.9.1
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
@@ -92,7 +95,7 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      branch: master
+      branch: bosh-core
   - name: terraform
     type: terraform
     source:
@@ -138,10 +141,11 @@ resources:
       region_name: us-east-2
       bucket: bosh-windows-stemcells-production
       regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
-  - name: concourse-windows
-    type: github-release
+  - name: concourse-windows-worker
+    type: bosh-io-release
     source:
-      access_token: {{concourse_config_access_token}}
-      repository: concourse-windows-worker-release
-      owner: pivotal-cf-experimental
-      pre_release: true
+      repository: pivotal-cf-experimental/concourse-windows-worker-release
+  - name: postgres-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/postgres-release

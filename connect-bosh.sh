@@ -1,5 +1,4 @@
-#!/bin/bash
-set -eu
+#!/bin/bash -eu
 
 secure_note="${1?'Provide the LastPass secure note name'}"
 
