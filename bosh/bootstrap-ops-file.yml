@@ -6,3 +6,6 @@
 - type: replace
   path: /variables/name=director_ssl/options/alternative_names
   value: [((internal_ip)), 127.0.0.1]
+- type: replace
+  path: /variables/name=nats_server_tls/options/alternative_names
+  value: [((internal_ip)), 127.0.0.1]
