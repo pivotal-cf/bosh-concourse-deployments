@@ -11,6 +11,9 @@ releases:
 - name: bosh-vsphere-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=44
   sha1: a4540e8182c6b3568e06c7b8c7c1801cc00e5667
+- name: postgres
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=22
+  sha1: 86a1333122e9cdd051551c83ec26d36f6e325d6c
 
 disk_pools:
 - name: disks
@@ -62,11 +65,10 @@ instance_groups:
       postgresql:
         sslmode: disable
         host: 127.0.0.1
-        port: 5432
-        database: &atc_db atc
+        database: atc
         role:
-          name: &atc_role atc
-          password: &atc_password ((postgres_password))
+          name: atc
+          password: ((postgres_password))
 
   - name: tsa
     release: concourse
@@ -74,13 +76,16 @@ instance_groups:
       atc:
         urls: ["http://127.0.0.1"]
 
-  - name: postgresql
-    release: concourse
+  - name: postgres
+    release: postgres
     properties:
       databases:
-      - name: *atc_db
-        role: *atc_role
-        password: *atc_password
+        port: 5432
+        databases:
+        - name: atc
+        roles:
+        - name: atc
+          password: ((postgres_password))
 
   - name: groundcrew
     release: concourse
