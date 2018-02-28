@@ -10,15 +10,15 @@ jobs:
         - get: bosh-cli
         - get: postgres-release
           version:
-            version: "22"
+            version: "26"
         - get: concourse-windows-worker
           params:
             globs: ['release.tgz']
           version:
-            version: "3.6.0"
+            version: "3.9.1"
         - get: concourse-and-garden
           version:
-            tag: v3.6.0
+            tag: v3.9.1
           params:
             globs: ['concourse-*.tgz','garden-runc-*.tgz']
         - get: ulimit
