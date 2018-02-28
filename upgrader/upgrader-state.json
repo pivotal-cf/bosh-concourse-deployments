@@ -1,16 +1,16 @@
 {
     "director_id": "644c8d7e-a54b-4507-63e8-d381cdad0c07",
     "installation_id": "d1e23621-a0db-4769-5a68-a7f27c35e570",
-    "current_vm_cid": "vm-38272903-5b7e-4e91-847b-645b396835f5",
+    "current_vm_cid": "vm-5f6a59be-466a-4e48-863a-2d0427622d9f",
     "current_stemcell_id": "50db6cd1-6d44-47b3-5146-c340fd3550cf",
     "current_disk_id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
     "current_release_ids": [
-        "e3a00fac-f9e8-4ec5-7eff-063696d4fa2b",
-        "1e56cf0f-7ea6-4ce0-5b86-6102081402ce",
-        "909c18f7-567f-4897-694e-a5471639c792",
-        "d45136f4-3069-4865-5766-75472d7b04fd"
+        "51a6b5f9-9ab8-44a6-48c0-7267f3dd8219",
+        "66625a30-6f49-44a4-4e21-7007f1d51d37",
+        "618362c3-28ee-424d-5469-3e720994be3b",
+        "9e2a5dbd-f22f-4b7e-7883-e4843218b5a5"
     ],
-    "current_manifest_sha": "387c41155143ac6f2652087341cd0c2f3e817f398456807a355953de0da66fbb36a11e5d6bc17e7ff6174a4b505bf82692dd8fd8f4c529d6094d26c380681017",
+    "current_manifest_sha": "0b2a05c19ba3900127187c735e24d393a5a202d86370ee785a1ddf19171a838424256029771930c5bb7938612eca2c62327d186cc9d53e7e53105e910b2a3198",
     "disks": [
         {
             "id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
@@ -29,22 +29,22 @@
     ],
     "releases": [
         {
-            "id": "e3a00fac-f9e8-4ec5-7eff-063696d4fa2b",
+            "id": "51a6b5f9-9ab8-44a6-48c0-7267f3dd8219",
             "name": "concourse",
-            "version": "3.5.0"
+            "version": "3.6.0"
         },
         {
-            "id": "1e56cf0f-7ea6-4ce0-5b86-6102081402ce",
+            "id": "66625a30-6f49-44a4-4e21-7007f1d51d37",
             "name": "garden-runc",
-            "version": "1.6.0"
+            "version": "1.9.0"
         },
         {
-            "id": "909c18f7-567f-4897-694e-a5471639c792",
+            "id": "618362c3-28ee-424d-5469-3e720994be3b",
             "name": "bosh-vsphere-cpi",
             "version": "44"
         },
         {
-            "id": "d45136f4-3069-4865-5766-75472d7b04fd",
+            "id": "9e2a5dbd-f22f-4b7e-7883-e4843218b5a5",
             "name": "postgres",
             "version": "22"
         }
