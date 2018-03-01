@@ -44,7 +44,6 @@ jobs:
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
           CONCOURSE_TEAMS:               {{concourse_teams}}
-          IGNORE_UPLOAD_ERRORS:          true
       - task: set-teams
         file: deployments-src/ci/tasks/set-teams.yml
         params:

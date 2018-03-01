@@ -64,12 +64,14 @@ instance_groups:
           client_id: ((github_auth_client_id))
           client_secret: ((github_auth_client_secret))
           authorize: ((github_auth_authorize_organizations))
+        token_signing_key: ((token_signing_key))
     - name: tsa
       release: concourse
       properties:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_host_key))
         host_public_key: ((tsa_host_public_key))
+        token_signing_key: ((token_signing_key))
     - name: ulimit
       release: ulimit
       properties:
@@ -111,6 +113,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-default
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: &additional_resource_types
         - type: slack-notification
           image: /var/vcap/packages/slack-notification-resource
@@ -151,6 +155,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-brats
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -186,6 +192,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -221,6 +229,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests-2
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -256,6 +266,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests-3
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -291,6 +303,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests-4
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -324,6 +338,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-1
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -361,6 +377,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-2
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -398,6 +416,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-3
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -437,6 +457,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-4
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -474,6 +496,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-5
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -511,6 +535,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-6
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -548,6 +574,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-7
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -585,6 +613,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-8
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -622,6 +652,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-9
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -659,6 +691,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-db-tls-postgres
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -680,6 +714,43 @@ instance_groups:
       release: slack-notification-resource
       properties: {}
 
+- name: worker_db-tls-hotswap
+  instances: 1
+  vm_type: concourse_core_worker_8_16
+  stemcell: default
+  azs: [us1]
+  networks:
+    - name: concourse
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-db-tls-hotswap
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration-db-tls-hotswap
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-db-tls-hotswap
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+
 - name: worker_db-tls-mysql
   instances: 1
   vm_type: concourse_core_worker_8_16
@@ -694,6 +765,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-db-tls-mysql
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -729,6 +802,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-dns-performance
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788

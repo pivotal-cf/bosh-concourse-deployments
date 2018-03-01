@@ -49,7 +49,6 @@ jobs:
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
-          IGNORE_UPLOAD_ERRORS:          true
     ensure:
       put: terraform
       params:
