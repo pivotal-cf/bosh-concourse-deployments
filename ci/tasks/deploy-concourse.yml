@@ -10,7 +10,6 @@ inputs:
   - name: deployments-src
   - name: terraform
   - name: concourse-and-garden
-  - name: postgres-release
   - name: concourse-windows-worker
   - name: windows-utilities
   - name: stemcell
