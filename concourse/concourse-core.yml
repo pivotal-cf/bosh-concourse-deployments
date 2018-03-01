@@ -70,7 +70,6 @@ instance_groups:
       properties:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_host_key))
-        host_public_key: ((tsa_host_public_key))
         token_signing_key: ((token_signing_key))
     - name: ulimit
       release: ulimit
