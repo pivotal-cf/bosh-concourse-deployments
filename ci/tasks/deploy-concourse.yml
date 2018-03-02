@@ -17,7 +17,6 @@ inputs:
   - name: windows-stemcell
   - name: bosh-cli
   - name: ulimit
-  - name: postgres-release
 
 params:
   DEPLOYMENT_NAME:               ""
