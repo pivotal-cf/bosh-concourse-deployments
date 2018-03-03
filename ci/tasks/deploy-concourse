@@ -23,8 +23,11 @@ terraform_metadata="$( realpath terraform/metadata )"
 stemcell_version="$( cat stemcell/version )"
 postgres_release_version="$( cat postgres-release/version )"
 concourse_version="$( cat concourse-and-garden/tag | tr -d v )"
+concourse_windows_release_version="$( cat concourse-windows-worker/version )"
 
 setup_ssh_tunnel "$JUMPBOX_SSH_KEY" "$JUMPBOX_SSH_USER@$JUMPBOX_HOST"
+
+set +e
 
 echo "Uploading Concourse release..."
 bosh2 -n --tty upload-release $( ls concourse-and-garden/concourse-*.tgz | tail -n1 )
@@ -52,6 +55,8 @@ bosh2 -n --tty upload-stemcell windows-stemcell/*.tgz
 
 echo "Uploading Postgres release..."
 bosh2 -n --tty upload-release postgres-release/release.tgz
+
+set -e
 
 create_worker_ops_file() {
   local concourse_teams=${1?'Concourse teams is required.'}
@@ -93,6 +98,7 @@ pushd deployments-src > /dev/null
     -v stemcell_version="'${stemcell_version}'" \
     -v concourse_version="'${concourse_version}'" \
     -v postgres_version="'${postgres_release_version}'" \
+    -v concourse_windows_release_version="'${concourse_windows_release_version}'" \
     -d "${DEPLOYMENT_NAME}" \
     -o "$worker_ops_path" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \

@@ -3,11 +3,11 @@ name: concourse-core
 
 releases:
 - name: concourse
-  version: 3.9.1
+  version: ((concourse_version))
 - name: postgres
-  version: 26
+  version: ((postgres_version))
 - name: garden-runc
-  version: 1.11.1
+  version: latest
 - name: ulimit
   version: latest
 - name: windows-utilities
@@ -19,7 +19,7 @@ releases:
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
-  version: 3.9.1
+  version: ((concourse_windows_release_version))
 
 stemcells:
 - alias: default
