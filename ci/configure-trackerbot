@@ -1,4 +1,4 @@
-fly -t production sp \
+fly -t upgrader sp \
   -p trackerbot \
-  -c "$PWD/ci/pipeline-trackerbot.yml" \
+  -c "$REPO_DIR/ci/pipeline-trackerbot.yml" \
   -l <(lpass show --note "concourse:production pipeline:trackerbot secrets")

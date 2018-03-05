@@ -1,12 +1,12 @@
 fly -t upgrader sp \
   -p concourse-cpi \
-  -c "$PWD/ci/pipeline-cpi.yml" \
+  -c "$REPO_DIR/ci/pipeline-cpi.yml" \
   -l <(lpass show --note bosh-concourse-upgrader-cpi-pipeline) \
   -v concourse_additional_ops_base64=$( bosh2 int <( lpass show --note bosh-concourse-upgrader-cpi-pipeline-additional-ops ) --path /concourse_additional_ops | base64 ) \
   -l <( lpass show --note bosh-concourse-upgrader-vpn )
 
 fly -t upgrader sp \
   -p concourse-cpi-workers \
-  -c "$PWD/ci/pipeline-cpi-workers.yml" \
+  -c "$REPO_DIR/ci/pipeline-cpi-workers.yml" \
   -l <(lpass show --note bosh-concourse-upgrader-cpi-pipeline) \
   -l <(lpass show --note cpi-external-concourse-worker) \
