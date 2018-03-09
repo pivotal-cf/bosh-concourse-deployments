@@ -1,15 +1,11 @@
 {
     "director_id": "644c8d7e-a54b-4507-63e8-d381cdad0c07",
     "installation_id": "d1e23621-a0db-4769-5a68-a7f27c35e570",
-    "current_vm_cid": "vm-ea04629a-6040-4747-a07d-b639bb8a642c",
+    "current_vm_cid": "vm-5a34a5d6-14f8-4049-8849-a46f99f8fef8",
     "current_stemcell_id": "50db6cd1-6d44-47b3-5146-c340fd3550cf",
     "current_disk_id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
-    "current_release_ids": [
-        "9b3ad9bc-712a-4107-4ed3-4bf2405dc480",
-        "94913722-35f3-4584-7931-b9dd387a2ee0",
-        "03f9e76e-a2b3-4c12-4151-23c54cb73fbc"
-    ],
-    "current_manifest_sha": "ffff3bc9f6f1dcf69db926b032b9ff3538abf526623a75de49e9dae24e607e0eaf7253f73bd95d50cd0ac2dce1780579df4db702735ec4e0c49b9e6dd7a9e951",
+    "current_release_ids": [],
+    "current_manifest_sha": "",
     "disks": [
         {
             "id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
@@ -26,21 +22,5 @@
             "cid": "sc-acd92ea8-0c3b-4f19-bae1-04e25b4b7494"
         }
     ],
-    "releases": [
-        {
-            "id": "9b3ad9bc-712a-4107-4ed3-4bf2405dc480",
-            "name": "concourse",
-            "version": "3.5.0"
-        },
-        {
-            "id": "94913722-35f3-4584-7931-b9dd387a2ee0",
-            "name": "garden-runc",
-            "version": "1.6.0"
-        },
-        {
-            "id": "03f9e76e-a2b3-4c12-4151-23c54cb73fbc",
-            "name": "bosh-vsphere-cpi",
-            "version": "44"
-        }
-    ]
+    "releases": []
 }

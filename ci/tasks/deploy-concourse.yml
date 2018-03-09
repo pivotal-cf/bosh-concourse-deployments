@@ -10,13 +10,13 @@ inputs:
   - name: deployments-src
   - name: terraform
   - name: concourse-and-garden
-  - name: concourse-windows
+  - name: postgres-release
+  - name: concourse-windows-worker
   - name: windows-utilities
   - name: stemcell
   - name: windows-stemcell
   - name: bosh-cli
   - name: ulimit
-  - name: postgres-release
 
 params:
   DEPLOYMENT_NAME:               ""

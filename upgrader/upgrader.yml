@@ -3,14 +3,17 @@ name: concourse
 
 releases:
 - name: concourse
-  url: https://bosh.io/d/github.com/concourse/concourse?v=3.5.0
-  sha1: 65a974b3831bb9908661a5ffffbe456e10185149
+  url: https://bosh.io/d/github.com/concourse/concourse?v=3.9.1
+  sha1: 235c704d50e62c9e089865dd43306659d5207690
 - name: garden-runc
-  url: https://github.com/concourse/concourse/releases/download/v3.0.1/garden-runc-1.6.0.tgz
-  sha1: 58fbc64aff303e6d76899441241dd5dacef50cb7
+  url: https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.11.1
+  sha1: d9a7901c0502d97c043b857496f0f414a5843e8d
 - name: bosh-vsphere-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=44
-  sha1: a4540e8182c6b3568e06c7b8c7c1801cc00e5667
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45.1.0
+  sha1: 49164212bcd6a35515db6664bcb26bef2fcc6b6c
+- name: postgres
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=22
+  sha1: 86a1333122e9cdd051551c83ec26d36f6e325d6c
 
 disk_pools:
 - name: disks
@@ -59,34 +62,42 @@ instance_groups:
       tls_key: ((tls_key))
       bind_port: 80
       tls_bind_port: 443
+      token_signing_key: ((token_signing_key))
       postgresql:
         sslmode: disable
         host: 127.0.0.1
-        port: 5432
-        database: &atc_db atc
+        database: atc
         role:
-          name: &atc_role atc
-          password: &atc_password ((postgres_password))
+          name: atc
+          password: ((postgres_password))
 
   - name: tsa
     release: concourse
     properties:
+      host_key: ((tsa_host_key))
+      token_signing_key: ((token_signing_key))
+      authorized_keys: [((worker_key.public_key))]
       atc:
         urls: ["http://127.0.0.1"]
 
-  - name: postgresql
-    release: concourse
+  - name: postgres
+    release: postgres
     properties:
       databases:
-      - name: *atc_db
-        role: *atc_role
-        password: *atc_password
+        port: 5432
+        databases:
+        - name: atc
+        roles:
+        - name: atc
+          password: ((postgres_password))
 
   - name: groundcrew
     release: concourse
     properties:
       tsa:
         host: 127.0.0.1
+        worker_key: ((worker_key))
+        host_public_key: ((tsa_host_key.public_key))
       baggageclaim:
         url: http://127.0.0.1:7788
   - name: baggageclaim
@@ -124,9 +135,7 @@ update:
 
 cloud_provider:
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
-
   mbus: "https://mbus:((mbus_bootstrap_password))@((internal_ip)):6868"
-
   properties:
     vcenter: *vcenter
     agent: {mbus: "https://mbus:((mbus_bootstrap_password))@0.0.0.0:6868"}

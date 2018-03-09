@@ -1,5 +1,4 @@
-#!/bin/bash
-set -eu
+#!/bin/bash -eu
 
 secure_note="${1?'Provide the LastPass secure note name'}"
 
@@ -7,7 +6,7 @@ lpass_note="$( set -eu ; lpass show --note "$secure_note" )"
 
 creds() {
   local path=${1?'Path is required.'}
-  bosh2 int <( echo "$lpass_note" ) --path /"$path"
+  bosh int <( echo "$lpass_note" ) --path /"$path"
 }
 
 jumpbox_host="$( set -eu ; creds jumpbox_host )"

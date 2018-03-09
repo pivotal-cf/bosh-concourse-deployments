@@ -8,25 +8,19 @@ jobs:
         - get: stemcell
         - get: windows-stemcell
         - get: bosh-cli
-        - get: postgres-release
-          version:
-            version: "22"
         - get: concourse-windows-worker
           params:
             globs: ['release.tgz']
-          version:
-            version: "3.6.0"
         - get: concourse-and-garden
-          version:
-            tag: v3.6.0
           params:
-            globs: ['concourse-*.tgz','garden-runc-*.tgz']
+            globs: ['concourse-*-*.tgz','garden-runc-*.tgz']
         - get: ulimit
         - get: windows-utilities
+        - get: postgres-release
       - put: terraform
         params:
-          env_name: bosh-core-concourse
-          terraform_source: deployments-src/terraform/allow_jumpbox
+          env_name: bosh-cpi-concourse
+          terraform_source: deployments-src/terraform/concourse
           vars:
             allow_ssh_access_to_jumpbox: 1
       - task: wait-for-ssh
@@ -36,9 +30,9 @@ jobs:
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
-          DEPLOYMENT_NAME:               concourse-core
-          DEPLOYMENT_CONFIG_PATH:        concourse/concourse-core.yml
-          CONCOURSE_SECRETS:             {{concourse_secrets}}
+          DEPLOYMENT_NAME:               concourse-cpi
+          DEPLOYMENT_CONFIG_PATH:        concourse/concourse-cpi.yml
+          CONCOURSE_SECRETS:             {{cpi_concourse_secrets}}
           BOSH_ENVIRONMENT:              {{bosh_environment}}
           BOSH_CLIENT:                   {{bosh_client}}
           BOSH_CLIENT_SECRET:            {{bosh_client_secret}}
@@ -49,34 +43,25 @@ jobs:
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
+          CONCOURSE_TEAMS:               {{concourse_teams}}
           IGNORE_UPLOAD_ERRORS:          true
+      - task: set-teams
+        file: deployments-src/ci/tasks/set-teams.yml
+        params:
+          CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
+          CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
+          CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password}}
+          CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
+          CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
+          CONCOURSE_TEAMS:                {{concourse_teams}}
+      - put: concourse-update-trigger
+        params:
+          file: concourse-and-garden/tag
     ensure:
       put: terraform
       params:
-        env_name: bosh-core-concourse
-        terraform_source: deployments-src/terraform/allow_jumpbox
-        vars:
-          allow_ssh_access_to_jumpbox: 0
-
-  - name: open-ssh-for-30m
-    serial_groups: [deploy]
-    plan:
-      - get: deployments-src
-      - put: terraform
-        params:
-          env_name: bosh-core-concourse
-          terraform_source: deployments-src/terraform/allow_jumpbox
-          vars:
-            allow_ssh_access_to_jumpbox: 1
-      - task: wait-for-ssh
-        file: deployments-src/ci/tasks/wait-for-ssh.yml
-        params:
-          JUMPBOX_HOST: {{jumpbox_host}}
-    ensure:
-      put: terraform
-      params:
-        env_name: bosh-core-concourse
-        terraform_source: deployments-src/terraform/allow_jumpbox
+        env_name: bosh-cpi-concourse
+        terraform_source: deployments-src/terraform/concourse
         vars:
           allow_ssh_access_to_jumpbox: 0
 
@@ -91,11 +76,6 @@ resource_types:
       repository: frodenas/gcs-resource
 
 resources:
-  - name: deployments-src
-    type: git
-    source:
-      uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      branch: bosh-core
   - name: terraform
     type: terraform
     source:
@@ -108,8 +88,15 @@ resources:
       vars:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
-        trusted_cidrs: {{jumpbox_trusted_cidrs}}
-        name: bosh-core
+        ssh_trusted_cidrs: {{ssh_trusted_cidrs}}
+        create_env_trusted_cidrs: {{create_env_trusted_cidrs}}
+        bosh_cpi_web_trusted_cidrs: {{bosh_cpi_web_trusted_cidrs}}
+        bosh_core_web_trusted_cidrs: {{bosh_core_web_trusted_cidrs}}
+  - name: deployments-src
+    type: git
+    source:
+      uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
+      branch: master
   - name: bosh-cli
     type: s3
     source:
@@ -119,12 +106,17 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-google-kvm-ubuntu-trusty-go_agent
+  - name: windows-stemcell
+    type: s3
+    source:
+      bucket: bosh-windows-stemcells
+      regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
   - name: concourse-and-garden
     type: github-release
     source:
-      access_token: {{concourse_config_access_token}}
       repository: concourse
       owner: concourse
+      access_token: {{concourse_config_access_token}}
   - name: ulimit
     type: git
     source:
@@ -135,17 +127,17 @@ resources:
     source:
       uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
       branch: master
-  - name: windows-stemcell
-    type: s3
-    source:
-      region_name: us-east-2
-      bucket: bosh-windows-stemcells-production
-      regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
-  - name: concourse-windows-worker
-    type: bosh-io-release
-    source:
-      repository: pivotal-cf-experimental/concourse-windows-worker-release
   - name: postgres-release
     type: bosh-io-release
     source:
       repository: cloudfoundry/postgres-release
+  - name: concourse-windows-worker
+    type: bosh-io-release
+    source:
+      repository: pivotal-cf-experimental/concourse-windows-worker-release
+  - name: concourse-update-trigger
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: concourse/concourse-update-trigger

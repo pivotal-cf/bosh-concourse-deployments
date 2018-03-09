@@ -7,15 +7,14 @@ UPGRADER_CREATE_ENV_SECURE_NOTE=bosh-concourse-upgrader-create-env
 
 load_create_env_var() {
   local path=${1?"path required: e.g. '/var'"}
-  bosh2 int <( lpass show --note "$UPGRADER_CREATE_ENV_SECURE_NOTE" ) --path $path
+  bosh int <( lpass show --note "$UPGRADER_CREATE_ENV_SECURE_NOTE" ) --path $path
 }
 
 : ${concourse_external_url=$( load_create_env_var /external_url )}
-: ${concourse_teams=$( load_create_env_var /concourse_teams )}
 : ${concourse_github_client_id=$( load_create_env_var /github_auth_client_id )}
 : ${concourse_github_client_secret=$( load_create_env_var /github_auth_client_secret )}
 
-bosh2 create-env ./upgrader.yml \
+bosh create-env ./upgrader.yml \
   -l <( lpass show --notes "$UPGRADER_CREATE_ENV_SECURE_NOTE" ) \
   --state ./upgrader-state.json
 
@@ -23,9 +22,6 @@ wget -O ./fly "${concourse_external_url}/api/v1/cli?arch=amd64&platform=darwin"
 chmod +x ./fly
 
 ./fly -t upgrader login -c "${concourse_external_url}"
-
-iterate_teams "$concourse_teams" \
-  set_team upgrader "${concourse_github_client_id}" "${concourse_github_client_secret}"
 
 echo "Finished successfully"
 echo "Remember to commit the statefile changes when deploy is finished!"
