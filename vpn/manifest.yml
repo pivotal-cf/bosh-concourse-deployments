@@ -2,12 +2,22 @@
 name: openvpn
 
 releases:
+- name: bpm
+  sha1: f2bd126b17b3591160f501d88d79ccf0aba1ae54
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bpm-release?v=0.2.0
+  version: 0.2.0
 - name: openvpn
-  version: latest
+  sha1: cbaca9fe8ceffb13ea1d481ad49fd5a706afbe9c
+  url: https://s3-external-1.amazonaws.com/dpb587-bosh-release-openvpn-us-east-1/releases/openvpn/openvpn-4.2.1.tgz
+  version: 4.2.1
 - name: networking
-  version: latest
+  sha1: 9b5f9d27917c3754e492470ac6c9af80d62963db
+  url: http://bosh.io/d/github.com/cloudfoundry/networking-release?v=9
+  version: 9
 - name: ssoca
-  version: latest
+  sha1: beae0e18ea00e2f0ebae12abe03e97d49a50bedc
+  url: https://s3-external-1.amazonaws.com/dpb587-ssoca-bosh-release-us-east-1/releases/ssoca/ssoca-0.10.0.tgz
+  version: 0.10.0
 
 stemcells:
 - alias: default
@@ -18,8 +28,8 @@ update:
   serial: false
   canaries: 1
   max_in_flight: 1
-  canary_watch_time: 30000 - 90000
-  update_watch_time: 30000 - 90000
+  canary_watch_time: 5000 - 90000
+  update_watch_time: 5000 - 90000
 
 instance_groups:
 - name: openvpn
@@ -34,6 +44,8 @@ instance_groups:
     static_ips:
     - ((vpn_server_external_ip))
   jobs:
+  - name: bpm
+    release: bpm
   - name: ssoca-openvpn-verify
     release: ssoca
     properties: {}
@@ -77,11 +89,19 @@ instance_groups:
         name: "bosh"
         title: "BOSH VPN"
         url: "((ssoca_external_url))"
+        banner: Unauthorized use is strictly prohibited. All access and activity is subject to logging and monitoring.
         metadata:
-          ui.link.Team Documentation: https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/vpn/README.md
+          ui.link.Team VPN Docs: https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/vpn/README.md
           ui.link.Need Help?: https://cloudfoundry.slack.com/messages/C094QMKB2/ # cloudfoundry#bosh-cpi-dev
           ui.usage: |
-            ssoca -e bosh openvpn connect --sudo
+            # Linux/macOS
+            ssoca -e bosh openvpn exec --sudo
+
+            # macOS: if you want to connect via Tunnelblick profile
+            ssoca -e bosh openvpn create-tunnelblick-profile --install
+
+            # Windows: use PowerShell as Administrator
+            ssoca -e bosh openvpn exec
       server:
         port: 443
         certificate: ((ssoca_server_tls_certificate))

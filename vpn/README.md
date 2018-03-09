@@ -10,46 +10,56 @@ Authentication to the VPN is handled via SSOCA/GitHub through the same GitHub te
 
 ### OpenVPN 2.4+
 
-- OS X: `brew install openvpn`
+- macOS: `brew install openvpn`
 - Ubuntu/Debian and RHEL/CentOS/Fedora: Follow the instructions [here](https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos)
 - Windows: Download and install from this [page](https://openvpn.net/index.php/open-source/downloads.html)
 
 ### ssoca
 
-Binaries and checksums available from https://vpn-bosh.ci.cf-app.com
+Download, verify, and install the `ssoca` client from [vpn-bosh.ci.cf-app.com](https://vpn-bosh.ci.cf-app.com).
+
+Alternatively, with [Homebrew](https://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)...
+
+    ```
+    brew install dpb587/tap/ssoca
+    ```
 
 
 ## Connecting to Concourse through the VPN
 
-Follow the platform-specific instructions to setup and connect. Once connected to the VPN, traffic to the [BOSH CPI](https://bosh-cpi.ci.cf-app.com) and [BOSH Core](https://main.bosh-ci.cf-app.com/) Concourse deployments will be routed through the VPN.
+Follow these instructions to setup and connect. Once connected to the VPN, traffic to the [BOSH CPI](https://bosh-cpi.ci.cf-app.com) and [BOSH Core](https://main.bosh-ci.cf-app.com/) Concourse installations will be routed through the VPN.
 
-### Linux/Mac
+### Linux/macOS
 
 1. To configure `ssoca` for the first time:
 
     ```
-    ssoca -e bosh env add https://vpn-bosh.ci.cf-app.com
+    ssoca -e bosh env set https://vpn-bosh.ci.cf-app.com
     ```
 
 2. Once configured, initiate the VPN connection:
 
     ```
-    ssoca -e bosh openvpn connect --sudo
+    ssoca -e bosh openvpn exec --sudo
     ```
 
-**Tip**: if you use [Tunnelblick](https://tunnelblick.net/) you may want to create a profile to allow you to connect/disconnect from Tunnelblick UI instead of through the terminal ([details](https://dpb587.github.io/ssoca/service/openvpn/create-tunnelblick-profile-cmd#usage-details)).
+3. macOS-specific: If you want to use [Tunnelblick](https://tunnelblick.net/) to manage the connection...
+
+    ```
+    ssoca -e bosh openvpn create-tunnelblick-profile --install
+    ```
 
 
 ### Windows
 
-1. To configure `ssoca` for the first time, download [our CA Certificate](ssoca_ca_cert.pem) and:
+1. To configure `ssoca` for the first time, download [our CA Certificate](ssoca_ca_cert.pem); then:
 
     ```
-    ssoca -e bosh env add https://vpn-bosh.ci.cf-app.com --ca-cert=ssoca_ca_cert.pem
+    ssoca -e bosh env set https://vpn-bosh.ci.cf-app.com --ca-cert=ssoca_ca_cert.pem
     ```
 
 2. Once configured, start PowerShell as Administrator and initiate the VPN connection:
 
     ```
-    ssoca -e bosh openvpn connect
+    ssoca -e bosh openvpn exec
     ```
