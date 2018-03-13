@@ -34,7 +34,7 @@ setup_gcloud_cli "${GOOGLE_CREDENTIALS}"
 set +e
 
 echo "Uploading Concourse release..."
-bosh -n --tty upload-release $( ls concourse-and-garden/concourse-*.tgz | tail -n1 )
+bosh -n --tty upload-release concourse/*.tgz
 
 echo "Uploading Postgres release..."
 bosh -n --tty upload-release postgres-release/*.tgz
@@ -43,7 +43,7 @@ echo "Uploading Concourse Windows release..."
 bosh -n --tty upload-release concourse-windows-worker/*.tgz
 
 echo "Uploading Garden release..."
-bosh -n --tty upload-release concourse-and-garden/garden-runc-*.tgz
+bosh -n --tty upload-release garden-runc-release/*.tgz
 
 echo "Uploading ulimit release..."
 ( cd ulimit ; bosh -n --tty upload-release )

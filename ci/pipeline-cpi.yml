@@ -231,7 +231,7 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      branch: merge-cpi-and-core
+      branch: master
   - name: bosh-cli
     type: s3
     source:
