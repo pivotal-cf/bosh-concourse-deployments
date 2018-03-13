@@ -22,6 +22,7 @@ setup_ssh_tunnel \
 echo "Updating cloud config..."
 bosh -n update-cloud-config \
   -l "${terraform_metadata}" \
+  --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
   deployments-src/bosh/cloud-config.yml
 
 echo "Successfully updated cloud-config!"

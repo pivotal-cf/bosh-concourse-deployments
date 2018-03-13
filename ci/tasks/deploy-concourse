@@ -30,8 +30,6 @@ concourse_windows_release_version="$( cat concourse-windows-worker/version )"
 
 setup_ssh_tunnel "$JUMPBOX_SSH_KEY" "$JUMPBOX_SSH_USER@$JUMPBOX_HOST"
 
-setup_gcloud_cli "${GOOGLE_CREDENTIALS}"
-
 set +e
 
 echo "Uploading Concourse release..."
@@ -94,9 +92,6 @@ echo "Building Concourse Workers manifest..."
 worker_ops_path="$( create_worker_ops_file "$CONCOURSE_TEAMS" )"
 
 pushd deployments-src > /dev/null
-  echo "Taking snapshot of persistent disk..."
-  take_disk_snapshot "${DEPLOYMENT_NAME}" "${GOOGLE_PROJECT_ID}" "$( jq -r -e .zone $terraform_metadata )"
-
   echo "Deploying Concourse..."
   bosh -n --tty deploy \
     -l <(echo "${CONCOURSE_SECRETS}") \
