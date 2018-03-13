@@ -12,14 +12,15 @@ source deployments-src/ci/utils
 source /etc/profile.d/chruby.sh
 chruby $RUBY_VERSION
 
-ln -s $PWD/concourse-and-garden/concourse-*.tgz concourse-and-garden/concourse-release.tgz
-ln -s $PWD/concourse-and-garden/garden-runc-*.tgz concourse-and-garden/garden-runc-release.tgz
-
 cp worker-state/*.json updated-worker-state/worker-state.json
 
 echo "Updating WORKER..."
 bosh -n create-env \
   --state updated-worker-state/worker-state.json \
+  -v concourse_release_path="$PWD/concourse/*.tgz" \
+  -v garden_runc_release_path="$PWD/garden-runc-release/*.tgz" \
+  -v bosh_cpi_release_path="$PWD/bosh-cpi-release/*.tgz" \
+  -v stemcell_path="$PWD/stemcell/*.tgz" \
   -l <( echo "${WORKER_SECRETS}" ) \
   deployments-src/${ENVIRONMENT_NAME}/worker.yml
 

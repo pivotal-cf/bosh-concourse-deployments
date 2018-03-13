@@ -10,7 +10,8 @@ inputs:
   - name: deployments-src
   - name: bosh-cpi-release
   - name: bosh-cli
-  - name: concourse-and-garden
+  - name: concourse
+  - name: garden-runc-release
   - name: worker-state
   - name: stemcell
 

@@ -3,19 +3,19 @@ name: google-asia-concourse-worker
 
 releases:
   - name: bosh-google-cpi
-    url: file://../../bosh-cpi-release/release.tgz
+    url: file://((bosh_cpi_release_path))
   - name: concourse
-    url: file://../../concourse-and-garden/concourse-release.tgz
+    url: file:/((concouse_release_path))
   - name: garden-runc
-    url: file://../../concourse-and-garden/garden-runc-release.tgz
+    url: file://((garden_runc_release_path))
   - name: os-conf
-    url: file://../../os-conf-release/release.tgz
+    url: file://((os_conf_release_path))
 
 resource_pools:
   - name: vms
     network: private
     stemcell:
-      url: file://../../stemcell/stemcell.tgz
+      url: file://((stemcell_path))
     cloud_properties:
       zone: ((zone))
       cpu: 2
