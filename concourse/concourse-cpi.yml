@@ -7,7 +7,7 @@ releases:
 - name: concourse
   version: ((concourse_version))
 - name: garden-runc
-  version: latest
+  version: ((garden_version))
 - name: ulimit
   version: latest
 - name: postgres

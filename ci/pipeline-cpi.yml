@@ -11,9 +11,8 @@ jobs:
         - get: concourse-windows-worker
           params:
             globs: ['release.tgz']
-        - get: concourse-and-garden
-          params:
-            globs: ['concourse-*-*.tgz','garden-runc-*.tgz']
+        - get: concourse
+        - get: garden-runc-release
         - get: ulimit
         - get: windows-utilities
         - get: postgres-release
@@ -110,12 +109,14 @@ resources:
     source:
       bucket: bosh-windows-stemcells
       regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
-  - name: concourse-and-garden
-    type: github-release
+  - name: concourse
+    type: bosh-io-release
     source:
-      repository: concourse
-      owner: concourse
-      access_token: {{concourse_config_access_token}}
+      repository: concourse/concourse
+  - name: garden-runc-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/garden-runc-release
   - name: ulimit
     type: git
     source:

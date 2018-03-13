@@ -9,7 +9,8 @@ image_resource:
 inputs:
   - name: deployments-src
   - name: terraform
-  - name: concourse-and-garden
+  - name: concourse
+  - name: garden-runc-release
   - name: concourse-windows-worker
   - name: windows-utilities
   - name: stemcell
