@@ -33,6 +33,7 @@ params:
   CONCOURSE_BASIC_AUTH_USERNAME: ""
   CONCOURSE_BASIC_AUTH_PASSWORD: ""
   CONCOURSE_TEAMS:               "[]"
+  GOOGLE_CREDENTIALS:            ""
 
 run:
   path: deployments-src/ci/tasks/deploy-concourse

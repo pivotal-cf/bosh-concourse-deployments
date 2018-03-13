@@ -16,6 +16,7 @@ set -eu
 : ${CONCOURSE_BASIC_AUTH_USERNAME:?}
 : ${CONCOURSE_BASIC_AUTH_PASSWORD:?}
 : ${CONCOURSE_TEAMS:?}
+: ${GOOGLE_CREDENTIALS:?}
 
 source deployments-src/ci/utils
 
@@ -28,34 +29,36 @@ concourse_windows_release_version="$( cat concourse-windows-worker/version )"
 
 setup_ssh_tunnel "$JUMPBOX_SSH_KEY" "$JUMPBOX_SSH_USER@$JUMPBOX_HOST"
 
+setup_gcloud_cli "${GOOGLE_CREDENTIALS}"
+
 set +e
 
 echo "Uploading Concourse release..."
-bosh2 -n --tty upload-release $( ls concourse-and-garden/concourse-*.tgz | tail -n1 )
+bosh -n --tty upload-release $( ls concourse-and-garden/concourse-*.tgz | tail -n1 )
 
 echo "Uploading Postgres release..."
-bosh2 -n --tty upload-release postgres-release/*.tgz
+bosh -n --tty upload-release postgres-release/*.tgz
 
 echo "Uploading Concourse Windows release..."
-bosh2 -n --tty upload-release concourse-windows-worker/*.tgz
+bosh -n --tty upload-release concourse-windows-worker/*.tgz
 
 echo "Uploading Garden release..."
-bosh2 -n --tty upload-release concourse-and-garden/garden-runc-*.tgz
+bosh -n --tty upload-release concourse-and-garden/garden-runc-*.tgz
 
 echo "Uploading ulimit release..."
-( cd ulimit ; bosh2 -n --tty upload-release )
+( cd ulimit ; bosh -n --tty upload-release )
 
 echo "Uploading Windows Utilities stemcell..."
-( cd windows-utilities ; rm -f config/private.yml ; bosh2 -n --tty upload-release )
+( cd windows-utilities ; rm -f config/private.yml ; bosh -n --tty upload-release )
 
 echo "Uploading stemcell..."
-bosh2 -n --tty upload-stemcell stemcell/*.tgz
+bosh -n --tty upload-stemcell stemcell/*.tgz
 
 echo "Uploading Windows stemcell..."
-bosh2 -n --tty upload-stemcell windows-stemcell/*.tgz
+bosh -n --tty upload-stemcell windows-stemcell/*.tgz
 
 echo "Uploading Postgres release..."
-bosh2 -n --tty upload-release postgres-release/release.tgz
+bosh -n --tty upload-release postgres-release/release.tgz
 
 set -e
 
@@ -70,14 +73,14 @@ create_worker_ops_file() {
     # if there is 'vm_type' create worker for team
     if [[ -n "$(echo "$team" | jq -r .vm_type)" ]]; then
       team_name="$(echo "$team" | jq -r .name)"
-      bosh2 int \
+      bosh int \
         -l <( echo "$team" | jq '. + {"team": .name}' ) \
         deployments-src/concourse/worker-ops.yml >> worker-ops.yml
     fi
 
     # if 'worker_public_key' add to 'tsa.team_authorized_keys'
     if [[ -n "$(echo "$team" | jq -r .worker_public_key)" ]]; then
-      bosh2 int \
+      bosh int \
         -l <( echo "$team" | jq '. + {"team": .name}' ) \
         deployments-src/concourse/team-authorized-public-key-ops.yml >> worker-ops.yml
     fi
@@ -90,8 +93,11 @@ echo "Building Concourse Workers manifest..."
 worker_ops_path="$( create_worker_ops_file "$CONCOURSE_TEAMS" )"
 
 pushd deployments-src > /dev/null
+  echo "Taking snapshot of persistent disk..."
+  take_disk_snapshot "${DEPLOYMENT_NAME}" "$( jq -r -e .zone $terraform_metadata )"
+
   echo "Deploying Concourse..."
-  bosh2 -n --tty deploy \
+  bosh -n --tty deploy \
     -l <(echo "${CONCOURSE_SECRETS}") \
     -v concourse_external_url=${CONCOURSE_EXTERNAL_URL} \
     -v concourse_basic_auth_username=${CONCOURSE_BASIC_AUTH_USERNAME} \

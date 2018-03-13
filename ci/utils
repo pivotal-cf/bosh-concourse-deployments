@@ -127,3 +127,23 @@ ssh_tunnel() {
   ssh $ssh_args -M -S "${tmp_dir}/tunnel-socket" -fnNT -L 6868:"${machine_internal_ip}":6868 "${jumpbox_address}"
   trap "{ cleanup_ssh_tunnel '$ssh_args' '$tmp_dir' '$jumpbox_address'; rm -rf '$tmp_dir'; }" EXIT
 }
+
+take_disk_snapshot() {
+  local deployment_name=${1?'Deployment name is required.'}
+  local zone=${2?'Zone is required'}
+
+  bosh -n -d "${deployment_name}" instances --details --column='Disk CIDs' | grep 'disk' | \
+    xargs -n1 gcloud compute disks snapshot \
+    --snapshot-names "concourse-snapshot-$(date +'%Y%m%d%H%M%S')" \
+    --zone "${zone}"
+}
+
+setup_gcloud_cli() {
+  local google_credentials=${1?'Google Cloud credentials are required.'}
+
+  source /root/.bashrc
+  local google_service_account=$( echo "${google_credentials}" | jq -r .client_email )
+
+  gcloud auth activate-service-account "${google_service_account}" \
+    --key-file <( echo "${google_credentials}" )
+}
