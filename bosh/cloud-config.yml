@@ -147,7 +147,15 @@ networks:
 disk_types:
 - name: persistent
   disk_size: 500_000
-  cloud_properties: {type: pd-standard}
+  cloud_properties:
+    type: pd-standard
+    creation: ((timestamp))
 - name: persistent-ssd
   disk_size: 500_000
-  cloud_properties: {type: pd-ssd}
+  cloud_properties:
+    type: pd-ssd
+    creation: ((timestamp))
+
+variables:
+- name: timestamp
+  type: password
