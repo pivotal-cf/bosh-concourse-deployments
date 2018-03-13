@@ -1,4 +1,19 @@
 ---
+groups:
+- name: all
+  jobs:
+  - update-concourse
+  - update-google-asia-worker
+  - update-vsphere-v6.5-worker
+  - prepare-asia-env
+- name: workers
+  jobs:
+  - update-google-asia-worker
+  - update-vsphere-v6.5-worker
+- name: env
+  jobs:
+  - prepare-asia-env
+
 jobs:
   - name: update-concourse
     serial_groups: [deploy]
@@ -52,9 +67,6 @@ jobs:
           CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
           CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
           CONCOURSE_TEAMS:                {{concourse_teams}}
-      - put: concourse-update-trigger
-        params:
-          file: concourse-and-garden/tag
     ensure:
       put: terraform
       params:
@@ -62,6 +74,130 @@ jobs:
         terraform_source: deployments-src/terraform/concourse
         vars:
           allow_ssh_access_to_jumpbox: 0
+
+  - name: update-google-asia-worker
+    serial_groups: [deploy-asia] # ensure Terraform state files don't get clobbered
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: google-asia-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-google-cpi-release
+          - get: concourse
+          - get: garden-runc-release
+          - get: stemcell
+          - get: os-conf-release
+        - &asia-open-ssh-to-jumpbox
+          put: terraform
+          params:
+            env_name: bosh-cpi-concourse-asia
+            terraform_source: deployments-src/terraform/asia
+            vars:
+              allow_ssh_access_to_jumpbox: 1
+        - aggregate:
+          - task: update-google-asia-worker
+            file: deployments-src/ci/tasks/deploy-worker-asia.yml
+            params:
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+              WORKER_SECRETS:     {{cpi-google-asia-worker-secrets}}
+              ENVIRONMENT_NAME:   google-asia-worker
+              JUMPBOX_SSH_USER:   {{jumpbox_ssh_user}}
+              JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
+            ensure:
+              put: worker-state
+              resource: google-asia-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+              ensure: &asia-close-ssh-to-jumpbox
+                put: terraform
+                params:
+                  env_name: bosh-cpi-concourse-asia
+                  terraform_source: deployments-src/terraform/asia
+                  vars:
+                    allow_ssh_access_to_jumpbox: 0
+
+  - name: update-vsphere-v6.5-worker
+    serial: true
+    plan:
+      - do:
+        - aggregate:
+          - get: concourse
+          - get: garden-runc-release
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: vsphere-v6.5-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-vsphere-cpi-release
+          - get: stemcell
+            resource: vsphere-stemcell
+        - aggregate:
+          - task: update-vsphere-v6.5-worker
+            file: deployments-src/ci/tasks/deploy-worker.yml
+            params:
+              WORKER_SECRETS: {{cpi-vsphere-v65-worker-secrets}}
+              ENVIRONMENT_NAME: vsphere-v6.5
+            ensure:
+              put: worker-state
+              resource: vsphere-v6.5-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+
+  - name: prepare-asia-env
+    serial_groups: [deploy-asia]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: jumpbox-deployment-src
+          - get: bosh-cli
+          - get: asia-natbox-state
+          - get: asia-jumpbox-state
+          - get: bosh-google-cpi-release
+          - get: networking-release
+          - get: stemcell
+        - put: terraform
+          params:
+            env_name: bosh-cpi-concourse-asia
+            terraform_source: deployments-src/terraform/asia
+            vars:
+              allow_mbus_access_to_natbox: 1
+              allow_mbus_access_to_jumpbox: 1
+        - aggregate:
+          - task: update-natbox
+            file: deployments-src/ci/tasks/deploy-natbox.yml
+            input_mapping:
+              natbox-state: asia-natbox-state
+            params:
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+            ensure:
+              put: asia-natbox-state
+              params:
+                file: updated-natbox-state/natbox-state.json
+          - task: update-jumpbox
+            file: deployments-src/ci/tasks/deploy-jumpbox.yml
+            input_mapping:
+              jumpbox-state: asia-jumpbox-state
+            params:
+              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
+              TRUSTED_CIDRS:      {{ssh_trusted_cidrs}}
+              MACHINE_TYPE:       {{jumpbox_machine_type}}
+              TEAMS:              {{bosh_teams}}
+            ensure:
+              put: asia-jumpbox-state
+              params:
+                file: updated-jumpbox-state/jumpbox-state.json
+        ensure:
+          put: terraform
+          params:
+            env_name: bosh-cpi-concourse-asia
+            terraform_source: deployments-src/terraform/asia
+            vars:
+              allow_mbus_access_to_natbox: 0
+              allow_mbus_access_to_jumpbox: 0
 
 resource_types:
   - name: terraform
@@ -94,7 +230,7 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      branch: master
+      branch: merge-cpi-and-core
   - name: bosh-cli
     type: s3
     source:
@@ -109,6 +245,10 @@ resources:
     source:
       bucket: bosh-windows-stemcells
       regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
+  - name: vsphere-stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
   - name: concourse
     type: bosh-io-release
     source:
@@ -135,9 +275,48 @@ resources:
     type: bosh-io-release
     source:
       repository: pivotal-cf-experimental/concourse-windows-worker-release
-  - name: concourse-update-trigger
+  - name: bosh-google-cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry-incubator/bosh-google-cpi-release
+  - name: bosh-vsphere-cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
+  - name: os-conf-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/os-conf-release
+  - name: networking-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/networking-release
+  - name: asia-natbox-state
     type: gcs-resource
     source:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
-      versioned_file: concourse/concourse-update-trigger
+      versioned_file: asia/natbox-state.json
+  - name: asia-jumpbox-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: asia/jumpbox-state.json
+  - name: jumpbox-deployment-src
+    type: git
+    source:
+      uri: https://github.com/cppforlife/jumpbox-deployment.git
+      branch: master
+  - name: vsphere-v6.5-worker-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: worker/vsphere-v6.5-worker-state.json
+  - name: google-asia-worker-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: worker/google-asia-worker-state.json
