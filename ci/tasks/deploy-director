@@ -42,15 +42,15 @@ ssh_tunnel \
 
 touch ops-file.yml
 if [[ -n "${ADDITIONAL_OPS}" && -n "$( echo "${ADDITIONAL_OPS}" | base64 -d )" ]]; then
-  bosh2 int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /commands | while read -r CMD; do eval $CMD; done
-  bosh2 int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /ops_file_yml > ops-file.yml
+  bosh int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /commands | while read -r CMD; do eval $CMD; done
+  bosh int <( echo "${ADDITIONAL_OPS}" | base64 -d ) --path /ops_file_yml > ops-file.yml
 fi
 
 vars_store="$(mktemp /tmp/vars-store-XXXXXX)"
 
 cp director-state/*.json updated-director-state
 echo "Updating director..."
-bosh2 -n create-env \
+bosh -n create-env \
   -o director-templates/gcp/cpi.yml \
   -o director-templates/local-dns.yml \
   -o deployments-src/bosh/debug-ops-file.yml \

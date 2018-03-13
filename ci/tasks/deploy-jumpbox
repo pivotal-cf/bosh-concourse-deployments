@@ -30,7 +30,7 @@ remove_terraform_prefix terraform/metadata jumpbox_ > metadata
 
 cp jumpbox-state/*.json updated-jumpbox-state
 echo "Updating jumpbox..."
-bosh2 -n create-env \
+bosh -n create-env \
   --state updated-jumpbox-state/jumpbox-state.json \
   --vars-store "you-really-need-this-flag-but-not-this-file.yml" \
   -o jumpbox-deployment-src/gcp/cpi.yml \

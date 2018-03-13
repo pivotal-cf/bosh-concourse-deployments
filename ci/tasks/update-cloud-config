@@ -20,7 +20,7 @@ setup_ssh_tunnel \
   "$JUMPBOX_SSH_USER@$( jq -r -e .jumpbox_external_ip $terraform_metadata )"
 
 echo "Updating cloud config..."
-bosh2 -n update-cloud-config \
+bosh -n update-cloud-config \
   -l "${terraform_metadata}" \
   deployments-src/bosh/cloud-config.yml
 

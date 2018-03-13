@@ -18,7 +18,7 @@ ln -s $PWD/concourse-and-garden/garden-runc-*.tgz concourse-and-garden/garden-ru
 cp worker-state/*.json updated-worker-state/worker-state.json
 
 echo "Updating WORKER..."
-bosh2 -n create-env \
+bosh -n create-env \
   --state updated-worker-state/worker-state.json \
   -l <( echo "${WORKER_SECRETS}" ) \
   deployments-src/${ENVIRONMENT_NAME}/worker.yml

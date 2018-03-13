@@ -12,7 +12,7 @@ remove_terraform_prefix terraform/metadata natbox_ > metadata
 cp natbox-state/*.json updated-natbox-state/natbox-state.json
 
 echo "Updating NAT..."
-bosh2 -n create-env \
+bosh -n create-env \
   --state updated-natbox-state/natbox-state.json \
   --vars-store "you-really-need-this-flag-but-not-this-file.yml" \
   -l metadata \
