@@ -130,10 +130,11 @@ ssh_tunnel() {
 
 take_disk_snapshot() {
   local deployment_name=${1?'Deployment name is required.'}
-  local zone=${2?'Zone is required'}
+  local project_id=${2?'Google Cloud Project ID is required.'}
+  local zone=${3?'Zone is required'}
 
   bosh -n -d "${deployment_name}" instances --details --column='Disk CIDs' | grep 'disk' | \
-    xargs -n1 gcloud compute disks snapshot \
+    xargs -n1 gcloud --project "${project_id}" compute disks snapshot \
     --snapshot-names "concourse-snapshot-$(date +'%Y%m%d%H%M%S')" \
     --zone "${zone}"
 }

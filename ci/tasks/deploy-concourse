@@ -16,6 +16,7 @@ set -eu
 : ${CONCOURSE_BASIC_AUTH_USERNAME:?}
 : ${CONCOURSE_BASIC_AUTH_PASSWORD:?}
 : ${CONCOURSE_TEAMS:?}
+: ${GOOGLE_PROJECT_ID:?}
 : ${GOOGLE_CREDENTIALS:?}
 
 source deployments-src/ci/utils
@@ -94,7 +95,7 @@ worker_ops_path="$( create_worker_ops_file "$CONCOURSE_TEAMS" )"
 
 pushd deployments-src > /dev/null
   echo "Taking snapshot of persistent disk..."
-  take_disk_snapshot "${DEPLOYMENT_NAME}" "$( jq -r -e .zone $terraform_metadata )"
+  take_disk_snapshot "${DEPLOYMENT_NAME}" "${GOOGLE_PROJECT_ID}" "$( jq -r -e .zone $terraform_metadata )"
 
   echo "Deploying Concourse..."
   bosh -n --tty deploy \

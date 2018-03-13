@@ -58,6 +58,7 @@ jobs:
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
           CONCOURSE_TEAMS:               {{concourse_teams}}
+          GOOGLE_PROJECT_ID:             {{project_id}}
           GOOGLE_CREDENTIALS:            {{gcp_credentials_json}}
       - task: set-teams
         file: deployments-src/ci/tasks/set-teams.yml
