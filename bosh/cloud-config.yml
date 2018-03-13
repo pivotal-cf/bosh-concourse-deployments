@@ -156,6 +156,9 @@ disk_types:
     type: pd-ssd
     creation: ((timestamp))
 
+# this will force bosh to create new persistent disk on every deployment
+# this will orphan previous disk in case a failure during upgrader
+# Related story: https://www.pivotaltracker.com/story/show/155955816
 variables:
 - name: timestamp
   type: password
