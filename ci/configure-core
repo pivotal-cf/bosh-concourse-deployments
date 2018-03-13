@@ -1,4 +1,4 @@
 fly -t upgrader sp \
   -p concourse-core \
-  -c "$PWD/ci/pipeline-core.yml" \
+  -c "$REPO_DIR/ci/pipeline-core.yml" \
   -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core")

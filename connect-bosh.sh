@@ -1,8 +1,5 @@
 #!/bin/bash -eu
-
-secure_note="${1?'Provide the LastPass secure note name'}"
-
-lpass_note="$( set -eu ; lpass show --note "$secure_note" )"
+lpass_note="$( set -eu ; lpass show --note bosh-concourse-upgrader-cpi-pipeline )"
 
 creds() {
   local path=${1?'Path is required.'}

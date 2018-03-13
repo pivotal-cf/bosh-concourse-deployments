@@ -3,11 +3,11 @@ name: concourse-core
 
 releases:
 - name: concourse
-  version: 3.6.0
+  version: ((concourse_version))
 - name: postgres
-  version: 22
+  version: ((postgres_version))
 - name: garden-runc
-  version: 1.6.0
+  version: ((garden_version))
 - name: ulimit
   version: latest
 - name: windows-utilities
@@ -19,7 +19,7 @@ releases:
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
-  version: 3.6.0
+  version: ((concourse_windows_release_version))
 
 stemcells:
 - alias: default
@@ -64,12 +64,13 @@ instance_groups:
           client_id: ((github_auth_client_id))
           client_secret: ((github_auth_client_secret))
           authorize: ((github_auth_authorize_organizations))
+        token_signing_key: ((token_signing_key))
     - name: tsa
       release: concourse
       properties:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_host_key))
-        host_public_key: ((tsa_host_public_key))
+        token_signing_key: ((token_signing_key))
     - name: ulimit
       release: ulimit
       properties:
@@ -111,6 +112,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-default
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: &additional_resource_types
         - type: slack-notification
           image: /var/vcap/packages/slack-notification-resource
@@ -151,6 +154,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-brats
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -186,6 +191,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -221,6 +228,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests-2
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -256,6 +265,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests-3
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -291,6 +302,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-bosh-load-tests-4
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -324,6 +337,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-1
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -361,6 +376,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-2
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -398,6 +415,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-3
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -437,6 +456,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-4
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -474,6 +495,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-5
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -511,6 +534,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-6
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -548,6 +573,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-7
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -585,6 +612,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-8
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -622,6 +651,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-integration-9
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -659,6 +690,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-db-tls-postgres
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -694,6 +727,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-db-tls-mysql
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -729,6 +764,8 @@ instance_groups:
         baggageclaim:
           from: baggageclaim-worker-dns-performance
       properties:
+        tsa:
+          worker_key: ((worker_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788

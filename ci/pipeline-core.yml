@@ -49,29 +49,6 @@ jobs:
           CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
-          IGNORE_UPLOAD_ERRORS:          true
-    ensure:
-      put: terraform
-      params:
-        env_name: bosh-core-concourse
-        terraform_source: deployments-src/terraform/allow_jumpbox
-        vars:
-          allow_ssh_access_to_jumpbox: 0
-
-  - name: open-ssh-for-30m
-    serial_groups: [deploy]
-    plan:
-      - get: deployments-src
-      - put: terraform
-        params:
-          env_name: bosh-core-concourse
-          terraform_source: deployments-src/terraform/allow_jumpbox
-          vars:
-            allow_ssh_access_to_jumpbox: 1
-      - task: wait-for-ssh
-        file: deployments-src/ci/tasks/wait-for-ssh.yml
-        params:
-          JUMPBOX_HOST: {{jumpbox_host}}
     ensure:
       put: terraform
       params:

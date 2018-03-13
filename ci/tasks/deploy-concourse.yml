@@ -9,8 +9,8 @@ image_resource:
 inputs:
   - name: deployments-src
   - name: terraform
-  - name: concourse-and-garden
-  - name: postgres-release
+  - name: concourse
+  - name: garden-runc-release
   - name: concourse-windows-worker
   - name: windows-utilities
   - name: stemcell
@@ -33,7 +33,6 @@ params:
   CONCOURSE_BASIC_AUTH_USERNAME: ""
   CONCOURSE_BASIC_AUTH_PASSWORD: ""
   CONCOURSE_TEAMS:               "[]"
-  IGNORE_UPLOAD_ERRORS:          false
 
 run:
   path: deployments-src/ci/tasks/deploy-concourse
