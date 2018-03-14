@@ -5,7 +5,7 @@ releases:
   - name: bosh-vsphere-cpi
     url: file://((bosh_cpi_release_path))
   - name: concourse
-    url: file:/((concouse_release_path))
+    url: file:/((concourse_release_path))
   - name: garden-runc
     url: file://((garden_runc_release_path))
 
