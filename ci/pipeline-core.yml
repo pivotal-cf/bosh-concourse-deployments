@@ -16,14 +16,22 @@ jobs:
         - get: windows-utilities
       - put: terraform
         params:
-          env_name: bosh-core-concourse
-          terraform_source: deployments-src/terraform/allow_jumpbox
+          env_name: bosh-cpi-concourse
+          terraform_source: deployments-src/terraform/concourse
           vars:
             allow_ssh_access_to_jumpbox: 1
       - task: wait-for-ssh
         file: deployments-src/ci/tasks/wait-ssh.yml
         params:
           JUMPBOX_HOST: {{jumpbox_host}}
+      - task: update-cloud-config
+        file: deployments-src/ci/tasks/update-cloud-config.yml
+        params:
+          BOSH_CLIENT:           {{bosh_client_admin}}
+          BOSH_CLIENT_SECRET:    {{bosh_client_secret_admin}}
+          BOSH_CA_CERT:          {{bosh_ca_cert}}
+          JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
@@ -43,8 +51,8 @@ jobs:
     ensure:
       put: terraform
       params:
-        env_name: bosh-core-concourse
-        terraform_source: deployments-src/terraform/allow_jumpbox
+        env_name: bosh-cpi-concourse
+        terraform_source: deployments-src/terraform/concourse
         vars:
           allow_ssh_access_to_jumpbox: 0
 
@@ -76,8 +84,10 @@ resources:
       vars:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
-        trusted_cidrs: {{jumpbox_trusted_cidrs}}
-        name: bosh-core
+        ssh_trusted_cidrs: {{ssh_trusted_cidrs}}
+        create_env_trusted_cidrs: {{create_env_trusted_cidrs}}
+        bosh_cpi_web_trusted_cidrs: {{bosh_cpi_web_trusted_cidrs}}
+        bosh_core_web_trusted_cidrs: {{bosh_core_web_trusted_cidrs}}
   - name: bosh-cli
     type: s3
     source:
