@@ -57,7 +57,8 @@ instance_groups:
       properties:
         host_key: ((tsa_host_key))
         token_signing_key: ((token_signing_key))
-        team_authorized_keys: [(worker_key.public_key))] # keys will be added via worker-ops.yml
+        authorized_keys: [((worker_key.public_key))]
+        team_authorized_keys: [] # keys will be added via worker-ops.yml
     - name: ulimit
       release: ulimit
       properties:
