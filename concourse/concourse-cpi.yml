@@ -51,12 +51,13 @@ instance_groups:
             password: ((concourse_db_password))
         basic_auth_username: ((concourse_basic_auth_username))
         basic_auth_password: ((concourse_basic_auth_password))
+        token_signing_key: ((token_signing_key))
     - name: tsa
       release: concourse
       properties:
-        host_key: ((tsa_private_key))
-        host_public_key: ((tsa_public_key))
-        team_authorized_keys: [] # keys will be added via worker-ops.yml
+        host_key: ((tsa_host_key))
+        token_signing_key: ((token_signing_key))
+        team_authorized_keys: [(worker_key.public_key))] # keys will be added via worker-ops.yml
     - name: ulimit
       release: ulimit
       properties:
@@ -98,6 +99,9 @@ instance_groups:
       consumes:
         baggageclaim: {from: shared_baggageclaim}
       properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         baggageclaim:
           forward_address: 127.0.0.1:7788
         garden:

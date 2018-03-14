@@ -14,6 +14,9 @@
         consumes:
           baggageclaim: {from: ((team))_baggageclaim}
         properties:
+          tsa:
+            worker_key: ((worker_key))
+            host_public_key: ((tsa_host_key.public_key))
           team: ((team))
           baggageclaim:
             forward_address: 127.0.0.1:7788

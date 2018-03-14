@@ -55,8 +55,8 @@ instance_groups:
         forward_address: 127.0.0.1:7777
       tsa:
         host: ((concourse_tsa_hostname))
-        host_public_key: ((concourse_tsa_public_key))
-        private_key: ((vcenter_worker_private_key))
+        worker_key: ((worker_key))
+        host_public_key: ((tsa_host_key.public_key))
 
 cloud_provider:
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
