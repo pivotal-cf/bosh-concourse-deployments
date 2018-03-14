@@ -13,17 +13,11 @@ source deployments-src/ci/utils
 
 terraform_metadata="$( realpath terraform/metadata )"
 
-if [[ -z "$BOSH_ENVIRONMENT" ]]; then
-  export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip $terraform_metadata )"
-fi
-
-if [[ -z "$JUMPBOX_SSH_HOST" ]]; then
-  JUMPBOX_SSH_HOST="$( jq -r -e .jumpbox_external_ip $terraform_metadata )"
-fi
+export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip $terraform_metadata )"
 
 setup_ssh_tunnel \
   "$JUMPBOX_SSH_KEY" \
-  "$JUMPBOX_SSH_USER@$JUMPBOX_SSH_HOST"
+  "$JUMPBOX_SSH_USER@$( jq -r -e .jumpbox_external_ip $terraform_metadata )"
 
 echo "Updating cloud config..."
 bosh -n update-cloud-config \
