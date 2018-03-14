@@ -13,7 +13,9 @@ source deployments-src/ci/utils
 
 terraform_metadata="$( realpath terraform/metadata )"
 
-export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip $terraform_metadata )"
+if [[ -z "$BOSH_ENVIRONMENT" ]]; then 
+  export BOSH_ENVIRONMENT="$( jq -r -e .director_internal_ip $terraform_metadata )"
+fi
 
 setup_ssh_tunnel \
   "$JUMPBOX_SSH_KEY" \
