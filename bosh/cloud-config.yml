@@ -149,16 +149,16 @@ disk_types:
   disk_size: 500_000
   cloud_properties:
     type: pd-standard
-    creation: ((timestamp))
+    creation: ((salt))
 - name: persistent-ssd
   disk_size: 500_000
   cloud_properties:
     type: pd-ssd
-    creation: ((timestamp))
+    creation: ((salt))
 
 # this will force bosh to create new persistent disk on every deployment
 # this will orphan previous disk in case a failure during upgrader
 # Related story: https://www.pivotaltracker.com/story/show/155955816
 variables:
-- name: timestamp
+- name: salt
   type: password

@@ -9,18 +9,9 @@ jobs:
         - get: windows-stemcell
         - get: bosh-cli
         - get: postgres-release
-          version:
-            version: "22"
         - get: concourse-windows-worker
-          params:
-            globs: ['release.tgz']
-          version:
-            version: "3.6.0"
-        - get: concourse-and-garden
-          version:
-            tag: v3.6.0
-          params:
-            globs: ['concourse-*.tgz','garden-runc-*.tgz']
+        - get: concourse
+        - get: garden-runc-release
         - get: ulimit
         - get: windows-utilities
       - put: terraform
@@ -33,14 +24,6 @@ jobs:
         file: deployments-src/ci/tasks/wait-ssh.yml
         params:
           JUMPBOX_HOST: {{jumpbox_host}}
-      - task: update-cloud-config
-        file: deployments-src/ci/tasks/update-cloud-config.yml
-        params:
-          BOSH_CLIENT:           {{bosh_client}}
-          BOSH_CLIENT_SECRET:    {{bosh_client_secret}}
-          BOSH_CA_CERT:          {{bosh_ca_cert}}
-          JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
-          JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
@@ -80,7 +63,7 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      branch: bosh-core
+      branch: master
   - name: terraform
     type: terraform
     source:
@@ -104,12 +87,14 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-google-kvm-ubuntu-trusty-go_agent
-  - name: concourse-and-garden
-    type: github-release
+  - name: concourse
+    type: bosh-io-release
     source:
-      access_token: {{concourse_config_access_token}}
-      repository: concourse
-      owner: concourse
+      repository: concourse/concourse
+  - name: garden-runc-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/garden-runc-release
   - name: ulimit
     type: git
     source:
