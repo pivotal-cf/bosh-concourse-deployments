@@ -32,11 +32,11 @@ bosh -n create-env \
   --state updated-worker-state/worker-state.json \
   -l metadata \
   -l <( echo "${WORKER_SECRETS}" ) \
-  -v concourse_release_path="$PWD/concourse/*.tgz" \
-  -v garden_runc_release_path="$PWD/garden-runc-release/*.tgz" \
-  -v bosh_cpi_release_path="$PWD/bosh-cpi-release/*.tgz" \
-  -v stemcell_path="$PWD/stemcell/*.tgz" \
-  -v os_conf_release_path="$PWD/os-conf-release./*.tgz" \
+  -v concourse_release_path="$( realpath $PWD/concourse/*.tgz )" \
+  -v garden_runc_release_path="$( realpath $PWD/garden-runc-release/*.tgz )" \
+  -v bosh_cpi_release_path="$( realpath $PWD/bosh-cpi-release/*.tgz )" \
+  -v stemcell_path="$( realpath $PWD/stemcell/*.tgz )" \
+  -v os_conf_release_path="$( realpath $PWD/os-conf-release./*.tgz )" \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
   deployments-src/${ENVIRONMENT_NAME}/worker.yml
 
