@@ -114,6 +114,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: &additional_resource_types
         - type: slack-notification
           image: /var/vcap/packages/slack-notification-resource
@@ -156,6 +157,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -193,6 +195,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -230,6 +233,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -267,6 +271,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -304,6 +309,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -339,6 +345,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -378,6 +385,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -417,6 +425,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -458,6 +467,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -497,6 +507,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -536,6 +547,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -575,6 +587,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -614,6 +627,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -653,6 +667,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -692,6 +707,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -729,6 +745,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -766,6 +783,7 @@ instance_groups:
       properties:
         tsa:
           worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
         additional_resource_types: *additional_resource_types
         baggageclaim:
           forward_address: 127.0.0.1:7788
@@ -808,5 +826,5 @@ instance_groups:
   properties:
     concourse_windows:
       tsa_host: ((concourse_tsa_hostname))
-      tsa_public_key: ((tsa_host_public_key))
+      tsa_public_key: ((tsa_host_key.public_key))
       tsa_worker_private_key: ((tsa_worker_private_key))
