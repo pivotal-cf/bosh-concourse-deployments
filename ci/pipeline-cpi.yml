@@ -150,6 +150,8 @@ jobs:
             params:
               WORKER_SECRETS: {{cpi-vsphere-v65-worker-secrets}}
               ENVIRONMENT_NAME: vsphere-v6.5
+              OPTIONAL_FLAGS: |
+                -o deployments-src/concourse/workers/ops/add-team.yml
             ensure:
               put: worker-state
               resource: vsphere-v6.5-worker-state

@@ -38,6 +38,6 @@ bosh -n create-env \
   -v stemcell_path="$( realpath $PWD/stemcell/*.tgz )" \
   -v os_conf_release_path="$( realpath $PWD/os-conf-release/*.tgz )" \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
-  deployments-src/${ENVIRONMENT_NAME}/worker.yml
+  deployments-src/concourse/workers/${ENVIRONMENT_NAME}/worker.yml
 
 echo "Successfully updated worker!"

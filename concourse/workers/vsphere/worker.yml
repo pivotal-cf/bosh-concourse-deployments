@@ -1,5 +1,5 @@
 ---
-name: vsphere-concourse-worker
+name: ((worker_name))
 
 releases:
   - name: bosh-vsphere-cpi
@@ -15,9 +15,7 @@ resource_pools:
     stemcell:
       url: file://((stemcell_path))
     cloud_properties:
-      cpu: 4
-      ram: 16_384
-      disk: 100_000
+      ((resource_pool_properties))
 
 networks:
   - name: private
@@ -43,8 +41,7 @@ instance_groups:
     networks:
       - {name: private, static_ips: [((vcenter_worker_ip))]}
     properties:
-      tags: ["vsphere", "vsphere-v6.5"]
-      team: ((vsphere_worker_team))
+      tags: ((worker_tags))
       baggageclaim:
         forward_address: 127.0.0.1:7788
       garden:
@@ -60,9 +57,7 @@ instance_groups:
 
 cloud_provider:
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
-
   mbus: "https://mbus:((vcenter_worker_mbus_password))@((vcenter_worker_ip)):6868"
-
   properties:
     vcenter:
       address: ((vcenter_address))
@@ -76,10 +71,8 @@ cloud_provider:
           persistent_datastore_pattern: ((vcenter_persistent_datacenter_datastore_pattern))
           disk_path: ((vcenter_datacenter_disk_path))
           clusters:
-            - ((vcenter_cluster)):
-                resource_pool: ((vcenter_resource_pool))
-
+          - ((vcenter_cluster)):
+              resource_pool: ((vcenter_resource_pool))
     agent: {mbus: "https://mbus:((vcenter_worker_mbus_password))@0.0.0.0:6868"}
-
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: [0.pool.ntp.org, 1.pool.ntp.org]

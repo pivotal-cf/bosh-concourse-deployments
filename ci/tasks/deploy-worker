@@ -22,6 +22,7 @@ bosh -n create-env \
   -v bosh_cpi_release_path="$( realpath $PWD/bosh-cpi-release/*.tgz )" \
   -v stemcell_path="$( realpath $PWD/stemcell/*.tgz )" \
   -l <( echo "${WORKER_SECRETS}" ) \
-  deployments-src/${ENVIRONMENT_NAME}/worker.yml
+  $( echo ${OPTIONAL_FLAGS} ) \
+  deployments-src/concourse/workers/${ENVIRONMENT_NAME}/worker.yml
 
 echo "Successfully updated worker!"

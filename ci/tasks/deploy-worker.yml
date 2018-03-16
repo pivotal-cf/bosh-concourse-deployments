@@ -19,7 +19,8 @@ outputs:
   - name: updated-worker-state
 
 params:
-  IAAS_CREDENTIALS:    ""
+  IAAS_CREDENTIALS:  ""
+  OPTIONAL_FLAGS:    ""
 
 run:
   path: deployments-src/ci/tasks/deploy-worker

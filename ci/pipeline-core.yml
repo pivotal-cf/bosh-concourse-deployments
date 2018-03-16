@@ -56,6 +56,60 @@ jobs:
         vars:
           allow_ssh_access_to_jumpbox: 0
 
+  - name: update-vsphere-v5.1-worker
+    serial: true
+    plan:
+      - do:
+        - aggregate:
+          - get: concourse
+          - get: garden-runc-release
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: vsphere-5.1-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-vsphere-cpi-release
+          - get: stemcell
+            resource: vsphere-stemcell
+        - aggregate:
+          - task: update-vsphere-v5.1-worker
+            file: deployments-src/ci/tasks/deploy-worker.yml
+            params:
+              WORKER_SECRETS: {{vsphere-v51-worker-secrets}}
+              ENVIRONMENT_NAME: vsphere
+            ensure:
+              put: worker-state
+              resource: vsphere-5.1-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+
+  - name: update-vsphere-windows-worker
+    serial: true
+    plan:
+      - do:
+        - aggregate:
+          - get: concourse
+          - get: garden-runc-release
+          - get: deployments-src
+          - get: bosh-cli
+          - get: worker-state
+            resource: vsphere-windows-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-vsphere-cpi-release
+          - get: stemcell
+            resource: vsphere-stemcell
+        - aggregate:
+          - task: update-vsphere-windows-worker
+            file: deployments-src/ci/tasks/deploy-worker.yml
+            params:
+              WORKER_SECRETS: {{vsphere-windows-worker-secrets}}
+              ENVIRONMENT_NAME: vsphere
+            ensure:
+              put: worker-state
+              resource: vsphere-windows-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+
 resource_types:
   - name: terraform
     type: docker-image
@@ -129,3 +183,23 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry/postgres-release
+  - name: vsphere-5.1-worker-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: worker/vsphere-v5.1-worker-state.json
+  - name: vsphere-windows-worker-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: worker/vsphere-windows-worker-state.json
+  - name: bosh-vsphere-cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
+  - name: vsphere-stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
