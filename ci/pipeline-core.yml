@@ -66,7 +66,7 @@ jobs:
           - get: deployments-src
           - get: bosh-cli
           - get: worker-state
-            resource: vsphere-5.1-worker-state
+            resource: vsphere-v5.1-worker-state
           - get: bosh-cpi-release
             resource: bosh-vsphere-cpi-release
           - get: stemcell
@@ -79,7 +79,7 @@ jobs:
               ENVIRONMENT_NAME: vsphere
             ensure:
               put: worker-state
-              resource: vsphere-5.1-worker-state
+              resource: vsphere-v5.1-worker-state
               params:
                 file: updated-worker-state/worker-state.json
 
@@ -183,16 +183,16 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry/postgres-release
-  - name: vsphere-5.1-worker-state
+  - name: vsphere-v5.1-worker-state
     type: gcs-resource
     source:
-      bucket: {{deployments_bucket_name}}
+      bucket: {{deployments_core_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: worker/vsphere-v5.1-worker-state.json
   - name: vsphere-windows-worker-state
     type: gcs-resource
     source:
-      bucket: {{deployments_bucket_name}}
+      bucket: {{deployments_core_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: worker/vsphere-windows-worker-state.json
   - name: bosh-vsphere-cpi-release
