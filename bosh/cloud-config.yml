@@ -148,7 +148,7 @@ disk_types:
 - name: persistent
   disk_size: 500_000
   cloud_properties:
-    type: pd-standard
+    type: pd-ssd
     creation: ((salt))
 - name: persistent-ssd
   disk_size: 500_000
