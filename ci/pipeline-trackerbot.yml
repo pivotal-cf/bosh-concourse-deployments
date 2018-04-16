@@ -32,7 +32,17 @@ jobs:
             mkdir -p $GOPATH
 
             config_file=$BUILD_DIR/config.yml
-            echo '{"ignore": [], "groups": {}}' > $config_file
+            echo '{"ignore": [], "groups": {
+              "bosh:stemcells:build-ubuntu-trusty": [
+                "bosh:stemcells.*build.*ubuntu-trusty"
+              ],
+              "bosh:stemcells:build-centos-7": [
+                "bosh:stemcells.*build.*centos-7"
+              ],
+              "bosh:xenial-stemcells:build-ubuntu-xenial": [
+                "bosh:xenial-stemcells.*build.*ubuntu-xenial"
+              ]
+            }}' > $config_file
 
             trackerbot_path=$GOPATH/src/github.com/pivotal-cf-experimental/relint-trackerbot
 
