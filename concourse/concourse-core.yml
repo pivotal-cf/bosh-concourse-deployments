@@ -866,3 +866,41 @@ instance_groups:
       tsa_host: ((concourse_tsa_hostname))
       tsa_public_key: ((tsa_host_key.public_key))
       tsa_worker_private_key: ((tsa_worker_private_key))
+
+- name: deleteme-beefcake
+  instances: 1
+  vm_type: concourse_core_load_worker
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-beefcake
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-beefcake
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-beefcake
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
