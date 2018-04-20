@@ -869,7 +869,7 @@ instance_groups:
 
 - name: deleteme-beefcake
   instances: 1
-  vm_type: concourse_core_load_worker
+  vm_type: concourse_core_worker_32_16
   stemcell: default
   azs: [us1]
   jobs:
