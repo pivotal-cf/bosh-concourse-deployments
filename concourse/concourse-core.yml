@@ -355,7 +355,8 @@ instance_groups:
         - potato
     - name: garden
       release: garden-runc
-      properties: *garden
+      properties:
+        <<: *garden
         max_containers: 1
     - name: baggageclaim
       release: concourse
