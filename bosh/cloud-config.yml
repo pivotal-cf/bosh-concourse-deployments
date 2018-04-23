@@ -86,10 +86,10 @@ vm_types:
     tags:
       - ((nat_traffic_tag))
       - ((bosh_core.worker_tag))
-- name: concourse_core_worker_32_16
+- name: concourse_core_worker_32_32
   cloud_properties:
     cpu: 32
-    ram: 29_440
+    ram: 32_768
     root_disk_size_gb: 164
     root_disk_type: pd-ssd
     tags:
