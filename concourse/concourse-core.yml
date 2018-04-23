@@ -341,7 +341,7 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggageclaim-worker-integration-1
+          from: baggageclaim-worker-integration
       properties:
         tsa:
           worker_key: ((worker_key))
@@ -364,7 +364,7 @@ instance_groups:
         driver: btrfs
       provides:
         baggageclaim:
-          as: baggageclaim-worker-integration-1
+          as: baggageclaim-worker-integration
     - name: slack-notification-resource
       release: slack-notification-resource
       properties: {}
