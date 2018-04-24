@@ -55,6 +55,7 @@ instance_groups:
         tls_cert: ((tls_cert))
         tls_key: ((tls_key))
         publicly_viewable: true
+        container_placement_strategy: random
         postgresql:
           database: ((database_name))
           role:
@@ -332,7 +333,7 @@ instance_groups:
       properties: {}
 
 - name: worker-integration
-  instances: 2
+  instances: 6
   vm_type: concourse_core_worker_32_32
   stemcell: default
   azs: [us1]
@@ -352,7 +353,8 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - potato
+        - bosh-integration
+        - fly-integration
     - name: garden
       release: garden-runc
       properties:
@@ -392,9 +394,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-1
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -432,9 +432,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-          - bosh-integration
           - bosh-integration-2
-          - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -472,9 +470,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-3
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -514,9 +510,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-4
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -554,9 +548,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-5
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -594,9 +586,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-6
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -634,9 +624,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-7
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -674,9 +662,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-8
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
@@ -714,9 +700,7 @@ instance_groups:
         garden:
           forward_address: 127.0.0.1:7777
         tags:
-        - bosh-integration
         - bosh-integration-9
-        - fly-integration
     - name: garden
       release: garden-runc
       properties: *garden
