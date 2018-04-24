@@ -334,7 +334,7 @@ instance_groups:
 
 - name: worker-integration
   instances: 8
-  vm_type: concourse_core_worker_32_32
+  vm_type: concourse_core_worker_32_64
   stemcell: default
   azs: [us1]
   jobs:
