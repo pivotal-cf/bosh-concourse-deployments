@@ -1,3 +1,5 @@
+#!/bin/bash
+
 fly -t upgrader sp \
   -p concourse-core \
   -c "$REPO_DIR/ci/pipeline-core.yml" \
