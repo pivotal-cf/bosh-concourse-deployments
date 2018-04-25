@@ -332,8 +332,8 @@ instance_groups:
       release: slack-notification-resource
       properties: {}
 
-- name: worker-integration
-  instances: 8
+- name: worker-integration-1
+  instances: 1
   vm_type: concourse_core_worker_32_64
   stemcell: default
   azs: [us1]
@@ -342,7 +342,206 @@ instance_groups:
       release: concourse
       consumes:
         baggageclaim:
-          from: baggageclaim-worker-integration
+          from: baggageclaim-worker-integration-1
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration
+        - bosh-integration-1
+        - bosh-integration-db-tls-hotswap # backwards compatibility with branch pipelines
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-integration-1
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker-integration-2
+  instances: 1
+  vm_type: concourse_core_worker_32_64
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-integration-2
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration
+        - bosh-integration-2
+        - bosh-integration-db-tls-mysql # backwards compatibility with branch pipelines
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-integration-2
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker-integration-3
+  instances: 1
+  vm_type: concourse_core_worker_32_64
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-integration-3
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration
+        - bosh-integration-3
+        - bosh-integration-db-tls-postgres # backwards compatibility with branch pipelines
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-integration-3
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker-integration-4
+  instances: 1
+  vm_type: concourse_core_worker_32_64
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-integration-4
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration
+        - bosh-integration-4
+        - bosh-integration-9 # backwards compatibility with branch pipelines
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-integration-4
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker-integration-5
+  instances: 1
+  vm_type: concourse_core_worker_32_64
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-integration-5
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration
+        - bosh-integration-5
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-integration-5
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker-integration-6
+  instances: 1
+  vm_type: concourse_core_worker_32_64
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-integration-6
       properties:
         tsa:
           worker_key: ((worker_key))
@@ -355,57 +554,87 @@ instance_groups:
         tags:
         - bosh-integration
         - fly-integration
-        - bosh-integration-1
-        - bosh-integration-2
-        - bosh-integration-3
-        - bosh-integration-4
-        - bosh-integration-5
         - bosh-integration-6
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-integration-6
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker-integration-7
+  instances: 1
+  vm_type: concourse_core_worker_32_64
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-integration-7
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration
+        - fly-integration
         - bosh-integration-7
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      properties:
+        driver: btrfs
+      provides:
+        baggageclaim:
+          as: baggageclaim-worker-integration-7
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
+  networks:
+    - name: concourse
+
+- name: worker-integration-8
+  instances: 1
+  vm_type: concourse_core_worker_32_64
+  stemcell: default
+  azs: [us1]
+  jobs:
+    - name: groundcrew
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: baggageclaim-worker-integration-8
+      properties:
+        tsa:
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+        tags:
+        - bosh-integration
+        - fly-integration
         - bosh-integration-8
-        - bosh-integration-9
-    - name: garden
-      release: garden-runc
-      properties:
-        <<: *garden
-        max_containers: 1
-    - name: baggageclaim
-      release: concourse
-      properties:
-        driver: btrfs
-      provides:
-        baggageclaim:
-          as: baggageclaim-worker-integration
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
-  networks:
-    - name: concourse
-
-- name: worker_db-tls-postgres
-  instances: 1
-  vm_type: concourse_core_worker_8_16
-  stemcell: default
-  azs: [us1]
-  networks:
-    - name: concourse
-  jobs:
-    - name: groundcrew
-      release: concourse
-      consumes:
-        baggageclaim:
-          from: baggageclaim-worker-db-tls-postgres
-      properties:
-        tsa:
-          worker_key: ((worker_key))
-          host_public_key: ((tsa_host_key.public_key))
-        additional_resource_types: *additional_resource_types
-        baggageclaim:
-          forward_address: 127.0.0.1:7788
-        garden:
-          forward_address: 127.0.0.1:7777
-        tags:
-        - bosh-integration-db-tls-postgres
     - name: garden
       release: garden-runc
       properties: *garden
@@ -415,86 +644,12 @@ instance_groups:
         driver: btrfs
       provides:
         baggageclaim:
-          as: baggageclaim-worker-db-tls-postgres
+          as: baggageclaim-worker-integration-8
     - name: slack-notification-resource
       release: slack-notification-resource
       properties: {}
-
-- name: worker_db-tls-hotswap
-  instances: 1
-  vm_type: concourse_core_worker_8_16
-  stemcell: default
-  azs: [us1]
   networks:
     - name: concourse
-  jobs:
-    - name: groundcrew
-      release: concourse
-      consumes:
-        baggageclaim:
-          from: baggageclaim-worker-db-tls-hotswap
-      properties:
-        tsa:
-          worker_key: ((worker_key))
-          host_public_key: ((tsa_host_key.public_key))
-        additional_resource_types: *additional_resource_types
-        baggageclaim:
-          forward_address: 127.0.0.1:7788
-        garden:
-          forward_address: 127.0.0.1:7777
-        tags:
-        - bosh-integration-db-tls-hotswap
-    - name: garden
-      release: garden-runc
-      properties: *garden
-    - name: baggageclaim
-      release: concourse
-      properties:
-        driver: btrfs
-      provides:
-        baggageclaim:
-          as: baggageclaim-worker-db-tls-hotswap
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
-
-- name: worker_db-tls-mysql
-  instances: 1
-  vm_type: concourse_core_worker_8_16
-  stemcell: default
-  azs: [us1]
-  networks:
-    - name: concourse
-  jobs:
-    - name: groundcrew
-      release: concourse
-      consumes:
-        baggageclaim:
-          from: baggageclaim-worker-db-tls-mysql
-      properties:
-        tsa:
-          worker_key: ((worker_key))
-          host_public_key: ((tsa_host_key.public_key))
-        additional_resource_types: *additional_resource_types
-        baggageclaim:
-          forward_address: 127.0.0.1:7788
-        garden:
-          forward_address: 127.0.0.1:7777
-        tags:
-        - bosh-integration-db-tls-mysql
-    - name: garden
-      release: garden-runc
-      properties: *garden
-    - name: baggageclaim
-      release: concourse
-      properties:
-        driver: btrfs
-      provides:
-        baggageclaim:
-          as: baggageclaim-worker-db-tls-mysql
-    - name: slack-notification-resource
-      release: slack-notification-resource
-      properties: {}
 
 - name: worker-dns-performance
   instances: 1
@@ -534,7 +689,7 @@ instance_groups:
       release: slack-notification-resource
       properties: {}
 
-- name: windows_worker
+- name: worker-windows
   stemcell: windows
   vm_type: concourse_core_worker_8_16
   azs: [us1]
