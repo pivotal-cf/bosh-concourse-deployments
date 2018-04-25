@@ -96,6 +96,6 @@ resources:
 - name: relint-trackerbot
   type: git
   source:
-    uri: git@github.com:jaresty/relint-trackerbot.git
+    uri: git@github.com:pivotal-cf-experimental/relint-trackerbot.git
     branch: master
-    private_key: ((private_key_jaresty))
+    private_key: ((private_key))
