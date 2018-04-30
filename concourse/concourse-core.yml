@@ -107,7 +107,7 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -150,7 +150,7 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -188,7 +188,7 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -226,7 +226,7 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -264,7 +264,7 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -302,7 +302,7 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -338,7 +338,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -378,7 +378,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -418,7 +418,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -458,7 +458,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -498,7 +498,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -537,7 +537,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -577,7 +577,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -617,7 +617,7 @@ instance_groups:
   stemcell: default
   azs: [us1]
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
@@ -659,7 +659,7 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim:
