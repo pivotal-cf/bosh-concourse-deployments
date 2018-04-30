@@ -31,7 +31,7 @@ instance_groups:
   - name: worker
     instances: 1
     jobs:
-      - name: groundcrew
+      - name: worker
         release: concourse
       - name: baggageclaim
         release: concourse
