@@ -54,6 +54,7 @@ instance_groups:
         host: ((concourse_tsa_hostname))
         worker_key: ((worker_key))
         host_public_key: ((tsa_host_key.public_key))
+        registration_mode: forward
 
 cloud_provider:
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
