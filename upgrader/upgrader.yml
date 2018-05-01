@@ -91,7 +91,7 @@ instance_groups:
         - name: atc
           password: ((postgres_password))
 
-  - name: groundcrew
+  - name: worker
     release: concourse
     properties:
       tsa:
