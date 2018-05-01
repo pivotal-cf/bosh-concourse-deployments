@@ -51,11 +51,12 @@ instance_groups:
         btrfs_store_size_mb: 1000000
         forward_address: 127.0.0.1:7777
       tsa:
+        registration_mode: forward
         host: ((concourse_tsa_hostname))
         worker_key: ((worker_key))
         host_public_key: ((tsa_host_key.public_key))
     jobs:
-      - name: groundcrew
+      - name: worker
         release: concourse
       - name: baggageclaim
         release: concourse
