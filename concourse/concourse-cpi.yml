@@ -95,12 +95,13 @@ instance_groups:
   networks:
     - name: concourse
   jobs:
-    - name: groundcrew
+    - name: worker
       release: concourse
       consumes:
         baggageclaim: {from: shared_baggageclaim}
       properties:
         tsa:
+          registration_mode: forward
           worker_key: ((worker_key))
           host_public_key: ((tsa_host_key.public_key))
         baggageclaim:
