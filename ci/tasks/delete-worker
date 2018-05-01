@@ -5,12 +5,11 @@ set -eu
 # env
 : ${ENVIRONMENT_NAME:?}
 : ${WORKER_SECRETS:?}
-: ${RUBY_VERSION:="2.3.1"}
 
 set +u
 source deployments-src/ci/utils
 source /etc/profile.d/chruby.sh
-chruby $RUBY_VERSION
+chruby ruby
 
 cp worker-state/*.json updated-worker-state/worker-state.json
 

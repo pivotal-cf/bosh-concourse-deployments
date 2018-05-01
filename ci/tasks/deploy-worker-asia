@@ -6,14 +6,13 @@ set -eu
 : ${GOOGLE_CREDENTIALS:?}
 : ${ENVIRONMENT_NAME:?}
 : ${WORKER_SECRETS:?}
-: ${RUBY_VERSION:?}
 : ${JUMPBOX_SSH_USER:?}
 : ${JUMPBOX_SSH_KEY:?}
 
 set +u
 source deployments-src/ci/utils
 source /etc/profile.d/chruby.sh
-chruby $RUBY_VERSION
+chruby ruby
 
 remove_terraform_prefix terraform/metadata worker_ > metadata
 
