@@ -3,11 +3,11 @@ name: concourse
 
 releases:
 - name: concourse
-  url: https://bosh.io/d/github.com/concourse/concourse?v=3.9.2
-  sha1: a0ebed14c296273f37ed2a7ec79b9a7814734e16
+  url: https://bosh.io/d/github.com/concourse/concourse?v=3.12.0
+  sha1: 12746f25cd484bdd9a8ed7151cfed20a142de2fa
 - name: garden-runc
-  url: https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.12.0
-  sha1: 9cb3ec63f04d6cfb3047229544f261ff737f203e
+  url: https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.13.1
+  sha1: 54cbb89cae1be0708aa056185671665d7f4b2a4f
 - name: bosh-vsphere-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45.1.0
   sha1: 49164212bcd6a35515db6664bcb26bef2fcc6b6c
