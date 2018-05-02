@@ -149,7 +149,7 @@ jobs:
             file: deployments-src/ci/tasks/deploy-worker.yml
             params:
               WORKER_SECRETS: {{cpi-vsphere-v65-worker-secrets}}
-              ENVIRONMENT_NAME: vsphere-v6.5
+              ENVIRONMENT_NAME: vsphere
               OPTIONAL_FLAGS: |
                 -o deployments-src/concourse/workers/ops/add-team.yml
             ensure:
