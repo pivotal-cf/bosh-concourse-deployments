@@ -724,6 +724,6 @@ instance_groups:
   instances: 1
   properties:
     concourse_windows:
-      tsa_host: ((concourse_tsa_hostname))
+      tsa_host: ((concourse_tsa_hostname)):2222
       tsa_public_key: ((tsa_host_key.public_key))
       tsa_worker_private_key: ((tsa_worker_private_key))
