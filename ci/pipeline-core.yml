@@ -155,11 +155,9 @@ resources:
       uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
       branch: master
   - name: windows-stemcell
-    type: s3
+    type: bosh-io-stemcell
     source:
-      region_name: us-east-2
-      bucket: bosh-windows-stemcells-production
-      regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
+      name: bosh-google-kvm-windows2012R2-go_agent
   - name: concourse-windows-worker
     type: bosh-io-release
     source:
