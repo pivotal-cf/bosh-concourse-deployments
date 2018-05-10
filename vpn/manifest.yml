@@ -7,9 +7,9 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bpm-release?v=0.2.0
   version: 0.2.0
 - name: openvpn
-  sha1: cbaca9fe8ceffb13ea1d481ad49fd5a706afbe9c
-  url: https://s3-external-1.amazonaws.com/dpb587-bosh-release-openvpn-us-east-1/releases/openvpn/openvpn-4.2.1.tgz
-  version: 4.2.1
+  sha1: 1b77cbd51a3debefcb06f2ad5311d872f056dbe9
+  url: https://s3-external-1.amazonaws.com/dpb587-bosh-release-openvpn-us-east-1/artifacts/release/1b77cbd51a3debefcb06f2ad5311d872f056dbe9
+  version: 5.0.0
 - name: networking
   sha1: 9b5f9d27917c3754e492470ac6c9af80d62963db
   url: http://bosh.io/d/github.com/cloudfoundry/networking-release?v=9
