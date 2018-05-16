@@ -34,16 +34,21 @@ Follow these instructions to setup and connect. Once connected to the VPN, traff
 1. To configure `ssoca` for the first time:
 
     ```
-    ssoca -e bosh env set https://vpn-bosh.ci.cf-app.com
+    ssoca -e bosh env add https://vpn-bosh.ci.cf-app.com
+    ```
+    
+2. Once your environment has been added, authenticate:
+    ```
+    ssoca -e bosh auth login
     ```
 
-2. Once configured, initiate the VPN connection:
+3. Once configured, initiate the VPN connection:
 
     ```
-    ssoca -e bosh openvpn exec --sudo
+    ssoca -e bosh openvpn connect --sudo
     ```
 
-3. macOS-specific: If you want to use [Tunnelblick](https://tunnelblick.net/) to manage the connection...
+4. macOS-specific: If you want to use [Tunnelblick](https://tunnelblick.net/) to manage the connection...
 
     ```
     ssoca -e bosh openvpn create-tunnelblick-profile --install
