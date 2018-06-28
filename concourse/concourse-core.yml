@@ -16,6 +16,9 @@ releases:
   version: 9
   url: http://bosh.io/d/github.com/cloudfoundry-community/slack-notification-resource-boshrelease?v=9
   sha1: a64c65d1f23ea089746e698f29dbe522dd716c1b
+- name: caddy
+  url: https://s3-external-1.amazonaws.com/dpb587-caddy-bosh-release-us-east-1/artifacts/release/caddy-0.2.0.tgz
+  sha1: a64c65d1f23ea089746e698f29dbe522dd716c1b
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
@@ -49,11 +52,7 @@ instance_groups:
     - name: atc
       release: concourse
       properties:
-        external_url: ((concourse_external_url))
-        bind_port: 80
-        tls_bind_port: 443
-        tls_cert: ((tls_cert))
-        tls_key: ((tls_key))
+        bind_port: 8080
         publicly_viewable: true
         container_placement_strategy: random
         postgresql:
@@ -78,6 +77,24 @@ instance_groups:
         nofile:
           soft: 32768
           hard: 32768
+    - name: caddy
+      release: caddy
+      properties:
+        acme:
+          email: ((letsencrypt_registration_email))
+        caddyfile: |
+          ((concourse_external_host)) {
+            tls {
+              dns route53
+            }
+            proxy / localhost:8080 {
+              transparent
+            }
+          }
+        env:
+          AWS_ACCESS_KEY_ID: ((route53_aws_access_id))
+          AWS_SECRET_ACCESS_KEY: ((route53_aws_secret_access_key))
+          AWS_HOSTED_ZONE_ID: ((route53_hosted_zone_id))
 
 - name: database
   instances: 1
