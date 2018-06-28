@@ -19,7 +19,7 @@ releases:
 - name: caddy
   version: 0.2.0
   url: https://s3-external-1.amazonaws.com/dpb587-caddy-bosh-release-us-east-1/artifacts/release/caddy-0.2.0.tgz
-  sha1: a64c65d1f23ea089746e698f29dbe522dd716c1b
+  sha1: 2def732c20fcf8f2fa7ed130266313520364cf0e
 
 # github.com/greenhouse-org/concourse-windows-release
 - name: concourse-windows-worker
