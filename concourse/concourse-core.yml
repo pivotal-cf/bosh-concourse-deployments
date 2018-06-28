@@ -54,6 +54,7 @@ instance_groups:
     - name: atc
       release: concourse
       properties:
+        external_url: ((concourse_external_url))
         bind_port: 8080
         publicly_viewable: true
         container_placement_strategy: random
