@@ -17,6 +17,7 @@ releases:
   url: http://bosh.io/d/github.com/cloudfoundry-community/slack-notification-resource-boshrelease?v=9
   sha1: a64c65d1f23ea089746e698f29dbe522dd716c1b
 - name: caddy
+  version: 0.2.0
   url: https://s3-external-1.amazonaws.com/dpb587-caddy-bosh-release-us-east-1/artifacts/release/caddy-0.2.0.tgz
   sha1: a64c65d1f23ea089746e698f29dbe522dd716c1b
 
