@@ -92,6 +92,7 @@ instance_groups:
             }
             proxy / localhost:8080 {
               transparent
+              websocket
             }
           }
         env:
