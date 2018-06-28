@@ -1,16 +1,16 @@
 {
     "director_id": "644c8d7e-a54b-4507-63e8-d381cdad0c07",
     "installation_id": "d1e23621-a0db-4769-5a68-a7f27c35e570",
-    "current_vm_cid": "vm-cfbcc71d-58de-471b-852a-125b2e1fa8a6",
+    "current_vm_cid": "vm-58aecf73-d606-4269-8850-0f61928c8478",
     "current_stemcell_id": "50db6cd1-6d44-47b3-5146-c340fd3550cf",
     "current_disk_id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
     "current_release_ids": [
-        "cb921d8e-35f8-41a5-6725-b97913be6c9e",
-        "9e3f790f-ee39-49d9-58ea-4ba15de21644",
-        "10520f93-df67-4ee1-71aa-24024941e526",
-        "873506b8-490b-48f0-5c26-2586a6fda9f3"
+        "160ec489-fb22-4014-6386-eb797d3f19af",
+        "e1d57187-6ead-40a0-6335-aa8e328aec99",
+        "832dc02a-11f2-42ae-42b0-4ab08a1f4ed5",
+        "25690ad1-dc83-486b-5489-323221217c38"
     ],
-    "current_manifest_sha": "aa9558bcc8c5b3b954dd34bd64168e749f4f2b245def4edcf1322da96732ff375c6ee3c0ee95b01a00d4140762cf3a13035f186515b89660df08dae11f3442ac",
+    "current_manifest_sha": "ae0b9b5b869b9f6f5b5c83519d703edaec1ebef21ad70a0d635384ca3316151ce7db35a634bfb32b5e7840dd1896de466c3e2c905305be4da3eaa90160230705",
     "disks": [
         {
             "id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
@@ -29,22 +29,22 @@
     ],
     "releases": [
         {
-            "id": "cb921d8e-35f8-41a5-6725-b97913be6c9e",
+            "id": "160ec489-fb22-4014-6386-eb797d3f19af",
             "name": "concourse",
             "version": "3.12.0"
         },
         {
-            "id": "9e3f790f-ee39-49d9-58ea-4ba15de21644",
+            "id": "e1d57187-6ead-40a0-6335-aa8e328aec99",
             "name": "garden-runc",
             "version": "1.13.1"
         },
         {
-            "id": "10520f93-df67-4ee1-71aa-24024941e526",
+            "id": "832dc02a-11f2-42ae-42b0-4ab08a1f4ed5",
             "name": "bosh-vsphere-cpi",
             "version": "45.1.0"
         },
         {
-            "id": "873506b8-490b-48f0-5c26-2586a6fda9f3",
+            "id": "25690ad1-dc83-486b-5489-323221217c38",
             "name": "postgres",
             "version": "22"
         }
