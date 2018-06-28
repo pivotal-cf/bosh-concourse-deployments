@@ -44,6 +44,7 @@ instance_groups:
 - name: atc
   instances: 1
   vm_type: concourse_core
+  persistent_disk_pool: caddy-ssd
   stemcell: default
   azs: [us1]
   networks:
