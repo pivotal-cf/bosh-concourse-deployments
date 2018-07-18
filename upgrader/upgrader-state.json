@@ -1,16 +1,16 @@
 {
     "director_id": "644c8d7e-a54b-4507-63e8-d381cdad0c07",
     "installation_id": "d1e23621-a0db-4769-5a68-a7f27c35e570",
-    "current_vm_cid": "vm-912e5357-17a2-4578-beb5-e73ec82734aa",
+    "current_vm_cid": "vm-43a98fea-e387-4f8c-b785-cde0fa7621bb",
     "current_stemcell_id": "50db6cd1-6d44-47b3-5146-c340fd3550cf",
     "current_disk_id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
     "current_release_ids": [
-        "106d9ad9-1d13-4b74-4532-e97f43077877",
-        "ab293a52-59e3-4392-6131-4bf5c669afb4",
-        "921bfd0d-4716-457d-6f06-3eb340692235",
-        "7e3f89d2-2df3-4f5c-66ce-147172878323"
+        "b5dac795-644c-4963-79e9-1787beea0a36",
+        "dd86d782-f9fa-4aef-604d-c43bf2a5fe09",
+        "4235044f-887c-4920-4cec-68306ac3854f",
+        "979f166e-4af1-4b42-4355-20fbb01d73fc"
     ],
-    "current_manifest_sha": "aa9558bcc8c5b3b954dd34bd64168e749f4f2b245def4edcf1322da96732ff375c6ee3c0ee95b01a00d4140762cf3a13035f186515b89660df08dae11f3442ac",
+    "current_manifest_sha": "cce16634b1788aef274c66f8aedc5ac5d484c892d560a892a9af51a640707651be19906e07a85a6024fc2f05e61ded7a7b767fdeef96aa2664dc81d91f718798",
     "disks": [
         {
             "id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
@@ -29,22 +29,22 @@
     ],
     "releases": [
         {
-            "id": "106d9ad9-1d13-4b74-4532-e97f43077877",
+            "id": "b5dac795-644c-4963-79e9-1787beea0a36",
             "name": "concourse",
             "version": "3.12.0"
         },
         {
-            "id": "ab293a52-59e3-4392-6131-4bf5c669afb4",
+            "id": "dd86d782-f9fa-4aef-604d-c43bf2a5fe09",
             "name": "garden-runc",
             "version": "1.13.1"
         },
         {
-            "id": "921bfd0d-4716-457d-6f06-3eb340692235",
+            "id": "4235044f-887c-4920-4cec-68306ac3854f",
             "name": "bosh-vsphere-cpi",
             "version": "45.1.0"
         },
         {
-            "id": "7e3f89d2-2df3-4f5c-66ce-147172878323",
+            "id": "979f166e-4af1-4b42-4355-20fbb01d73fc",
             "name": "postgres",
             "version": "22"
         }
