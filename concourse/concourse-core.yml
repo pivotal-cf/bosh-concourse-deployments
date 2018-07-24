@@ -165,7 +165,7 @@ instance_groups:
       properties: {}
 
 - name: worker-brats
-  instances: 1
+  instances: 4
   vm_type: concourse_core_worker_12_16
   stemcell: default
   azs: [us1]
