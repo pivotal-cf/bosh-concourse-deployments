@@ -3,17 +3,17 @@ name: concourse
 
 releases:
 - name: concourse
-  url: https://bosh.io/d/github.com/concourse/concourse?v=3.12.0
-  sha1: 12746f25cd484bdd9a8ed7151cfed20a142de2fa
+  url: https://bosh.io/d/github.com/concourse/concourse?v=3.14.1
+  sha1: 6be91b70ecc7ce233d2aff5d03ed28c8eab3d132
 - name: garden-runc
-  url: https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.13.1
-  sha1: 54cbb89cae1be0708aa056185671665d7f4b2a4f
+  url: https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.14.0
+  sha1: be5e6d6a263be1437d99dc5e818deeb8ab2a03a4
 - name: bosh-vsphere-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45.1.0
-  sha1: 49164212bcd6a35515db6664bcb26bef2fcc6b6c
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=50
+  sha1: 27cad6e254f363ac06f947b4def3cbc7bfa269b9
 - name: postgres
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=22
-  sha1: 86a1333122e9cdd051551c83ec26d36f6e325d6c
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=29
+  sha1: 24d2e2887a45258b71bc40577c0f406180e47701
 
 disk_pools:
 - name: disks
@@ -23,8 +23,8 @@ resource_pools:
 - name: default
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3445.11
-    sha1: 1b52eeb8e82968975e19ecb37f4b2c27078dcbf6
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3586.26
+    sha1: b56fcc8879b22223f17f2fd6d76d4085296792d4
   cloud_properties:
     cpu: 2
     ram: 4_096
