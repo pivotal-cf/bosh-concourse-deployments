@@ -180,7 +180,7 @@ jobs:
               allow_mbus_access_to_jumpbox: 1
         - aggregate:
           - task: update-natbox
-            file: deployments-src/ci/tasks/deploy-natbox.yml
+            file: deployments-src/ci/tasks/destroy-natbox.yml
             input_mapping:
               natbox-state: asia-natbox-state
             params:
@@ -190,7 +190,7 @@ jobs:
               params:
                 file: updated-natbox-state/natbox-state.json
           - task: update-jumpbox
-            file: deployments-src/ci/tasks/deploy-jumpbox.yml
+            file: deployments-src/ci/tasks/destroy-jumpbox.yml
             input_mapping:
               jumpbox-state: asia-jumpbox-state
             params:

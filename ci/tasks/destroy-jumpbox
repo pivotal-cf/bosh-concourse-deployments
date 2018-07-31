@@ -1,0 +1,47 @@
+#!/bin/bash
+
+set -eu
+
+# env
+: ${TEAMS:?}
+: ${GOOGLE_CREDENTIALS:?}
+: ${TRUSTED_CIDRS:?}
+: ${MACHINE_TYPE:?}
+
+source deployments-src/ci/utils
+
+generate_jumpbox_users_ops_file() {
+  echo "$TEAMS" | yaml_to_json | jq '
+    del(.[] | select(.jumpbox == null))
+    |
+    map({
+      "type": "replace",
+      "path": "/instance_groups/name=jumpbox/jobs/name=user_add/properties/users?/-",
+      "value": {
+        "name": .name,
+        "sudo": false,
+        "public_key": .jumpbox.public_key
+      }
+    })
+  '
+}
+
+remove_terraform_prefix terraform/metadata jumpbox_ > metadata
+
+cp jumpbox-state/*.json updated-jumpbox-state
+echo "Updating jumpbox..."
+bosh -n delete-env \
+  --state updated-jumpbox-state/jumpbox-state.json \
+  --vars-store "you-really-need-this-flag-but-not-this-file.yml" \
+  -o jumpbox-deployment-src/gcp/cpi.yml \
+  -o deployments-src/jumpbox/iptables-ops.yml \
+  -o deployments-src/jumpbox/custom-type-ops.yml \
+  -o deployments-src/jumpbox/remove-users-ops.yml \
+  -o <( generate_jumpbox_users_ops_file ) \
+  -l metadata \
+  -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
+  -v "trusted_cidrs='${TRUSTED_CIDRS}'" \
+  -v "machine_type='${MACHINE_TYPE}'" \
+  jumpbox-deployment-src/jumpbox.yml
+
+echo "Successfully updated jumpbox!"

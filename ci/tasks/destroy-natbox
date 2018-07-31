@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -eu
+
+# env
+: ${GOOGLE_CREDENTIALS:?}
+
+source deployments-src/ci/utils
+
+remove_terraform_prefix terraform/metadata natbox_ > metadata
+
+cp natbox-state/*.json updated-natbox-state/natbox-state.json
+
+echo "Updating NAT..."
+bosh -n delete-env \
+  --state updated-natbox-state/natbox-state.json \
+  --vars-store "you-really-need-this-flag-but-not-this-file.yml" \
+  -l metadata \
+  -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
+  deployments-src/natbox/natbox.yml
+
+echo "Successfully updated nat!"
