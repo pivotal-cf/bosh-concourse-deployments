@@ -1,6 +1,10 @@
 azs:
 - name: us1
-  cloud_properties: {zone: ((zone))}
+  cloud_properties:
+    zone: ((zone))
+- name: asia
+  cloud_properties:
+    zone: ((asia.zone))
 
 vm_types:
 # BOSH CPI team VM types
@@ -147,6 +151,16 @@ networks:
     cloud_properties:
       network_name: ((network))
       subnetwork_name: ((subnetwork))
+      tags:
+        - ((director_internal_tag))
+        - ((jumpbox_internal_management_tag))
+- name: concourse-asia
+  type: dynamic
+  subnets:
+  - az: asia
+    cloud_properties:
+      network_name: ((network))
+      subnetwork_name: ((asia.subnetwork))
       tags:
         - ((director_internal_tag))
         - ((jumpbox_internal_management_tag))

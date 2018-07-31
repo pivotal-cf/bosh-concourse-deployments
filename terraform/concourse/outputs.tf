@@ -10,6 +10,13 @@ output "zone" {
   value = "${module.concourse_subnet.zone}"
 }
 
+output "asia" {
+  value = {
+    zone       = "${var.asia_zone}"
+    subnetwork = "${google_compute_subnetwork.asia-bosh-subnet.name}"
+  }
+}
+
 output "network" {
   value = "${var.network}"
 }

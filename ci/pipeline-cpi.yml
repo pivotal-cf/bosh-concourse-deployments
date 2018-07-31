@@ -4,13 +4,6 @@ groups:
   jobs:
   - update-concourse
   - update-vsphere-v6.5-worker
-  - prepare-asia-env
-- name: workers
-  jobs:
-  - update-vsphere-v6.5-worker
-- name: env
-  jobs:
-  - prepare-asia-env
 
 jobs:
   - name: update-concourse
@@ -112,35 +105,6 @@ jobs:
               params:
                 file: updated-worker-state/worker-state.json
 
-  - name: prepare-asia-env
-    serial_groups: [deploy-asia]
-    plan:
-      - do:
-        - aggregate:
-          - get: deployments-src
-          - get: jumpbox-deployment-src
-          - get: bosh-cli
-          - get: asia-natbox-state
-          - get: asia-jumpbox-state
-          - get: bosh-google-cpi-release
-          - get: networking-release
-          - get: stemcell
-        - put: terraform
-          params:
-            env_name: bosh-cpi-concourse-asia
-            terraform_source: deployments-src/terraform/asia
-            vars:
-              allow_mbus_access_to_natbox: 1
-              allow_mbus_access_to_jumpbox: 1
-        ensure:
-          put: terraform
-          params:
-            env_name: bosh-cpi-concourse-asia
-            terraform_source: deployments-src/terraform/asia
-            vars:
-              allow_mbus_access_to_natbox: 0
-              allow_mbus_access_to_jumpbox: 0
-
 resource_types:
   - name: terraform
     type: docker-image
@@ -217,35 +181,10 @@ resources:
     type: bosh-io-release
     source:
       repository: pivotal-cf-experimental/concourse-windows-worker-release
-  - name: bosh-google-cpi-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry-incubator/bosh-google-cpi-release
   - name: bosh-vsphere-cpi-release
     type: bosh-io-release
     source:
       repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
-  - name: networking-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry/networking-release
-  - name: asia-natbox-state
-    type: gcs-resource
-    source:
-      bucket: {{deployments_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: asia/natbox-state.json
-  - name: asia-jumpbox-state
-    type: gcs-resource
-    source:
-      bucket: {{deployments_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: asia/jumpbox-state.json
-  - name: jumpbox-deployment-src
-    type: git
-    source:
-      uri: https://github.com/cppforlife/jumpbox-deployment.git
-      branch: master
   - name: vsphere-v6.5-worker-state
     type: gcs-resource
     source:

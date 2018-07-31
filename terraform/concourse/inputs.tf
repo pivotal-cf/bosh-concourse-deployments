@@ -32,16 +32,32 @@ variable "internal_cidr" {
   default = "10.0.0.0/24"
 }
 
+variable "asia_internal_cidr" {
+  default = "10.0.1.0/24"
+}
+
 variable "name" {
   default = "concourse"
+}
+
+variable "asia_name" {
+  default = "asia"
 }
 
 variable "zone" {
   default = "us-west1-b"
 }
 
+variable "asia_zone" {
+  default = "asia-northeast1-b"
+}
+
 variable "region" {
   default = "us-west1"
+}
+
+variable "asia_region" {
+  default = "asia-northeast1"
 }
 
 variable "concourse_atc_tag" {

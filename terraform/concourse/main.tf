@@ -43,6 +43,13 @@ module "concourse_subnet" {
   allow_mbus_access_to_natbox = "${var.allow_mbus_access_to_natbox}"
 }
 
+resource "google_compute_subnetwork" "asia-bosh-subnet" {
+  name          = "${var.asia_name}"
+  ip_cidr_range = "${var.asia_internal_cidr}"
+  network       = "${var.network}"
+  region        = "${var.asia_region}"
+}
+
 module "jumpbox" {
   source                       = "../modules/jumpbox/"
 
