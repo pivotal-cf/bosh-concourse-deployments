@@ -3,12 +3,10 @@ groups:
 - name: all
   jobs:
   - update-concourse
-  - update-google-asia-worker
   - update-vsphere-v6.5-worker
   - prepare-asia-env
 - name: workers
   jobs:
-  - update-google-asia-worker
   - update-vsphere-v6.5-worker
 - name: env
   jobs:
@@ -85,50 +83,6 @@ jobs:
         vars:
           allow_ssh_access_to_jumpbox: 0
 
-  - name: update-google-asia-worker
-    serial_groups: [deploy-asia] # ensure Terraform state files don't get clobbered
-    plan:
-      - do:
-        - aggregate:
-          - get: deployments-src
-          - get: bosh-cli
-          - get: worker-state
-            resource: google-asia-worker-state
-          - get: bosh-cpi-release
-            resource: bosh-google-cpi-release
-          - get: concourse
-          - get: garden-runc-release
-          - get: stemcell
-          - get: os-conf-release
-        - &asia-open-ssh-to-jumpbox
-          put: terraform
-          params:
-            env_name: bosh-cpi-concourse-asia
-            terraform_source: deployments-src/terraform/asia
-            vars:
-              allow_ssh_access_to_jumpbox: 1
-        - aggregate:
-          - task: destroy-google-asia-worker
-            file: deployments-src/ci/tasks/destroy-worker-asia.yml
-            params:
-              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-              WORKER_SECRETS:     {{cpi-google-asia-worker-secrets}}
-              ENVIRONMENT_NAME:   google-asia-worker
-              JUMPBOX_SSH_USER:   {{jumpbox_ssh_user}}
-              JUMPBOX_SSH_KEY:    {{jumpbox_ssh_key}}
-            ensure:
-              put: worker-state
-              resource: google-asia-worker-state
-              params:
-                file: updated-worker-state/worker-state.json
-              ensure: &asia-close-ssh-to-jumpbox
-                put: terraform
-                params:
-                  env_name: bosh-cpi-concourse-asia
-                  terraform_source: deployments-src/terraform/asia
-                  vars:
-                    allow_ssh_access_to_jumpbox: 0
-
   - name: update-vsphere-v6.5-worker
     serial: true
     plan:
@@ -178,30 +132,6 @@ jobs:
             vars:
               allow_mbus_access_to_natbox: 1
               allow_mbus_access_to_jumpbox: 1
-        - aggregate:
-          - task: update-natbox
-            file: deployments-src/ci/tasks/destroy-natbox.yml
-            input_mapping:
-              natbox-state: asia-natbox-state
-            params:
-              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-            ensure:
-              put: asia-natbox-state
-              params:
-                file: updated-natbox-state/natbox-state.json
-          - task: update-jumpbox
-            file: deployments-src/ci/tasks/destroy-jumpbox.yml
-            input_mapping:
-              jumpbox-state: asia-jumpbox-state
-            params:
-              GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
-              TRUSTED_CIDRS:      {{ssh_trusted_cidrs}}
-              MACHINE_TYPE:       {{jumpbox_machine_type}}
-              TEAMS:              {{bosh_teams}}
-            ensure:
-              put: asia-jumpbox-state
-              params:
-                file: updated-jumpbox-state/jumpbox-state.json
         ensure:
           put: terraform
           params:
@@ -295,10 +225,6 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
-  - name: os-conf-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry/os-conf-release
   - name: networking-release
     type: bosh-io-release
     source:
@@ -326,9 +252,3 @@ resources:
       bucket: {{deployments_bucket_name}}
       json_key: {{gcp_credentials_json}}
       versioned_file: worker/vsphere-v6.5-worker-state.json
-  - name: google-asia-worker-state
-    type: gcs-resource
-    source:
-      bucket: {{deployments_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: worker/google-asia-worker-state.json
