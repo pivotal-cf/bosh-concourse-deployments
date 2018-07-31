@@ -28,4 +28,4 @@ params:
   JUMPBOX_SSH_KEY:    ""
 
 run:
-  path: deployments-src/ci/tasks/deploy-worker-asia
+  path: deployments-src/ci/tasks/destroy-worker-asia

@@ -108,8 +108,8 @@ jobs:
             vars:
               allow_ssh_access_to_jumpbox: 1
         - aggregate:
-          - task: update-google-asia-worker
-            file: deployments-src/ci/tasks/deploy-worker-asia.yml
+          - task: destroy-google-asia-worker
+            file: deployments-src/ci/tasks/destroy-worker-asia.yml
             params:
               GOOGLE_CREDENTIALS: {{gcp_credentials_json}}
               WORKER_SECRETS:     {{cpi-google-asia-worker-secrets}}

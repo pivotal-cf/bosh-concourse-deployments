@@ -27,7 +27,7 @@ ssh_tunnel \
 cp worker-state/*.json updated-worker-state/worker-state.json
 
 echo "Updating WORKER..."
-bosh -n create-env \
+bosh -n destroy-env \
   --state updated-worker-state/worker-state.json \
   -l metadata \
   -l <( echo "${WORKER_SECRETS}" ) \
