@@ -5,6 +5,12 @@ azs:
 - name: asia
   cloud_properties:
     zone: ((asia.zone))
+- name: taiwan
+  cloud_properties:
+    zone: ((taiwan.zone))
+- name: singapore
+  cloud_properties:
+    zone: ((singapore.zone))
 
 vm_types:
 # BOSH CPI team VM types
