@@ -164,6 +164,26 @@ networks:
       tags:
         - ((director_internal_tag))
         - ((jumpbox_internal_management_tag))
+- name: concourse-singapore
+  type: dynamic
+  subnets:
+  - az: singapore
+    cloud_properties:
+      network_name: ((network))
+      subnetwork_name: ((singapore.subnetwork))
+      tags:
+        - ((director_internal_tag))
+        - ((jumpbox_internal_management_tag))
+- name: concourse-taiwan
+  type: dynamic
+  subnets:
+  - az: taiwan
+    cloud_properties:
+      network_name: ((network))
+      subnetwork_name: ((taiwan.subnetwork))
+      tags:
+        - ((director_internal_tag))
+        - ((jumpbox_internal_management_tag))
 - name: vip
   type: vip
 
