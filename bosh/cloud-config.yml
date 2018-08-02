@@ -53,10 +53,10 @@ vm_types:
 # Used by Concourse ATC and TSA VM
 - name: concourse_core
   cloud_properties:
-    cpu: 1
-    ram: 2_560
+    cpu: 4
+    ram: 8_192
     root_disk_size_gb: 20
-    root_disk_type: pd-standard
+    root_disk_type: pd-ssd
     tags:
       - ((bosh_core.atc_tag))
       - ((nat_traffic_tag))
