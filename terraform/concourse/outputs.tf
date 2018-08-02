@@ -17,6 +17,20 @@ output "asia" {
   }
 }
 
+output "taiwan" {
+  value = {
+    zone       = "${var.taiwan_zone}"
+    subnetwork = "${google_compute_subnetwork.taiwan-bosh-subnet.name}"
+  }
+}
+
+output "singapore" {
+  value = {
+    zone       = "${var.singapore_zone}"
+    subnetwork = "${google_compute_subnetwork.singapore-bosh-subnet.name}"
+  }
+}
+
 output "network" {
   value = "${var.network}"
 }

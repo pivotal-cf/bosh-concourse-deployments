@@ -50,6 +50,20 @@ resource "google_compute_subnetwork" "asia-bosh-subnet" {
   region        = "${var.asia_region}"
 }
 
+resource "google_compute_subnetwork" "taiwan-bosh-subnet" {
+  name          = "${var.taiwan_name}"
+  ip_cidr_range = "${var.taiwan_internal_cidr}"
+  network       = "${var.network}"
+  region        = "${var.taiwan_region}"
+}
+
+resource "google_compute_subnetwork" "singapore-bosh-subnet" {
+  name          = "${var.singapore_name}"
+  ip_cidr_range = "${var.singapore_internal_cidr}"
+  network       = "${var.network}"
+  region        = "${var.singapore_region}"
+}
+
 module "jumpbox" {
   source                       = "../modules/jumpbox/"
 
