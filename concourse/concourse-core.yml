@@ -101,26 +101,6 @@ instance_groups:
           AWS_SECRET_ACCESS_KEY: ((route53_aws_secret_access_key))
           AWS_HOSTED_ZONE_ID: ((route53_hosted_zone_id))
 
-- name: database
-  instances: 1
-  vm_type: concourse_core_database
-  stemcell: default
-  azs: [us1]
-  persistent_disk_pool: persistent-ssd
-  networks:
-    - name: concourse
-  jobs:
-    - name: postgres
-      release: postgres
-      properties:
-        databases:
-          port: 5432
-          databases:
-          - name: ((database_name))
-          roles:
-          - name: ((database_role))
-            password: ((database_password))
-
 - name: worker
   instances: 12
   vm_type: concourse_core_worker_8_16
