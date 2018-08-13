@@ -59,6 +59,7 @@ instance_groups:
         publicly_viewable: true
         container_placement_strategy: random
         postgresql:
+          host: ((database_host))
           database: ((database_name))
           role:
             name: ((database_role))
@@ -121,7 +122,7 @@ instance_groups:
             password: ((database_password))
 
 - name: worker
-  instances: 8
+  instances: 12
   vm_type: concourse_core_worker_8_16
   stemcell: default
   azs: [us1]
