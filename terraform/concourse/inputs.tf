@@ -49,7 +49,7 @@ variable "zone" {
 }
 
 variable "asia_zone" {
-  default = "asia-northeast1-b"
+  default = "asia-east1-b"
 }
 
 variable "region" {
@@ -57,7 +57,7 @@ variable "region" {
 }
 
 variable "asia_region" {
-  default = "asia-northeast1"
+  default = "asia-east1"
 }
 
 variable "concourse_atc_tag" {
