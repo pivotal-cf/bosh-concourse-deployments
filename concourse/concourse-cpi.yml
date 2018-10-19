@@ -67,27 +67,6 @@ instance_groups:
           soft: 32768
           hard: 32768
 
-- name: concourse_cpi_database
-  instances: 1
-  vm_type: concourse_cpi_database
-  stemcell: default
-  azs: [us1]
-  persistent_disk_pool: persistent-ssd
-  networks:
-    - name: concourse
-      default: [dns, gateway]
-  jobs:
-    - name: postgres
-      release: postgres
-      properties:
-        databases:
-          port: 5432
-          databases:
-            - name: *atc_db
-          roles:
-            - name: atc
-              password: ((concourse_db_password))
-
 - name: shared_worker
   instances: 3
   vm_type: concourse_worker_8_24
