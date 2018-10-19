@@ -45,6 +45,7 @@ instance_groups:
         tls_key: ((tls_key))
         publicly_viewable: true
         postgresql:
+          host: ((concourse_db_host))
           database: &atc_db atc
           role:
             name: atc
