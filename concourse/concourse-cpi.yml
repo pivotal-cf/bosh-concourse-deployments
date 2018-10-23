@@ -1,6 +1,4 @@
 ---
-# post-install addition of CPI GitHub Team for auth, only needed for fresh install:
-# fly -t upgrader set-team -n bosh-cpi --github-auth-client-id $(lpass show --username "BOSH Concourse Upgrader GitHub Auth") --github-auth-client-secret $(lpass show --password "BOSH Concourse Upgrader GitHub Auth") --github-auth-team "cloudfoundry/CF BOSH CPI"
 name: concourse-cpi
 
 releases:
@@ -53,6 +51,9 @@ instance_groups:
         basic_auth_username: ((concourse_basic_auth_username))
         basic_auth_password: ((concourse_basic_auth_password))
         token_signing_key: ((token_signing_key))
+        github_auth:
+          client_id: ((concourse_github_client_id))
+          client_secret: ((concourse_github_client_secret))
     - name: tsa
       release: concourse
       properties:

@@ -14,8 +14,6 @@ params:
   CONCOURSE_BASIC_AUTH_USERNAME:  ""
   CONCOURSE_BASIC_AUTH_PASSWORD:  ""
   CONCOURSE_TEAMS:                ""
-  CONCOURSE_GITHUB_CLIENT_ID:     ""
-  CONCOURSE_GITHUB_CLIENT_SECRET: ""
 
 run:
   path: deployments-src/ci/tasks/set-teams
