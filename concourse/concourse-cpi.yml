@@ -48,7 +48,7 @@ instance_groups:
             password: ((concourse_db_password))
         token_signing_key: ((token_signing_key))
         add_local_users:
-        - ((concourse_basic_auth_username)):((concourse_basic_auth_password_bcrypt))
+        - ((concourse_basic_auth_username)):((concourse_basic_auth_password))
         github_auth:
           client_id: ((concourse_github_client_id))
           client_secret: ((concourse_github_client_secret))
