@@ -15,9 +15,6 @@ jobs:
           resource: xenial-stemcell
         - get: windows-stemcell
         - get: bosh-cli
-        - get: concourse-windows-worker
-          params:
-            globs: ['release.tgz']
         - get: concourse
         - get: garden-runc-release
         - get: ulimit
@@ -165,10 +162,6 @@ resources:
     source:
       uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
       branch: master
-  - name: concourse-windows-worker
-    type: bosh-io-release
-    source:
-      repository: pivotal-cf-experimental/concourse-windows-worker-release
   - name: bosh-vsphere-cpi-release
     type: bosh-io-release
     source:
