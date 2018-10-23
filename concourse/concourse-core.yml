@@ -708,6 +708,7 @@ instance_groups:
       properties: {}
 
 - name: worker-windows
+  instances: 1
   stemcell: windows
   vm_type: concourse_core_worker_8_16
   azs: [us1]
@@ -727,7 +728,10 @@ instance_groups:
       garden: {from: windows-garden}
     properties:
       tsa:
-        worker_key: ((tsa_worker_private_key))
+        worker_key:
+          host: ((concourse_tsa_hostname)):2222
+          host_public_key: ((tsa_host_key.public_key))
+          worker_private_key: ((tsa_worker_private_key))
   - name: set_password
     release: windows-utilities
     properties:
@@ -736,4 +740,3 @@ instance_groups:
         password: "((windows_administrator_password))"
   - name: enable_ssh
     release: windows-utilities
-  instances: 1
