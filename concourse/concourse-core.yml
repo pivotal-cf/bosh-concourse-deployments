@@ -725,6 +725,9 @@ instance_groups:
     consumes:
       baggageclaim: {from: windows-baggageclaim}
       garden: {from: windows-garden}
+    properties:
+      tsa:
+        worker_key: ((tsa_worker_private_key))
   - name: set_password
     release: windows-utilities
     properties:
@@ -734,8 +737,3 @@ instance_groups:
   - name: enable_ssh
     release: windows-utilities
   instances: 1
-  properties:
-    concourse_windows:
-      tsa_host: ((concourse_tsa_hostname)):2222
-      tsa_public_key: ((tsa_host_key.public_key))
-      tsa_worker_private_key: ((tsa_worker_private_key))
