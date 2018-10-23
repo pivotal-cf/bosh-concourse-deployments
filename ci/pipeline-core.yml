@@ -6,9 +6,9 @@ jobs:
       - aggregate:
         - get: deployments-src
         - get: stemcell
+          resource: xenial-stemcell
         - get: windows-stemcell
         - get: bosh-cli
-        - get: concourse-windows-worker
         - get: concourse
         - get: garden-runc-release
         - get: ulimit
@@ -26,19 +26,21 @@ jobs:
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
-          DEPLOYMENT_NAME:               concourse-core
-          DEPLOYMENT_CONFIG_PATH:        concourse/concourse-core.yml
-          CONCOURSE_SECRETS:             {{concourse_secrets}}
-          BOSH_ENVIRONMENT:              {{bosh_environment}}
-          BOSH_CLIENT:                   {{bosh_client}}
-          BOSH_CLIENT_SECRET:            {{bosh_client_secret}}
-          BOSH_CA_CERT:                  {{bosh_ca_cert}}
-          JUMPBOX_HOST:                  {{jumpbox_host}}
-          JUMPBOX_SSH_KEY:               {{jumpbox_ssh_key}}
-          JUMPBOX_SSH_USER:              {{jumpbox_ssh_user}}
-          CONCOURSE_EXTERNAL_URL:        {{concourse_external_url}}
-          CONCOURSE_BASIC_AUTH_USERNAME: {{concourse_basic_auth_username}}
-          CONCOURSE_BASIC_AUTH_PASSWORD: {{concourse_basic_auth_password}}
+          DEPLOYMENT_NAME:                concourse-core
+          DEPLOYMENT_CONFIG_PATH:         concourse/concourse-core.yml
+          CONCOURSE_SECRETS:              {{concourse_secrets}}
+          BOSH_ENVIRONMENT:               {{bosh_environment}}
+          BOSH_CLIENT:                    {{bosh_client}}
+          BOSH_CLIENT_SECRET:             {{bosh_client_secret}}
+          BOSH_CA_CERT:                   {{bosh_ca_cert}}
+          JUMPBOX_HOST:                   {{jumpbox_host}}
+          JUMPBOX_SSH_KEY:                {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:               {{jumpbox_ssh_user}}
+          CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
+          CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
+          CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password_bcrypt}}
+          CONCOURSE_GITHUB_CLIENT_ID:     {{concourse_github_client_id}}
+          CONCOURSE_GITHUB_CLIENT_SECRET: {{concourse_github_client_secret}}
     ensure:
       put: terraform
       params:
@@ -61,7 +63,7 @@ jobs:
           - get: bosh-cpi-release
             resource: bosh-vsphere-cpi-release
           - get: stemcell
-            resource: vsphere-stemcell
+            resource: vsphere-xenial-stemcell
         - aggregate:
           - task: update-vsphere-v6.5-worker-1
             file: deployments-src/ci/tasks/deploy-worker.yml
@@ -123,10 +125,10 @@ resources:
     source:
       bucket: bosh-cli-artifacts
       regexp: bosh-cli-(\d+\.\d+\.\d+)-linux-amd64
-  - name: stemcell
+  - name: xenial-stemcell
     type: bosh-io-stemcell
     source:
-      name: bosh-google-kvm-ubuntu-trusty-go_agent
+      name: bosh-google-kvm-ubuntu-xenial-go_agent
   - name: concourse
     type: bosh-io-release
     source:
@@ -149,10 +151,6 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-google-kvm-windows2012R2-go_agent
-  - name: concourse-windows-worker
-    type: bosh-io-release
-    source:
-      repository: pivotal-cf-experimental/concourse-windows-worker-release
   - name: vsphere-v6.5-worker-state-1
     type: gcs-resource
     source:
@@ -169,7 +167,7 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
-  - name: vsphere-stemcell
+  - name: vsphere-xenial-stemcell
     type: bosh-io-stemcell
     source:
-      name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+      name: bosh-vsphere-esxi-ubuntu-xenial-go_agent

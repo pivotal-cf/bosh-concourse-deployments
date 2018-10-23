@@ -4,8 +4,6 @@ name: concourse-core
 releases:
 - name: concourse
   version: ((concourse_version))
-- name: postgres
-  version: ((postgres_version))
 - name: garden-runc
   version: ((garden_version))
 - name: ulimit
@@ -21,13 +19,9 @@ releases:
   url: https://s3-external-1.amazonaws.com/dpb587-caddy-bosh-release-us-east-1/artifacts/release/caddy-0.2.0.tgz
   sha1: 2def732c20fcf8f2fa7ed130266313520364cf0e
 
-# github.com/greenhouse-org/concourse-windows-release
-- name: concourse-windows-worker
-  version: ((concourse_windows_release_version))
-
 stemcells:
 - alias: default
-  os: ubuntu-trusty
+  os: ubuntu-xenial
   version: ((stemcell_version))
 # Windows Stemcell for AWS: https://s3.amazonaws.com/bosh-windows-stemcells/light-bosh-stemcell-*-aws-xen-hvm-windows2012R2-go_agent.tgz
 - alias: windows
@@ -65,10 +59,17 @@ instance_groups:
             name: ((database_role))
             password: ((database_password))
         github_auth:
-          client_id: ((github_auth_client_id))
-          client_secret: ((github_auth_client_secret))
-          authorize: ((github_auth_authorize_organizations))
+          client_id: ((concourse_github_client_id))
+          client_secret: ((concourse_github_client_secret))
         token_signing_key: ((token_signing_key))
+        add_local_users:
+        - ((concourse_basic_auth_username)):((concourse_basic_auth_password))
+        main_team:
+          auth:
+            local:
+              users: [((concourse_basic_auth_username))]
+            github:
+              teams: ((main_team_github_teams))
     - name: tsa
       release: concourse
       properties:
@@ -713,8 +714,17 @@ instance_groups:
   networks:
   - name: concourse
   jobs:
-  - name: concourse_windows
-    release: concourse-windows-worker
+  - name: houdini-windows
+    release: concourse
+    provides: {garden: {as: windows-garden}}
+  - name: baggageclaim-windows
+    release: concourse
+    provides: {baggageclaim: {as: windows-baggageclaim}}
+  - name: worker-windows
+    release: concourse
+    consumes:
+      baggageclaim: {from: windows-baggageclaim}
+      garden: {from: windows-garden}
   - name: set_password
     release: windows-utilities
     properties:
