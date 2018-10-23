@@ -92,7 +92,6 @@ pushd deployments-src > /dev/null
     -v stemcell_version="'${stemcell_version}'" \
     -v concourse_version="'${concourse_version}'" \
     -v garden_version="'${garden_version}'" \
-    -v concourse_windows_release_version="'${concourse_windows_release_version}'" \
     -d "${DEPLOYMENT_NAME}" \
     -o "$worker_ops_path" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \
