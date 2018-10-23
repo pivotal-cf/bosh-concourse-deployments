@@ -93,6 +93,29 @@ jobs:
                 vars:
                   allow_ssh_access_to_jumpbox: 0
 
+  - name: update-cloud-config
+    serial_groups: [deploy]
+    plan:
+      - do:
+        - aggregate:
+          - get: deployments-src
+          - get: bosh-cli
+        - *open-ssh-to-jumpbox
+        - &wait-for-ssh
+          task: wait-for-ssh
+          file: deployments-src/ci/tasks/wait-ssh.yml
+          params:
+            JUMPBOX_HOST: {{jumpbox_host}}
+        - task: update-cloud-config
+          file: deployments-src/ci/tasks/update-cloud-config.yml
+          params:
+            BOSH_CLIENT:           {{bosh_client}}
+            BOSH_CLIENT_SECRET:    {{bosh_client_secret}}
+            BOSH_CA_CERT:          {{bosh_ca_cert}}
+            JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
+            JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
+          ensure: *close-ssh-to-jumpbox
+
   - name: update-vpn-server
     serial_groups: [deploy]
     plan:
@@ -104,11 +127,7 @@ jobs:
         - get: openvpn-release
         - get: ssoca
       - *open-ssh-to-jumpbox
-      - &wait-for-ssh
-        task: wait-for-ssh
-        file: deployments-src/ci/tasks/wait-ssh.yml
-        params:
-          JUMPBOX_HOST: {{jumpbox_host}}
+      - *wait-for-ssh
       - task: deploy-vpn-server
         file: deployments-src/ci/tasks/deploy-vpn-server.yml
         params:

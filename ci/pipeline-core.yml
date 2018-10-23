@@ -23,6 +23,14 @@ jobs:
         file: deployments-src/ci/tasks/wait-ssh.yml
         params:
           JUMPBOX_HOST: {{jumpbox_host}}
+      - task: update-cloud-config
+        file: deployments-src/ci/tasks/update-cloud-config.yml
+        params:
+          BOSH_CLIENT:           {{bosh_client_admin}}
+          BOSH_CLIENT_SECRET:    {{bosh_client_secret_admin}}
+          BOSH_CA_CERT:          {{bosh_ca_cert}}
+          JUMPBOX_SSH_KEY:       {{jumpbox_ssh_key}}
+          JUMPBOX_SSH_USER:      {{jumpbox_ssh_user}}
       - task: deploy-concourse
         file: deployments-src/ci/tasks/deploy-concourse.yml
         params:
