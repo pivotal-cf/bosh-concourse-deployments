@@ -8,8 +8,6 @@ releases:
   version: ((garden_version))
 - name: ulimit
   version: latest
-- name: postgres
-  version: ((postgres_version))
 
 stemcells:
 - alias: default

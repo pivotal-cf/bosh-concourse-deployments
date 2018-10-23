@@ -8,7 +8,6 @@ jobs:
         - get: stemcell
         - get: windows-stemcell
         - get: bosh-cli
-        - get: postgres-release
         - get: concourse-windows-worker
         - get: concourse
         - get: garden-runc-release
@@ -154,10 +153,6 @@ resources:
     type: bosh-io-release
     source:
       repository: pivotal-cf-experimental/concourse-windows-worker-release
-  - name: postgres-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry/postgres-release
   - name: vsphere-v6.5-worker-state-1
     type: gcs-resource
     source:

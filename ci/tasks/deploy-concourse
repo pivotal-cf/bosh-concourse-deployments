@@ -23,7 +23,6 @@ source deployments-src/ci/utils
 
 terraform_metadata="$( realpath terraform/metadata )"
 stemcell_version="$( cat stemcell/version )"
-postgres_release_version="$( cat postgres-release/version )"
 concourse_version="$( cat concourse/version )"
 garden_version="$( cat garden-runc-release/version )"
 concourse_windows_release_version="$( cat concourse-windows-worker/version )"
@@ -34,9 +33,6 @@ set +e
 
 echo "Uploading Concourse release..."
 bosh -n --tty upload-release concourse/*.tgz
-
-echo "Uploading Postgres release..."
-bosh -n --tty upload-release postgres-release/*.tgz
 
 echo "Uploading Concourse Windows release..."
 bosh -n --tty upload-release concourse-windows-worker/*.tgz
@@ -55,9 +51,6 @@ bosh -n --tty upload-stemcell stemcell/*.tgz
 
 echo "Uploading Windows stemcell..."
 bosh -n --tty upload-stemcell windows-stemcell/*.tgz
-
-echo "Uploading Postgres release..."
-bosh -n --tty upload-release postgres-release/release.tgz
 
 set -e
 

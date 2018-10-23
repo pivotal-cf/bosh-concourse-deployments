@@ -12,6 +12,7 @@ jobs:
       - aggregate:
         - get: deployments-src
         - get: stemcell
+          resource: xenial-stemcell
         - get: windows-stemcell
         - get: bosh-cli
         - get: concourse-windows-worker
@@ -21,7 +22,6 @@ jobs:
         - get: garden-runc-release
         - get: ulimit
         - get: windows-utilities
-        - get: postgres-release
       - put: terraform
         params:
           env_name: bosh-cpi-concourse
@@ -82,7 +82,7 @@ jobs:
           - get: bosh-cpi-release
             resource: bosh-vsphere-cpi-release
           - get: stemcell
-            resource: vsphere-stemcell
+            resource: vsphere-xenial-stemcell
         - aggregate:
           - task: update-vsphere-v6.5-worker
             file: deployments-src/ci/tasks/deploy-worker.yml
@@ -134,19 +134,19 @@ resources:
     source:
       bucket: bosh-cli-artifacts
       regexp: bosh-cli-(\d+\.\d+\.\d+)-linux-amd64
-  - name: stemcell
+  - name: xenial-stemcell
     type: bosh-io-stemcell
     source:
-      name: bosh-google-kvm-ubuntu-trusty-go_agent
+      name: bosh-google-kvm-ubuntu-xenial-go_agent
   - name: windows-stemcell
     type: s3
     source:
       bucket: bosh-windows-stemcells
       regexp: light-bosh-stemcell-(.*)-google-kvm-windows2012R2-go_agent.tgz
-  - name: vsphere-stemcell
+  - name: vsphere-xenial-stemcell
     type: bosh-io-stemcell
     source:
-      name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+      name: bosh-vsphere-esxi-ubuntu-xenial-go_agent
   - name: concourse
     type: bosh-io-release
     source:
@@ -165,10 +165,6 @@ resources:
     source:
       uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
       branch: master
-  - name: postgres-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry/postgres-release
   - name: concourse-windows-worker
     type: bosh-io-release
     source:
