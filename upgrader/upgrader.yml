@@ -67,9 +67,9 @@ instance_groups:
       tls_bind_port: 443
       token_signing_key: ((token_signing_key))
       postgresql:
-        sslmode: disable
         host: 127.0.0.1
         database: atc
+        sslmode: disable
         role:
           name: atc
           password: ((postgres_password))
@@ -85,6 +85,8 @@ instance_groups:
       host_key: ((tsa_host_key))
       token_signing_key: ((token_signing_key))
       authorized_keys: [((worker_key.public_key))]
+      atc:
+        urls: ["http://127.0.0.1"]
 
   - name: postgres
     release: postgres
@@ -101,13 +103,13 @@ instance_groups:
     release: concourse
     properties:
       drain_timeout: 10m
+      baggageclaim:
+        url: http://127.0.0.1:7788
       tsa:
         host: 127.0.0.1
         port: 2222
-        worker_key: ((worker_key))
         host_public_key: ((tsa_host_key.public_key))
-      baggageclaim:
-        url: http://127.0.0.1:7788
+        worker_key: ((worker_key))
 
   - name: baggageclaim
     release: concourse
@@ -119,6 +121,7 @@ instance_groups:
       garden:
         listen_network: tcp
         listen_address: 0.0.0.0:7777
+        allow_host_access: true
 
   properties:
     vcenter: &vcenter
