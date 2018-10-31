@@ -2,18 +2,22 @@
 name: concourse
 
 releases:
-- name: concourse
-  url: https://bosh.io/d/github.com/concourse/concourse?v=3.14.1
-  sha1: 6be91b70ecc7ce233d2aff5d03ed28c8eab3d132
-- name: garden-runc
-  url: https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.14.0
-  sha1: be5e6d6a263be1437d99dc5e818deeb8ab2a03a4
-- name: bosh-vsphere-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=50
-  sha1: 27cad6e254f363ac06f947b4def3cbc7bfa269b9
-- name: postgres
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=29
-  sha1: 24d2e2887a45258b71bc40577c0f406180e47701
+- name: "concourse"
+  version: "4.2.1"
+  url: "https://bosh.io/d/github.com/concourse/concourse?v=4.2.1"
+  sha1: "470a6fdd7cb82fc723d7d78930c7d261ca4a6cb4"
+- name: "garden-runc"
+  version: "1.16.8"
+  url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release?v=1.16.8"
+  sha1: "67e6b474d63b402f725ec2d298fd959c9cd8d7c7"
+- name: "bosh-vsphere-cpi"
+  version: "51"
+  url: "https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=51"
+  sha1: "7996b34b4cdaf6f0f1b8955680774f2ec0741d05"
+- name: "postgres"
+  version: "30"
+  url: "https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=30"
+  sha1: "a798999d29b9f5aa12035cff907b26674b491200"
 
 disk_pools:
 - name: disks
@@ -23,8 +27,8 @@ resource_pools:
 - name: default
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3586.43
-    sha1: 9a79aa8c443597a2cb6f4bdeef020f01e558a044
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-xenial-go_agent?v=170.2
+    sha1: 081db6cc5c9709a49d0875bbc1f90a1ac0fa8652
   cloud_properties:
     cpu: 2
     ram: 4_096
@@ -55,7 +59,6 @@ instance_groups:
     properties:
       external_url: ((external_url))
       github_auth:
-        authorize: ((github_auth_main_teams))
         client_id: ((github_auth_client_id))
         client_secret: ((github_auth_client_secret))
       tls_cert: ((tls_cert))
@@ -70,6 +73,11 @@ instance_groups:
         role:
           name: atc
           password: ((postgres_password))
+      main_team:
+        auth:
+          github:
+            teams:
+            - cloudfoundry:cf-bosh
 
   - name: tsa
     release: concourse
@@ -77,8 +85,6 @@ instance_groups:
       host_key: ((tsa_host_key))
       token_signing_key: ((token_signing_key))
       authorized_keys: [((worker_key.public_key))]
-      atc:
-        urls: ["http://127.0.0.1"]
 
   - name: postgres
     release: postgres
@@ -94,21 +100,26 @@ instance_groups:
   - name: worker
     release: concourse
     properties:
+      drain_timeout: 10m
       tsa:
         host: 127.0.0.1
+        port: 2222
         worker_key: ((worker_key))
         host_public_key: ((tsa_host_key.public_key))
       baggageclaim:
         url: http://127.0.0.1:7788
+
   - name: baggageclaim
     release: concourse
     properties: {}
+
   - name: garden
     release: garden-runc
     properties:
       garden:
         listen_network: tcp
         listen_address: 0.0.0.0:7777
+
   properties:
     vcenter: &vcenter
       address: ((vcenter_address))
