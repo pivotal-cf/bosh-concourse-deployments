@@ -85,7 +85,7 @@ vm_types:
   cloud_properties:
     cpu: 12
     ram: 16_384
-    root_disk_size_gb: 164
+    root_disk_size_gb: 350
     root_disk_type: pd-ssd
     tags:
       - ((nat_traffic_tag))
