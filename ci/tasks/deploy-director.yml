@@ -25,7 +25,6 @@ params:
   BOSH_CA_KEY:           ""
   JUMPBOX_SSH_KEY:       ""
   JUMPBOX_SSH_USER:      ""
-  ADDITIONAL_OPS:        ""
   BOSH_TEAMS:            ""
 run:
   path: deployments-src/ci/tasks/deploy-director
