@@ -1,3 +1,5 @@
+#!/bin/bash
+
 fly -t upgrader sp \
   -p shared-environment \
   -c "$REPO_DIR/ci/pipeline-shared.yml" \
