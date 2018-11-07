@@ -33,7 +33,7 @@ update:
   max_in_flight: 6
   canary_watch_time: 30000 - 90000
   update_watch_time: 30000 - 90000
-  vm_strategy: create-swap-delete
+  # vm_strategy: create-swap-delete
   serial: false
 
 instance_groups:
