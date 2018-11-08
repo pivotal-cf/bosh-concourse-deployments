@@ -39,8 +39,11 @@ bosh -n --tty upload-release garden-runc-release/*.tgz
 echo "Uploading ulimit release..."
 ( cd ulimit ; bosh -n --tty upload-release )
 
-echo "Uploading Windows Utilities stemcell..."
-( cd windows-utilities ; rm -f config/private.yml ; bosh -n --tty upload-release )
+echo "Uploading Windows Utilities release..."
+( cd windows-utilities ; bosh -n --tty upload-release )
+
+echo "Uploading Windows Tools release..."
+( cd windows-tools ; bosh -n --tty upload-release )
 
 echo "Uploading stemcell..."
 bosh -n --tty upload-stemcell stemcell/*.tgz

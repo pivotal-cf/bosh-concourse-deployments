@@ -19,6 +19,7 @@ jobs:
         - get: garden-runc-release
         - get: ulimit
         - get: windows-utilities
+        - get: windows-tools
       - put: terraform
         params:
           env_name: bosh-cpi-concourse
@@ -169,6 +170,11 @@ resources:
     type: git
     source:
       uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
+      branch: master
+  - name: windows-tools
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/windows-tools-release.git
       branch: master
   - name: bosh-vsphere-cpi-release
     type: bosh-io-release

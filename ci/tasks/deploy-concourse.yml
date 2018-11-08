@@ -16,6 +16,7 @@ inputs:
   - name: windows-stemcell
   - name: bosh-cli
   - name: ulimit
+  - name: windows-tools
 
 params:
   DEPLOYMENT_NAME:                ""

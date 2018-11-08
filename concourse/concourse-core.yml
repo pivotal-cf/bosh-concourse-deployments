@@ -18,6 +18,8 @@ releases:
   version: 0.2.0
   url: https://s3-external-1.amazonaws.com/dpb587-caddy-bosh-release-us-east-1/artifacts/release/caddy-0.2.0.tgz
   sha1: 2def732c20fcf8f2fa7ed130266313520364cf0e
+- name: windows-tools
+  version: latest
 
 stemcells:
 - alias: default
@@ -584,3 +586,9 @@ instance_groups:
         password: "((windows_administrator_password))"
   - name: enable_ssh
     release: windows-utilities
+  - name: golang-windows
+    release: windows-tools
+  - name: ginkgo
+    release: windows-tools
+  - name: mingw64
+    release: windows-tools
