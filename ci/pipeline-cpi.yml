@@ -172,10 +172,9 @@ resources:
       uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
       branch: master
   - name: windows-tools
-    type: git
+    type: bosh-io-release
     source:
-      uri: https://github.com/cloudfoundry/windows-tools-release.git
-      branch: master
+      repository: cloudfoundry-incubator/windows-tools-release
   - name: bosh-vsphere-cpi-release
     type: bosh-io-release
     source:

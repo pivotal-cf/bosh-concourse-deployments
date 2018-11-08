@@ -157,10 +157,9 @@ resources:
       uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
       branch: master
   - name: windows-tools
-    type: git
+    type: bosh-io-release
     source:
-      uri: https://github.com/cloudfoundry/windows-tools-release.git
-      branch: master
+      repository: cloudfoundry-incubator/windows-tools-release
   - name: windows-stemcell
     type: bosh-io-stemcell
     source:
