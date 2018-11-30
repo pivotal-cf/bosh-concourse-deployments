@@ -160,13 +160,13 @@ networks:
   - az: us1
     cloud_properties:
       ephemeral_external_ip: true
-      network_name: concourse-windows
-      subnetwork_name: concourse-windows
+      network_name: ((network))
+      subnetwork_name: ((windows_subnetwork))
       tags:
         - ((director_internal_tag))
         - ((jumpbox_internal_management_tag))
-    gateway: 10.1.0.1
-    range: 10.1.0.0/16
+    gateway: ((windows_internal_gw))
+    range: ((windows_internal_cidr))
     reserved: []
 - name: concourse-asia
   type: dynamic

@@ -50,6 +50,13 @@ resource "google_compute_subnetwork" "asia-bosh-subnet" {
   region        = "${var.asia_region}"
 }
 
+resource "google_compute_subnetwork" "windows-bosh-subnet" {
+  name          = "${var.windows_subnetwork}"
+  ip_cidr_range = "${var.windows_internal_cidr}"
+  network       = "${var.network}"
+  region        = "${var.region}"
+}
+
 module "jumpbox" {
   source                       = "../modules/jumpbox/"
 

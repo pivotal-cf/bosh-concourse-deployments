@@ -32,6 +32,14 @@ variable "internal_cidr" {
   default = "10.0.0.0/24"
 }
 
+variable "windows_subnetwork" {
+    default = "concourse-windows"
+}
+
+variable "windows_internal_cidr" {
+  default = "10.0.2.0/24"
+}
+
 variable "asia_internal_cidr" {
   default = "10.0.1.0/24"
 }

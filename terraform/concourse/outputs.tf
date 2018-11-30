@@ -25,8 +25,20 @@ output "subnetwork" {
   value = "${module.concourse_subnet.name}"
 }
 
+output "windows_subnetwork" {
+  value = "${var.windows_subnetwork}"
+}
+
+output "windows_internal_gw" {
+  value = "${google_compute_subnetwork.windows-bosh-subnet.internal_gw}"
+}
+
 output "internal_cidr" {
   value = "${module.concourse_subnet.internal_cidr}"
+}
+
+output "windows_internal_cidr" {
+  value = "${var.windows_internal_cidr}"
 }
 
 output "internal_gw" {
