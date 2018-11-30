@@ -30,7 +30,7 @@ output "windows_subnetwork" {
 }
 
 output "windows_internal_gw" {
-  value = "${google_compute_subnetwork.windows-bosh-subnet.internal_gw}"
+  value = "${cidrhost(var.windows_internal_cidr,1)}"
 }
 
 output "internal_cidr" {
