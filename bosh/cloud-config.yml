@@ -165,6 +165,7 @@ networks:
       tags:
         - ((director_internal_tag))
         - ((jumpbox_internal_management_tag))
+    gateway: 10.1.0.1
     range: 10.1.0.0/16
     reserved: []
 - name: concourse-asia
