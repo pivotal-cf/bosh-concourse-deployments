@@ -27,7 +27,7 @@ stemcells:
   version: ((stemcell_version))
 # Windows Stemcell for AWS: https://s3.amazonaws.com/bosh-windows-stemcells/light-bosh-stemcell-*-aws-xen-hvm-windows2012R2-go_agent.tgz
 - alias: windows
-  os: windows2012R2
+  os: windows2016
   version: latest
 
 update:
