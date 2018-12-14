@@ -21,7 +21,7 @@ releases:
 
 disk_pools:
 - name: disks
-  disk_size: 20_000
+  disk_size: 40_000
 
 resource_pools:
 - name: default

@@ -1,21 +1,21 @@
 {
     "director_id": "644c8d7e-a54b-4507-63e8-d381cdad0c07",
     "installation_id": "d1e23621-a0db-4769-5a68-a7f27c35e570",
-    "current_vm_cid": "vm-c8f2fb50-c61d-403a-94a5-10d18fc75ad3",
+    "current_vm_cid": "vm-b7cd755b-1f42-45c7-86ff-b5546eacb60a",
     "current_stemcell_id": "eb44e166-1e9f-406d-44c8-a448bc0f2f9d",
-    "current_disk_id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
+    "current_disk_id": "3d6ef928-b2e0-480a-721b-ac63fd5d5b0c",
     "current_release_ids": [
-        "ed27b324-0a80-4c8e-7482-353977c6fa3d",
-        "4407d824-d870-4eaf-7bb6-c1b17675f05a",
-        "f05be80b-3df5-4a0e-5029-d4cfe184e5a9",
-        "124051c5-a4fa-4301-76fb-9aa0e81023ac"
+        "ed99bdc7-c8d2-42eb-4090-58e34e0ec7ac",
+        "e811c5ba-c233-462b-79fb-21fcfa552bb9",
+        "5cbcb822-8e51-4740-47bd-4a48c44d606c",
+        "11ea1e09-3f0c-411d-5b71-43f2cda8f642"
     ],
-    "current_manifest_sha": "81358aac8a1c6c1e439437d879cefd0202168a6da4b53849fe816092cdfb83da77faa989d79d7db569f16ff58540707f7855e370431e8858c287a3c322c00cde",
+    "current_manifest_sha": "5c13cac29b9a8124256b14ed1c62bc52880e58603dbdfcbf7ea4dd29860b3b770a2a0de4470e5d4e59788f14be68fc8e1390eb7a8bff167edee1ead05654f6f7",
     "disks": [
         {
-            "id": "b420fab1-09ee-424f-6952-5cb133fb3cd2",
-            "cid": "disk-0fbc7a5b-fe54-4845-84b7-35113809deb5",
-            "size": 20000,
+            "id": "3d6ef928-b2e0-480a-721b-ac63fd5d5b0c",
+            "cid": "disk-f6e79fff-385a-4a88-b0ff-775f26ed9fa8",
+            "size": 40000,
             "cloud_properties": {}
         }
     ],
@@ -29,22 +29,22 @@
     ],
     "releases": [
         {
-            "id": "ed27b324-0a80-4c8e-7482-353977c6fa3d",
+            "id": "ed99bdc7-c8d2-42eb-4090-58e34e0ec7ac",
             "name": "concourse",
             "version": "4.2.1"
         },
         {
-            "id": "4407d824-d870-4eaf-7bb6-c1b17675f05a",
+            "id": "e811c5ba-c233-462b-79fb-21fcfa552bb9",
             "name": "garden-runc",
             "version": "1.16.8"
         },
         {
-            "id": "f05be80b-3df5-4a0e-5029-d4cfe184e5a9",
+            "id": "5cbcb822-8e51-4740-47bd-4a48c44d606c",
             "name": "bosh-vsphere-cpi",
             "version": "51"
         },
         {
-            "id": "124051c5-a4fa-4301-76fb-9aa0e81023ac",
+            "id": "11ea1e09-3f0c-411d-5b71-43f2cda8f642",
             "name": "postgres",
             "version": "30"
         }
