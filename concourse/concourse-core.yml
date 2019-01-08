@@ -92,6 +92,8 @@ instance_groups:
           email: ((letsencrypt_registration_email))
         caddyfile: |
           ((concourse_external_host)) {
+            gzip
+
             tls {
               dns route53
             }
