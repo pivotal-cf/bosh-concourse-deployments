@@ -141,7 +141,7 @@ resources:
   - name: concourse
     type: bosh-io-release
     source:
-      repository: concourse/concourse
+      repository: concourse/concourse-bosh-release
   - name: garden-runc-release
     type: bosh-io-release
     source:
