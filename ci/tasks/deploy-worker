@@ -22,6 +22,7 @@ bosh -n create-env \
   -v stemcell_path="$( realpath $PWD/stemcell/*.tgz )" \
   -l <( echo "${WORKER_SECRETS}" ) \
   $( echo ${OPTIONAL_FLAGS} ) \
+  --vars-store="creds.yml" \
   deployments-src/concourse/workers/${ENVIRONMENT_NAME}/worker.yml
 
 echo "Successfully updated worker!"
