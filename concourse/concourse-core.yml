@@ -512,3 +512,42 @@ instance_groups:
     release: windows-tools
   - name: mingw64
     release: windows-tools
+
+- name: asia_worker
+  instances: 1
+  vm_type: concourse_worker_2_8
+  stemcell: default
+  azs: [asia]
+  networks:
+    - name: concourse-asia
+  jobs:
+    - name: worker
+      release: concourse
+      consumes:
+        baggageclaim:
+          from: asia_baggageclaim
+      properties:
+        tags: [asia]
+        team: pcf
+        tsa:
+          registration_mode: forward
+          worker_key: ((worker_key))
+          host_public_key: ((tsa_host_key.public_key))
+        additional_resource_types: *additional_resource_types
+        baggageclaim:
+          forward_address: 127.0.0.1:7788
+        garden:
+          forward_address: 127.0.0.1:7777
+    - name: garden
+      release: garden-runc
+      properties: *garden
+    - name: baggageclaim
+      release: concourse
+      provides:
+        baggageclaim:
+          as: asia_baggageclaim
+      properties:
+        driver: btrfs
+    - name: slack-notification-resource
+      release: slack-notification-resource
+      properties: {}
