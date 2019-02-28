@@ -99,6 +99,15 @@ vm_types:
     tags:
       - ((nat_traffic_tag))
       - ((bosh_core.worker_tag))
+- name: concourse_core_worker_2_8
+  cloud_properties:
+    cpu: 2
+    ram: 8_192
+    root_disk_size_gb: 164
+    root_disk_type: pd-ssd
+    tags:
+      - ((nat_traffic_tag))
+      - ((bosh_core.worker_tag))
 #test bosh-load-test worker vm
 - name: concourse_core_load_worker
   cloud_properties:

@@ -513,9 +513,9 @@ instance_groups:
   - name: mingw64
     release: windows-tools
 
-- name: asia_worker
+- name: worker-asia
   instances: 1
-  vm_type: concourse_worker_2_8
+  vm_type: concourse_core_worker_2_8
   stemcell: default
   azs: [asia]
   networks:
