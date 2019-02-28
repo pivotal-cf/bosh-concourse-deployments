@@ -119,7 +119,7 @@ instance_groups:
           from: asia_baggageclaim
       properties:
         tags: [asia]
-        team: pcf
+        team: pivotal
         tsa:
           registration_mode: forward
           worker_key: ((worker_key))
