@@ -6,8 +6,6 @@ releases:
   version: ((concourse_version))
 - name: garden-runc
   version: ((garden_version))
-- name: ulimit
-  version: latest
 
 stemcells:
 - alias: default
@@ -40,6 +38,8 @@ instance_groups:
         tls_cert: ((tls_cert))
         tls_key: ((tls_key))
         publicly_viewable: true
+        atc:
+          open_files_limit: 1048576
         postgresql:
           host: ((concourse_db_host))
           database: &atc_db atc
@@ -63,12 +63,6 @@ instance_groups:
         token_signing_key: ((token_signing_key))
         authorized_keys: [((worker_key.public_key))]
         team_authorized_keys: [] # keys will be added via worker-ops.yml
-    - name: ulimit
-      release: ulimit
-      properties:
-        nofile:
-          soft: 32768
-          hard: 32768
 
 - name: shared_worker
   instances: 3
