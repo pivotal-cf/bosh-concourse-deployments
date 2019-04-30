@@ -55,6 +55,8 @@ instance_groups:
         bind_port: 8080
         publicly_viewable: true
         container_placement_strategy: random
+        atc:
+          open_files_limit: 1048576
         postgresql:
           host: ((database_host))
           database: ((database_name))

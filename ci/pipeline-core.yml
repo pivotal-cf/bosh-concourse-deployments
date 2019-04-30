@@ -159,7 +159,7 @@ resources:
   - name: windows-tools
     type: bosh-io-release
     source:
-      repository: cloudfoundry-incubator/windows-tools-release
+      repository: cloudfoundry/windows-tools-release
   - name: windows-stemcell
     type: bosh-io-stemcell
     source:
