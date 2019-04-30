@@ -39,9 +39,6 @@ bosh -n --tty upload-release garden-runc-release/*.tgz
 echo "Uploading Windows Tools release..."
 bosh -n --tty upload-release windows-tools/*.tgz
 
-echo "Uploading ulimit release..."
-( cd ulimit ; bosh -n --tty upload-release )
-
 echo "Uploading Windows Utilities release..."
 ( cd windows-utilities ; bosh -n --tty upload-release )
 
