@@ -6,6 +6,8 @@ releases:
   version: ((concourse_version))
 - name: garden-runc
   version: ((garden_version))
+- name: ulimit
+  version: latest
 - name: windows-utilities
   version: latest
 - name: slack-notification-resource
@@ -53,8 +55,6 @@ instance_groups:
         bind_port: 8080
         publicly_viewable: true
         container_placement_strategy: random
-        atc:
-          open_files_limit: 1048576
         postgresql:
           host: ((database_host))
           database: ((database_name))
@@ -79,6 +79,12 @@ instance_groups:
         authorized_keys: ((tsa_authorized_keys))
         host_key: ((tsa_host_key))
         token_signing_key: ((token_signing_key))
+    - name: ulimit
+      release: ulimit
+      properties:
+        nofile:
+          soft: 1048576
+          hard: 1048576
     - name: caddy
       release: caddy
       properties:

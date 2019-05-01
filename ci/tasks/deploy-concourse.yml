@@ -15,6 +15,7 @@ inputs:
   - name: stemcell
   - name: windows-stemcell
   - name: bosh-cli
+  - name: ulimit
   - name: windows-tools
 
 params:
