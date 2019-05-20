@@ -18,9 +18,16 @@ bosh create-env ./upgrader.yml \
   -l <( lpass show --notes "$UPGRADER_CREATE_ENV_SECURE_NOTE" ) \
   --state ./upgrader-state.json
 
-wget -O ./fly "${concourse_external_url}/api/v1/cli?arch=amd64&platform=darwin"
-chmod +x ./fly
+if [ "$(uname)" = "Darwin" ]; then
+  wget -O ./fly "${concourse_external_url}/api/v1/cli?arch=amd64&platform=darwin"
+elif [ "$(uname)" = "Linux" ]; then
+  wget -O ./fly "${concourse_external_url}/api/v1/cli?arch=amd64&platform=linux"
+else
+  echo "What operating system are you even on? Windows?"
+  exit 1
+fi
 
+chmod +x ./fly
 ./fly -t upgrader login -c "${concourse_external_url}"
 
 echo "Finished successfully"
