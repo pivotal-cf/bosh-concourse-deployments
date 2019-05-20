@@ -35,6 +35,8 @@ resource_pools:
     disk: 100_000
   env:
     bosh:
+      mbus:
+        cert: ((mbus_bootstrap_ssl))
       password: ((upgrader_vm_password))
 
 networks:
@@ -148,6 +150,7 @@ update:
   update_watch_time: 1000-60000
 
 cloud_provider:
+  cert: ((mbus_bootstrap_ssl))
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
   mbus: "https://mbus:((mbus_bootstrap_password))@((internal_ip)):6868"
   properties:
@@ -155,3 +158,24 @@ cloud_provider:
     agent: {mbus: "https://mbus:((mbus_bootstrap_password))@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
+
+variables:
+- name: default_ca
+  options:
+    common_name: ca
+    is_ca: true
+  type: certificate
+- name: mbus_bootstrap_ssl
+  options:
+    alternative_names:
+    - ((internal_ip))
+    ca: default_ca
+    common_name: ((internal_ip))
+  type: certificate
+- name: director_ssl
+  options:
+    alternative_names:
+    - ((internal_ip))
+    ca: default_ca
+    common_name: ((internal_ip))
+  type: certificate
