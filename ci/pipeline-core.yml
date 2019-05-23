@@ -142,6 +142,7 @@ resources:
     type: bosh-io-release
     source:
       repository: concourse/concourse-bosh-release
+      regexp: 4.2.*
   - name: garden-runc-release
     type: bosh-io-release
     source:
