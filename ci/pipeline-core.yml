@@ -150,10 +150,9 @@ resources:
     source:
       repository: dpb587/caddy-bosh-release
   - name: windows-utilities
-    type: git
+    type: bosh-io-release
     source:
-      uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
-      branch: master
+      repository: cloudfoundry-incubator/windows-utilities-release
   - name: windows-tools
     type: bosh-io-release
     source:
