@@ -46,7 +46,7 @@ instance_groups:
           allow_host_access: true
         worker_gateway:
           worker_key: ((worker_key))
-          hosts: ((concourse_tsa_hostname))
+          hosts: ((concourse_tsa_host))
           host_public_key: ((tsa_host_key.public_key))
 
 cloud_provider:
