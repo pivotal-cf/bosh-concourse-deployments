@@ -11,26 +11,7 @@
     jobs:
       - name: worker
         release: concourse
-        consumes:
-          baggageclaim: {from: ((team))_baggageclaim}
         properties:
-          tsa:
-            registration_mode: forward
+          worker_gateway:
             worker_key: ((worker_key))
-            host_public_key: ((tsa_host_key.public_key))
           team: ((team))
-          baggageclaim:
-            forward_address: 127.0.0.1:7788
-          garden:
-            forward_address: 127.0.0.1:7777
-      - name: garden
-        release: garden-runc
-        properties:
-          garden:
-            listen_network: tcp
-            listen_address: 127.0.0.1:7777
-      - name: baggageclaim
-        release: concourse
-        provides:
-          baggageclaim: {as: ((team))_baggageclaim}
-        properties: {}

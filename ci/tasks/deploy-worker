@@ -17,7 +17,6 @@ echo "Updating WORKER..."
 bosh -n create-env \
   --state updated-worker-state/worker-state.json \
   -v concourse_release_path="$( realpath $PWD/concourse/*.tgz )" \
-  -v garden_runc_release_path="$( realpath $PWD/garden-runc-release/*.tgz )" \
   -v bosh_cpi_release_path="$( realpath $PWD/bosh-cpi-release/*.tgz )" \
   -v stemcell_path="$( realpath $PWD/stemcell/*.tgz )" \
   -l <( echo "${WORKER_SECRETS}" ) \

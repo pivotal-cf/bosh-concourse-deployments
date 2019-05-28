@@ -7,16 +7,16 @@ image_resource:
     repository: boshcpi/bosh-concourse-deployments
 
 inputs:
-  - name: deployments-src
-  - name: terraform
-  - name: concourse
-  - name: garden-runc-release
-  - name: windows-utilities
-  - name: stemcell
-  - name: windows-stemcell
   - name: bosh-cli
-  - name: ulimit
+  - name: bpm
+  - name: caddy
+  - name: concourse
+  - name: deployments-src
+  - name: stemcell
+  - name: terraform
+  - name: windows-stemcell
   - name: windows-tools
+  - name: windows-utilities
 
 params:
   DEPLOYMENT_NAME:                ""

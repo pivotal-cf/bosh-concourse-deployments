@@ -6,8 +6,6 @@ releases:
     url: file://((bosh_cpi_release_path))
   - name: concourse
     url: file://((concourse_release_path))
-  - name: garden-runc
-    url: file://((garden_runc_release_path))
 
 resource_pools:
   - name: vms
@@ -34,31 +32,20 @@ networks:
 instance_groups:
   - name: worker
     instances: 1
-    jobs:
-      - name: worker
-        release: concourse
-      - name: baggageclaim
-        release: concourse
-      - name: garden
-        release: garden-runc
     resource_pool: vms
     networks:
       - {name: private, static_ips: [((vcenter_worker_ip))]}
-    properties:
-      tags: ((worker_tags))
-      baggageclaim:
-        forward_address: 127.0.0.1:7788
-      garden:
-        listen_network: tcp
-        listen_address: 127.0.0.1:7777
-        allow_host_access: true
-        btrfs_store_size_mb: 1000000
-        forward_address: 127.0.0.1:7777
-      tsa:
-        host: ((concourse_tsa_hostname))
-        worker_key: ((worker_key))
-        host_public_key: ((tsa_host_key.public_key))
-        registration_mode: forward
+    jobs:
+    - name: worker
+      release: concourse
+      properties:
+        tags: ((worker_tags))
+        garden:
+          allow_host_access: true
+        worker_gateway:
+          worker_key: ((worker_key))
+          hosts: ((concourse_tsa_hostname))
+          host_public_key: ((tsa_host_key.public_key))
 
 cloud_provider:
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}

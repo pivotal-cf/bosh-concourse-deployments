@@ -10,8 +10,8 @@ jobs:
         - get: windows-stemcell
         - get: bosh-cli
         - get: concourse
-        - get: garden-runc-release
-        - get: ulimit
+        - get: bpm
+        - get: caddy
         - get: windows-utilities
         - get: windows-tools
       - put: terraform
@@ -64,7 +64,6 @@ jobs:
       - do:
         - aggregate:
           - get: concourse
-          - get: garden-runc-release
           - get: deployments-src
           - get: bosh-cli
           - get: vsphere-v6.5-worker-state-1
@@ -142,16 +141,14 @@ resources:
     type: bosh-io-release
     source:
       repository: concourse/concourse-bosh-release
-      regexp: 4.2.*
-  - name: garden-runc-release
+  - name: bpm
     type: bosh-io-release
     source:
-      repository: cloudfoundry/garden-runc-release
-  - name: ulimit
-    type: git
+      repository: cloudfoundry/bpm-release
+  - name: caddy
+    type: bosh-io-release
     source:
-      uri: https://github.com/pivotal-cf/ulimit-release.git
-      branch: master
+      repository: dpb587/caddy-bosh-release
   - name: windows-utilities
     type: git
     source:
