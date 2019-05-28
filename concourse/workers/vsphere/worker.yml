@@ -12,6 +12,8 @@ resource_pools:
     network: private
     env:
       bosh:
+        authorized_keys:
+        - ((ssh_authorized_public_key))
         mbus:
           cert: ((mbus_bootstrap_ssl))
     stemcell:
