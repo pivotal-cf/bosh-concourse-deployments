@@ -10,7 +10,7 @@ yes | ./fly -t concourse login \
   -u "${CONCOURSE_BASIC_AUTH_USERNAME}" \
   -p "${CONCOURSE_BASIC_AUTH_PASSWORD}"
 
-pushd desployments-src/concourse/teams/core
+pushd deployments-src/concourse/teams/core
   fly -t concourse set-team  --non-interactive -n bosh-io -c bosh-io.yml
   fly -t concourse set-team  --non-interactive -n bosh-packages -c bosh-packages.yml
   fly -t concourse set-team  --non-interactive -n dev -c dev.yml
