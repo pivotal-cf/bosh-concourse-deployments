@@ -2,12 +2,12 @@
 name: concourse-cpi
 
 releases:
+- name: bpm
+  version: ((bpm_version))
+- name: caddy
+  version: ((caddy_version))
 - name: concourse
   version: ((concourse_version))
-- name: garden-runc
-  version: ((garden_version))
-- name: ulimit
-  version: latest
 
 stemcells:
 - alias: default
@@ -31,22 +31,22 @@ instance_groups:
   - name: concourse
     default: [dns, gateway]
   jobs:
-    - name: atc
+    - name: web
       release: concourse
       properties:
         external_url: ((concourse_external_url))
-        bind_port: 80
-        tls_bind_port: 443
-        tls_cert: ((tls_cert))
-        tls_key: ((tls_key))
-        publicly_viewable: true
+        token_signing_key: ((token_signing_key))
         postgresql:
           host: ((concourse_db_host))
-          database: &atc_db atc
+          database: atc
           role:
             name: atc
             password: ((concourse_db_password))
-        token_signing_key: ((token_signing_key))
+        worker_gateway:
+          host_key: ((tsa_host_key))
+          token_signing_key: ((token_signing_key))
+          authorized_keys: [((worker_key.public_key))]
+          team_authorized_keys: [] # keys will be added via worker-ops.yml
         add_local_users:
         - ((concourse_basic_auth_username)):((concourse_basic_auth_password))
         github_auth:
@@ -56,19 +56,8 @@ instance_groups:
           auth:
             local:
               users: [((concourse_basic_auth_username))]
-    - name: tsa
-      release: concourse
-      properties:
-        host_key: ((tsa_host_key))
-        token_signing_key: ((token_signing_key))
-        authorized_keys: [((worker_key.public_key))]
-        team_authorized_keys: [] # keys will be added via worker-ops.yml
-    - name: ulimit
-      release: ulimit
-      properties:
-        nofile:
-          soft: 1048576
-          hard: 1048576
+        tls_cert: ((tls_cert))
+        tls_key: ((tls_key))
 
 - name: shared_worker
   instances: 3
@@ -76,33 +65,16 @@ instance_groups:
   stemcell: default
   azs: [us1]
   networks:
-    - name: concourse
+  - name: concourse
   jobs:
-    - name: worker
-      release: concourse
-      consumes:
-        baggageclaim: {from: shared_baggageclaim}
-      properties:
-        tsa:
-          registration_mode: forward
-          worker_key: ((worker_key))
-          host_public_key: ((tsa_host_key.public_key))
-        baggageclaim:
-          forward_address: 127.0.0.1:7788
-        garden:
-          forward_address: 127.0.0.1:7777
-    - name: garden
-      release: garden-runc
-      properties:
-        garden:
-          max_containers: 500
-          listen_network: tcp
-          listen_address: 127.0.0.1:7777
-    - name: baggageclaim
-      release: concourse
-      provides:
-        baggageclaim: {as: shared_baggageclaim}
-      properties: {}
+  - name: worker
+    release: concourse
+    properties:
+      worker_gateway:
+        worker_key: ((worker_key))
+        host_public_key: ((tsa_host_key.public_key))
+      garden:
+        allow_host_access: true
 
 - name: asia_worker
   instances: 1
@@ -110,36 +82,17 @@ instance_groups:
   stemcell: default
   azs: [asia]
   networks:
-    - name: concourse-asia
+  - name: concourse-asia
   jobs:
-    - name: worker
-      release: concourse
-      consumes:
-        baggageclaim:
-          from: asia_baggageclaim
-      properties:
-        tags: [asia]
-        team: pivotal
-        tsa:
-          registration_mode: forward
-          worker_key: ((worker_key))
-          host_public_key: ((tsa_host_key.public_key))
-        baggageclaim:
-          forward_address: 127.0.0.1:7788
-        garden:
-          forward_address: 127.0.0.1:7777
-    - name: garden
-      release: garden-runc
-      properties:
-        garden:
-          max_containers: 500
-          listen_network: tcp
-          listen_address: 127.0.0.1:7777
-    - name: baggageclaim
-      release: concourse
-      provides:
-        baggageclaim:
-          as: asia_baggageclaim
-      properties: {}
+  - name: worker
+    release: concourse
+    properties:
+      worker_gateway:
+        worker_key: ((worker_key))
+        host_public_key: ((tsa_host_key.public_key))
+      garden:
+        allow_host_access: true
+      tags: [asia]
+      team: pivotal
 
 # worker instances will be added via worker-ops.yml
