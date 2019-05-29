@@ -1,16 +1,16 @@
 {
     "director_id": "6aa333f2-5d4b-4a61-5bd2-9663b1799422",
     "installation_id": "c58f4564-d686-4afd-6c2b-6abcaba0aa17",
-    "current_vm_cid": "vm-36d99824-dcc1-4f7c-933d-fafcfd0cf8be",
+    "current_vm_cid": "vm-841b6a7b-3652-488d-afb1-e89344cce98c",
     "current_stemcell_id": "7aef0046-d015-4dd5-71fd-858b4230c636",
     "current_disk_id": "ee10d696-b74d-427c-7a84-c6d34536503f",
     "current_release_ids": [
-        "57cbd80a-2767-46f1-5970-59175a77a1bc",
-        "3d253e35-15b4-41ad-7f35-6d31b142c768",
-        "6083bdf5-77d6-4b98-71d9-09fd8241e910",
-        "eaa71efa-f131-43d8-5591-3b2b5d3dcc9a"
+        "102570ed-e684-453a-556c-e0deb43a7969",
+        "e7fc6da2-9c7e-454a-4b9f-93325efc3c7b",
+        "43d2fb9c-7a79-47f5-4e2e-25117cdbbf2e",
+        "d9f42683-4240-4d7a-753d-f67be804b54a"
     ],
-    "current_manifest_sha": "3e5d552cdf60ededc4501844576020c4d28ece23f3d811d00b20b746e9a3c67d975e2893d6fc45de2e9ddacb6f47ee69874345484650ee9b947da5bebcf65e33",
+    "current_manifest_sha": "345c3ed6792e275bb81d5366c1ee4b997a33c9f6c00b33567505beae1c479d54e12e47e78786dbb9cc8a312aa4c4990e245c0eca900725b672f5807e2f9720b8",
     "disks": [
         {
             "id": "ee10d696-b74d-427c-7a84-c6d34536503f",
@@ -30,22 +30,22 @@
     ],
     "releases": [
         {
-            "id": "57cbd80a-2767-46f1-5970-59175a77a1bc",
+            "id": "102570ed-e684-453a-556c-e0deb43a7969",
+            "name": "bpm",
+            "version": "1.1.0"
+        },
+        {
+            "id": "e7fc6da2-9c7e-454a-4b9f-93325efc3c7b",
             "name": "concourse",
-            "version": "4.2.4"
+            "version": "5.2.0"
         },
         {
-            "id": "3d253e35-15b4-41ad-7f35-6d31b142c768",
-            "name": "garden-runc",
-            "version": "1.19.1"
-        },
-        {
-            "id": "6083bdf5-77d6-4b98-71d9-09fd8241e910",
+            "id": "43d2fb9c-7a79-47f5-4e2e-25117cdbbf2e",
             "name": "bosh-vsphere-cpi",
             "version": "52.1.1"
         },
         {
-            "id": "eaa71efa-f131-43d8-5591-3b2b5d3dcc9a",
+            "id": "d9f42683-4240-4d7a-753d-f67be804b54a",
             "name": "postgres",
             "version": "37"
         }
