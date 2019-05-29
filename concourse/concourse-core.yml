@@ -44,6 +44,7 @@ instance_groups:
   - name: web
     release: concourse
     properties:
+    # things that are ok
       external_url: ((concourse_external_url))
       token_signing_key: ((token_signing_key))
       postgresql:
@@ -67,6 +68,7 @@ instance_groups:
             users: [((concourse_basic_auth_username))]
           github:
             teams: ((main_team_owner_github_teams))
+    # things we are unsure about
   - name: caddy
     release: caddy
     properties:

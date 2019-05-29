@@ -1,4 +1,0 @@
-roles:
-- name: owner
-  github:
-    teams: ["pivotal-cf:cf-bosh"]

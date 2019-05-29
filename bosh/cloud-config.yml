@@ -53,8 +53,8 @@ vm_types:
 # Used by Concourse ATC and TSA VM
 - name: concourse_core
   cloud_properties:
-    cpu: 16
-    ram: 32_768
+    cpu: 4
+    ram: 8_192
     root_disk_size_gb: 20
     root_disk_type: pd-ssd
     tags:
