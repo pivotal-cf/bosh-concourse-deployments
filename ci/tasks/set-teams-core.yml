@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: boshcpi/bosh-concourse-deployments
+
+inputs:
+  - name: deployments-src
+
+params:
+  CONCOURSE_EXTERNAL_URL:         ""
+  CONCOURSE_BASIC_AUTH_USERNAME:  ""
+  CONCOURSE_BASIC_AUTH_PASSWORD:  ""
+
+run:
+  path: deployments-src/ci/tasks/set-teams-core

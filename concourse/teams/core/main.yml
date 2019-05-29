@@ -1,0 +1,7 @@
+roles:
+- name: owner
+  github:
+    teams: ["cloudfoundry:cf-bosh"]
+- name: member
+  github:
+    teams: ["cloudfoundry:cf-bosh-windows", "cloudfoundry:cf-bosh-core-external-contributor", "cloudfoundry:cf-bosh-europe"]
