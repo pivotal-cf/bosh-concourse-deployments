@@ -5,11 +5,11 @@ variable "region" {
   default = "us-west1"
 }
 variable "allow_ssh_access_to_jumpbox" {
-  default = 0
+  default = 1
   description = "Set to `1` to allow SSH from `trusted_cidrs` to the jumpbox. This should only be done temporarily for debugging or tunneling."
 }
 variable "allow_mbus_access_to_jumpbox" {
-  default = 0
+  default = 1
   description = "Set to `1` to allow mbus traffic on 6868 from `trusted_cidrs` to the jumpbox. This should only be done temporarily to upgrade the jumpbox."
 }
 variable "trusted_cidrs" {
