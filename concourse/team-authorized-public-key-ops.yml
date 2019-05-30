@@ -1,5 +1,5 @@
 - type: replace
-  path: /instance_groups/name=concourse_cpi/jobs/name=tsa/properties/team_authorized_keys/-
+  path: /instance_groups/name=concourse_cpi/jobs/name=web/properties/worker_gateway/team_authorized_keys/-
   value:
     team: ((team))
     ssh_key: ((worker_public_key))

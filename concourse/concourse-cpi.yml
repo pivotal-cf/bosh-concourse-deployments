@@ -46,6 +46,7 @@ instance_groups:
         host_key: ((tsa_host_key))
         token_signing_key: ((token_signing_key))
         authorized_keys: [((worker_key.public_key))]
+        team_authorized_keys: [] # these will be added by the team-authorized-public-key ops file
       add_local_users:
       - ((concourse_basic_auth_username)):((concourse_basic_auth_password))
       github_auth:
