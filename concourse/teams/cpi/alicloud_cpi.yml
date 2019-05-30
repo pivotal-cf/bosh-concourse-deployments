@@ -1,0 +1,4 @@
+roles:
+- name: owner
+  github:
+    teams: ["aliyun:bosh-alicloud-cpi"]

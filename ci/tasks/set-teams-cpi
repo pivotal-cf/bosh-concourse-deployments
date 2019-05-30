@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -eu
+
+pushd deployments-src/concourse/teams/cpi
+  wget -O ./fly "${CONCOURSE_EXTERNAL_URL}/api/v1/cli?arch=amd64&platform=linux"
+  chmod +x ./fly
+
+  yes | ./fly -t concourse login \
+    -c "${CONCOURSE_EXTERNAL_URL}" \
+    -u "${CONCOURSE_BASIC_AUTH_USERNAME}" \
+    -p "${CONCOURSE_BASIC_AUTH_PASSWORD}"
+
+
+  ./fly -t concourse set-team  --non-interactive -n alicloud_cpi -c alicloud_cpi.yml
+  ./fly -t concourse set-team  --non-interactive -n azure_cpi -c azure_cpi.yml
+  ./fly -t concourse set-team  --non-interactive -n bosh_europe -c bosh_europe.yml
+  ./fly -t concourse set-team  --non-interactive -n google_cpi -c google_cpi.yml
+  ./fly -t concourse set-team  --non-interactive -n ibm_russia -c ibm_russia.yml
+  ./fly -t concourse set-team  --non-interactive -n oracle_cpi -c oracle_cpi.yml
+  ./fly -t concourse set-team  --non-interactive -n pivotal -c pivotal.yml
+  ./fly -t concourse set-team  --non-interactive -n sap -c sap.yml
+  ./fly -t concourse set-team  --non-interactive -n vsphere_cpi -c vsphere_cpi.yml
+popd
+

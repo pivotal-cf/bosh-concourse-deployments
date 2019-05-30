@@ -16,8 +16,7 @@ jobs:
         - get: windows-stemcell
         - get: bosh-cli
         - get: concourse
-        - get: garden-runc-release
-        - get: ulimit
+        - get: bpm
         - get: windows-utilities
         - get: windows-tools
       - put: terraform
@@ -59,13 +58,12 @@ jobs:
           CONCOURSE_TEAMS:                {{concourse_teams}}
           GOOGLE_PROJECT_ID:              {{project_id}}
           GOOGLE_CREDENTIALS:             {{gcp_credentials_json}}
-      - task: set-teams
-        file: deployments-src/ci/tasks/set-teams.yml
+      - task: set-teams-cpi
+        file: deployments-src/ci/tasks/set-teams-cpi.yml
         params:
           CONCOURSE_EXTERNAL_URL:         {{concourse_external_url}}
           CONCOURSE_BASIC_AUTH_USERNAME:  {{concourse_basic_auth_username}}
           CONCOURSE_BASIC_AUTH_PASSWORD:  {{concourse_basic_auth_password}}
-          CONCOURSE_TEAMS:                {{concourse_teams}}
     ensure:
       put: terraform
       params:
@@ -80,7 +78,6 @@ jobs:
       - do:
         - aggregate:
           - get: concourse
-          - get: garden-runc-release
           - get: deployments-src
           - get: bosh-cli
           - get: worker-state
@@ -157,21 +154,14 @@ resources:
     type: bosh-io-release
     source:
       repository: concourse/concourse-bosh-release
-      regexp: 4.2.*
-  - name: garden-runc-release
+  - name: bpm
     type: bosh-io-release
     source:
-      repository: cloudfoundry/garden-runc-release
-  - name: ulimit
-    type: git
-    source:
-      uri: https://github.com/pivotal-cf/ulimit-release.git
-      branch: master
+      repository: cloudfoundry/bpm-release
   - name: windows-utilities
-    type: git
+    type: bosh-io-release
     source:
-      uri: https://github.com/cloudfoundry-incubator/windows-utilities-release.git
-      branch: master
+      repository: cloudfoundry-incubator/windows-utilities-release
   - name: windows-tools
     type: bosh-io-release
     source:
