@@ -1,4 +1,3 @@
 - type: replace
-  path: /instance_groups/name=concourse_cpi/jobs/name=web/properties/worker_gateway/team_authorized_keys/-
-  value:
-    ((team)): ((worker_public_key))
+  path: /instance_groups/name=concourse_cpi/jobs/name=web/properties/worker_gateway/team_authorized_keys/((team))?
+  value: ((worker_public_key))
