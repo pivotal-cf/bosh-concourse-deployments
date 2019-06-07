@@ -9,7 +9,7 @@ jobs:
   - name: update-concourse
     serial_groups: [deploy]
     plan:
-      - aggregate:
+      - in_parallel:
         - get: deployments-src
         - get: stemcell
           resource: xenial-stemcell
@@ -77,7 +77,7 @@ jobs:
     serial: true
     plan:
       - do:
-        - aggregate:
+        - in_parallel:
           - get: concourse
           - get: deployments-src
           - get: bosh-cli
@@ -87,7 +87,7 @@ jobs:
             resource: bosh-vsphere-cpi-release
           - get: stemcell
             resource: vsphere-xenial-stemcell
-        - aggregate:
+        - in_parallel:
           - task: update-vsphere-v6.5-worker
             file: deployments-src/ci/tasks/deploy-worker.yml
             params:

@@ -7,7 +7,7 @@ jobs:
   - get: interval-trigger
     trigger: true
   - get: relint-trackerbot
-  - aggregate:
+  - in_parallel:
     - task: start-core
       config:
         platform: linux

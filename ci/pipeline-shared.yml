@@ -3,7 +3,7 @@ jobs:
   - name: prepare-concourse-env
     serial_groups: [deploy]
     plan:
-      - aggregate:
+      - in_parallel:
         - get: deployments-src
         - get: jumpbox-deployment-src
         - get: bosh-cli
@@ -19,7 +19,7 @@ jobs:
           vars:
             allow_mbus_access_to_natbox: 1
             allow_mbus_access_to_jumpbox: 1
-      - aggregate:
+      - in_parallel:
         - task: update-natbox
           file: deployments-src/ci/tasks/deploy-natbox.yml
           input_mapping:
@@ -55,7 +55,7 @@ jobs:
     serial_groups: [deploy]
     plan:
       - do:
-        - aggregate:
+        - in_parallel:
           - get: deployments-src
           - get: director-templates
           - get: bosh-cli
@@ -95,7 +95,7 @@ jobs:
     serial_groups: [deploy]
     plan:
       - do:
-        - aggregate:
+        - in_parallel:
           - get: deployments-src
           - get: bosh-cli
         - *open-ssh-to-jumpbox
@@ -117,7 +117,7 @@ jobs:
   - name: update-vpn-server
     serial_groups: [deploy]
     plan:
-      - aggregate:
+      - in_parallel:
         - get: deployments-src
         - get: stemcell
         - get: bosh-cli
@@ -151,7 +151,7 @@ jobs:
   - name: re-terraform
     serial_groups: [deploy, deploy-asia]
     plan:
-      - aggregate:
+      - in_parallel:
         - get: every-2-hours
           trigger: true
         - get: deployments-src
