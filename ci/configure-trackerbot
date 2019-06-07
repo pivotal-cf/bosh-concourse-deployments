@@ -1,4 +1,0 @@
-fly -t production sp \
-  -p trackerbot \
-  -c "$REPO_DIR/ci/pipeline-trackerbot.yml" \
-  -l <(lpass show --note "concourse:production pipeline:trackerbot secrets")
