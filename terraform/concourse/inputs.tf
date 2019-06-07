@@ -1,31 +1,30 @@
-
 variable "project_id" {
-    type = "string"
+  type = string
 }
 
 variable "gcp_credentials_json" {
-    type = "string"
+  type = string
 }
 
 variable "ssh_trusted_cidrs" {
-    type = "string"
+  type = string
 }
 
 variable "create_env_trusted_cidrs" {
-    type = "string"
+  type = string
 }
 
 # bosh_cpi_web_trusted_cidrs will be deprecated when the VPN is fully setup
 variable "bosh_cpi_web_trusted_cidrs" {
-    type = "string"
+  type = string
 }
 
 variable "bosh_core_web_trusted_cidrs" {
-    type = "string"
+  type = string
 }
 
 variable "network" {
-    default = "concourse"
+  default = "concourse"
 }
 
 variable "internal_cidr" {
@@ -33,7 +32,7 @@ variable "internal_cidr" {
 }
 
 variable "windows_subnetwork" {
-    default = "concourse-windows"
+  default = "concourse-windows"
 }
 
 variable "windows_internal_cidr" {
@@ -73,17 +72,17 @@ variable "concourse_atc_tag" {
 }
 
 variable "allow_mbus_access_to_natbox" {
-  default = 0
+  default     = 0
   description = "Allow mbus access (6868) from `trusted_cidrs` to the Natbox. Set to 1 to enable."
 }
 
 variable "allow_mbus_access_to_jumpbox" {
-  default = 0
+  default     = 0
   description = "Allow mbus access (6868) from `trusted_cidrs` to the Jumpbox. Set to 1 to enable."
 }
 
 variable "allow_ssh_access_to_jumpbox" {
-  default = 0
+  default     = 0
   description = "Allow SSH access from `trusted_cidrs` to the Jumpbox. Set to 1 to enable."
 }
 
