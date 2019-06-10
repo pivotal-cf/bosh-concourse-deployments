@@ -17,5 +17,6 @@ pushd deployments-src/concourse/teams/core
   ./fly -t concourse set-team  --non-interactive -n dev -c dev.yml
   ./fly -t concourse set-team  --non-interactive -n main -c main.yml
   ./fly -t concourse set-team  --non-interactive -n pcf -c pcf.yml
+  ./fly -t concourse set-team  --non-interactive -n bosh-director -c bosh-director.yml
 popd
 
