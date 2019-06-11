@@ -39,7 +39,7 @@ module "concourse_subnet" {
 
   natbox_tag                  = "${var.name}-natbox"
   nat_traffic_tag             = "${var.name}-nat-traffic"
-  create_env_trusted_cidrs    = [split(",", var.create_env_trusted_cidrs)]
+  create_env_trusted_cidrs    = var.create_env_trusted_cidrs
   allow_mbus_access_to_natbox = var.allow_mbus_access_to_natbox
 }
 
@@ -64,8 +64,8 @@ module "jumpbox" {
   network       = google_compute_network.bosh.name
   internal_cidr = var.internal_cidr
 
-  ssh_trusted_cidrs            = [split(",", var.ssh_trusted_cidrs)]
-  create_env_trusted_cidrs     = [split(",", var.create_env_trusted_cidrs)]
+  ssh_trusted_cidrs            = var.ssh_trusted_cidrs
+  create_env_trusted_cidrs     = var.create_env_trusted_cidrs
   allow_ssh_access_to_jumpbox  = var.allow_ssh_access_to_jumpbox
   allow_mbus_access_to_jumpbox = var.allow_mbus_access_to_jumpbox
   allow_internal_management    = 1
@@ -85,7 +85,7 @@ module "concourse" {
 
   name          = "${var.name}-concourse"
   network       = google_compute_network.bosh.name
-  trusted_cidrs = [split(",", var.bosh_cpi_web_trusted_cidrs), "${google_compute_address.vpn_server.address}/32"]
+  trusted_cidrs = concat(var.bosh_cpi_web_trusted_cidrs, ["${google_compute_address.vpn_server.address}/32"])
   nat_ip        = module.concourse_subnet.natbox_external_ip
 }
 
@@ -94,7 +94,7 @@ module "concourse_core" {
 
   name          = "${var.name}-concourse-core"
   network       = google_compute_network.bosh.name
-  trusted_cidrs = [split(",", var.bosh_core_web_trusted_cidrs), "${google_compute_address.vpn_server.address}/32"]
+  trusted_cidrs = concat(var.bosh_core_web_trusted_cidrs, ["${google_compute_address.vpn_server.address}/32"])
   nat_ip        = module.concourse_subnet.natbox_external_ip
 }
 
