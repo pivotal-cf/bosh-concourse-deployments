@@ -26,6 +26,7 @@ stemcell_version="$( cat stemcell/version )"
 concourse_version="$( cat concourse/version )"
 windows_utilities_version="$( cat windows-utilities/version )"
 windows_tools_version="$( cat windows-tools/version )"
+caddy_version="$( cat caddy/version )"
 bpm_version="$( cat bpm/version )"
 
 setup_ssh_tunnel "$JUMPBOX_SSH_KEY" "$JUMPBOX_SSH_USER@$JUMPBOX_HOST"
@@ -40,6 +41,9 @@ bosh -n --tty upload-release bpm/*.tgz
 
 echo "Uploading Windows Tools release..."
 bosh -n --tty upload-release windows-tools/*.tgz
+
+echo "Uploading ulimit release..."
+bosh -n --tty upload-release caddy/*.tgz
 
 echo "Uploading Windows Utilities release..."
 bosh -n --tty upload-release windows-utilities/*.tgz
@@ -94,6 +98,7 @@ pushd deployments-src > /dev/null
     -v stemcell_version="'${stemcell_version}'" \
     -v concourse_version="'${concourse_version}'" \
     -v bpm_version="'${bpm_version}'" \
+    -v caddy_version="'${caddy_version}'" \
     -v windows_tools_version="'${windows_tools_version}'" \
     -v windows_utilities_version="'${windows_utilities_version}'" \
     -d "${DEPLOYMENT_NAME}" \

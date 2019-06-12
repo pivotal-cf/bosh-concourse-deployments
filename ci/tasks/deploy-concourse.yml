@@ -9,6 +9,7 @@ image_resource:
 inputs:
   - name: bosh-cli
   - name: bpm
+  - name: caddy
   - name: concourse
   - name: deployments-src
   - name: stemcell
