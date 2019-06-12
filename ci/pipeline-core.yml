@@ -11,7 +11,6 @@ jobs:
         - get: bosh-cli
         - get: concourse
         - get: bpm
-        - get: caddy
         - get: windows-utilities
         - get: windows-tools
       - put: terraform
@@ -151,10 +150,6 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry/bpm-release
-  - name: caddy
-    type: bosh-io-release
-    source:
-      repository: dpb587/caddy-bosh-release
   - name: windows-utilities
     type: bosh-io-release
     source:
