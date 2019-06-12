@@ -101,15 +101,15 @@ output "external_ip" {
 }
 
 output "atc_tag" {
-  value = google_compute_firewall.bosh-atc-to-db.source_tags[0]
+  value = google_compute_firewall.bosh-atc-to-db.source_tags
 }
 
 output "worker_tag" {
-  value = google_compute_firewall.concourse-worker.source_tags[0]
+  value = google_compute_firewall.concourse-worker.source_tags
 }
 
 output "db_tag" {
-  value = google_compute_firewall.bosh-atc-to-db.target_tags[0]
+  value = google_compute_firewall.bosh-atc-to-db.target_tags
 }
 
 output "target_pool" {
