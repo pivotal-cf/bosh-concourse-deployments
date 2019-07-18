@@ -1,0 +1,12 @@
+---
+- path: /instance_groups/name=ssoca/jobs/name=ssoca/properties/server?/host
+  type: replace
+  value: 127.0.0.1
+- path: /instance_groups/name=ssoca/jobs/name=caddy/properties/caddyfile
+  type: replace
+  value: |
+    ((external_host)) {
+      proxy / 127.0.0.1:18705 {
+        transparent
+      }
+    }

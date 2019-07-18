@@ -26,6 +26,9 @@ bosh -n --tty upload-release openvpn-release/release.tgz
 echo "Uploading Networking release..."
 bosh -n --tty upload-release networking-release/release.tgz
 
+echo "Uploading Caddy release..."
+bosh -n --tty upload-release caddy-bosh-release/release.tgz
+
 echo "Uploading SSOCA release..."
 ( cd ssoca; bosh -n --tty upload-release )
 
@@ -49,7 +52,9 @@ pushd deployments-src/vpn > /dev/null
   echo "Deploying OpenVPN Server..."
   bosh -n --tty deploy -d openvpn \
     -v stemcell_version="'$stemcell_version'" \
+    -v external_host="$EXTERNAL_HOST" \
     -o /tmp/ssoca-teams-ops.yml \
+    -o caddy-ops.yml \
     -l <(echo "${VPN_SECRETS}") \
     -l "$terraform_metadata" \
     --vars-store="you-really-need-this-flag-but-not-this-file.yml" \

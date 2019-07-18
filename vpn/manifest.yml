@@ -18,6 +18,10 @@ releases:
   sha1: beae0e18ea00e2f0ebae12abe03e97d49a50bedc
   url: https://s3-external-1.amazonaws.com/dpb587-ssoca-bosh-release-us-east-1/releases/ssoca/ssoca-0.10.0.tgz
   version: 0.10.0
+- name: "caddy"
+  version: "0.6.0"
+  url: "https://bosh.io/d/github.com/dpb587/caddy-bosh-release?v=0.6.0"
+  sha1: "27ea56243236ffe26267092fc672c591930cd0e0"
 
 stemcells:
 - alias: default

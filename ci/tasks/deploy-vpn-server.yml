@@ -12,6 +12,7 @@ inputs:
   - name: bosh-cli
   - name: networking-release
   - name: openvpn-release
+  - name: caddy-bosh-release
   - name: ssoca
   - name: terraform
 
@@ -22,6 +23,7 @@ params:
   BOSH_CLIENT_SECRET: ""
   BOSH_CA_CERT:       ""
   VPN_SECRETS:        ""
+  EXTERNAL_HOST:      ""
 
 run:
   path: deployments-src/ci/tasks/deploy-vpn-server
