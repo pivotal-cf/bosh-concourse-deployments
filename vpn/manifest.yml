@@ -40,6 +40,7 @@ instance_groups:
   instances: 1
   stemcell: default
   vm_type: openvpn_server
+  persistent_disk_type: caddy-ssd
   azs: [us1]
   networks:
   - name: concourse
@@ -124,6 +125,10 @@ instance_groups:
       openvpn_service_link:
         require:
         - or: [] # github team in the format ORG/TEAM
+  - name: caddy
+    release: caddy
+    properties: {}
+
 variables:
 - name: ca
   type: certificate

@@ -1,8 +1,8 @@
 ---
-- path: /instance_groups/name=ssoca/jobs/name=ssoca/properties/server?/host
+- path: /instance_groups/name=openvpn/jobs/name=ssoca/properties/server?/host
   type: replace
   value: 127.0.0.1
-- path: /instance_groups/name=ssoca/jobs/name=caddy/properties/caddyfile
+- path: /instance_groups/name=openvpn/jobs/name=caddy/properties/caddyfile
   type: replace
   value: |
     ((external_host)) {
