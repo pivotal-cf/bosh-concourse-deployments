@@ -1,11 +1,17 @@
 {
     "director_id": "6aa333f2-5d4b-4a61-5bd2-9663b1799422",
     "installation_id": "c58f4564-d686-4afd-6c2b-6abcaba0aa17",
-    "current_vm_cid": "vm-fede5ca8-06ef-42f1-8190-f7b467aa8b7c",
+    "current_vm_cid": "vm-23a84eb3-3c16-4392-a7b8-16f536b5c951",
     "current_stemcell_id": "7aef0046-d015-4dd5-71fd-858b4230c636",
     "current_disk_id": "ee10d696-b74d-427c-7a84-c6d34536503f",
-    "current_release_ids": [],
-    "current_manifest_sha": "",
+    "current_release_ids": [
+        "32eeb0c4-4c61-478e-6c15-6c1f936b141d",
+        "b00c92f0-27e0-4319-4c2d-b4981b1e5826",
+        "0279acb9-fbc1-473d-5ff8-10232571dd4f",
+        "dec45760-db23-4f8f-4ffa-657dfdf9074b",
+        "68613756-6a5e-4564-7ebb-436d2964a552"
+    ],
+    "current_manifest_sha": "2005228a8e629a7bc68c855da610f956ea7d0663f5c16043889e4b3c4e20d0771f6be4cd456b57b479dc544d67b3e4c7109f98bb41e56a63e3ee523831e84d27",
     "disks": [
         {
             "id": "ee10d696-b74d-427c-7a84-c6d34536503f",
@@ -23,5 +29,31 @@
             "cid": "sc-3fe096cd-a78d-4d97-b36a-cf223f4a3832"
         }
     ],
-    "releases": []
+    "releases": [
+        {
+            "id": "32eeb0c4-4c61-478e-6c15-6c1f936b141d",
+            "name": "bpm",
+            "version": "1.1.0"
+        },
+        {
+            "id": "b00c92f0-27e0-4319-4c2d-b4981b1e5826",
+            "name": "concourse",
+            "version": "5.2.0"
+        },
+        {
+            "id": "0279acb9-fbc1-473d-5ff8-10232571dd4f",
+            "name": "bosh-vsphere-cpi",
+            "version": "52.1.1"
+        },
+        {
+            "id": "dec45760-db23-4f8f-4ffa-657dfdf9074b",
+            "name": "postgres",
+            "version": "37"
+        },
+        {
+            "id": "68613756-6a5e-4564-7ebb-436d2964a552",
+            "name": "caddy",
+            "version": "0.6.0"
+        }
+    ]
 }
