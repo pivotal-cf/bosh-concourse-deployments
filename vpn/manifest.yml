@@ -108,7 +108,6 @@ instance_groups:
             # Windows: use PowerShell as Administrator
             ssoca -e bosh openvpn exec
       server:
-        port: 443
         certificate: ((ssoca_server_tls_certificate))
         private_key: ((ssoca_server_tls_private_key))
       auth:
