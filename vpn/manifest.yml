@@ -15,13 +15,13 @@ releases:
   url: http://bosh.io/d/github.com/cloudfoundry/networking-release?v=9
   version: 9
 - name: ssoca
-  sha1: beae0e18ea00e2f0ebae12abe03e97d49a50bedc
-  url: https://s3-external-1.amazonaws.com/dpb587-ssoca-bosh-release-us-east-1/releases/ssoca/ssoca-0.10.0.tgz
-  version: 0.10.0
-- name: "caddy"
-  version: "0.6.0"
-  url: "https://bosh.io/d/github.com/dpb587/caddy-bosh-release?v=0.6.0"
-  sha1: "27ea56243236ffe26267092fc672c591930cd0e0"
+  version: 0.15.0
+  url: https://s3-external-1.amazonaws.com/dpb587-ssoca-bosh-release-us-east-1/artifacts/release/0.15.0/ssoca-0.15.0.tgz
+  sha1: sha256:24937fcbe9af65312cf77845faf81f9af96ebe0a5eb61660adc69068d6d9c234
+- name: caddy
+  version: 0.6.0
+  sha1: 27ea56243236ffe26267092fc672c591930cd0e0
+  url: https://bosh.io/d/github.com/dpb587/caddy-bosh-release?v=0.6.0
 
 stemcells:
 - alias: default
