@@ -107,9 +107,6 @@ instance_groups:
 
             # Windows: use PowerShell as Administrator
             ssoca -e bosh openvpn exec
-      server:
-        certificate: ((ssoca_server_tls_certificate))
-        private_key: ((ssoca_server_tls_private_key))
       auth:
         type: github
         options:
