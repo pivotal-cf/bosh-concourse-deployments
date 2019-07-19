@@ -59,9 +59,6 @@ instance_groups:
         auth:
           local:
             users: [((concourse_basic_auth_username))]
-      tls_bind_port: 443
-      tls_cert: ((tls_cert))
-      tls_key: ((tls_key))
   - name: caddy
     release: caddy
     properties:
