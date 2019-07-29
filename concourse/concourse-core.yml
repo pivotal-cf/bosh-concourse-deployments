@@ -55,7 +55,7 @@ instance_groups:
       worker_gateway:
         host_key: ((tsa_host_key))
         authorized_keys: ((tsa_authorized_keys))
-      container_placement_strategy: least-build-containers
+      container_placement_strategy: fewest-build-containers
       github_auth:
         client_id: ((concourse_github_client_id))
         client_secret: ((concourse_github_client_secret))
