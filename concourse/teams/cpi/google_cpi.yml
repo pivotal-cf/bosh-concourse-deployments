@@ -1,4 +1,6 @@
 roles:
 - name: owner
   github:
-    teams: ["cloudfoundry:cf-bosh-google-cpi"]
+    teams:
+    - "cloudfoundry:cf-bosh"
+    - "cloudfoundry:cf-bosh-google-cpi"
