@@ -17,7 +17,7 @@ You only need to do this once, unless you redeploy the jumpbox.
 1. Download the BOSH director's CA certificate, which we stored in LastPass:
 
 ```
-lpass show --note bosh-concourse-upgrader-cpi-pipeline \
+lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["director_ca_cert"]' \
   > /tmp/ca_cert.pem
 ```
@@ -34,7 +34,7 @@ Your jumpbox address is '104.198.xx.yy'.
    in the secure note "secret-lastpass-note".
 
 ```
-lpass show --note bosh-concourse-upgrader-cpi-pipeline \
+lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["jumpbox_ssh_key"]' \
   > /tmp/vcap.pem
 chmod 600 /tmp/vcap.pem
@@ -43,7 +43,7 @@ chmod 600 /tmp/vcap.pem
    log in:
 
 ```
-lpass show --note bosh-concourse-upgrader-cpi-pipeline \
+lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["director_admin_username"]; puts data["director_admin_password"]'
 ```
 1. Copy the ca_cert and the vcap key to the jumpbox (the cert needed to execute BOSH commands; the key is needed to ssh to VMs):

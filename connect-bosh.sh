@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-lpass_note="$( set -eu ; lpass show --note bosh-concourse-upgrader-cpi-pipeline )"
+lpass_note="$( set -eu ; lpass show --note bosh-concourse-upgrader-cpi-pipeline-director )"
 
 creds() {
   local path=${1?'Path is required.'}

@@ -8,18 +8,18 @@ if [[ -z "${jumpbox_ip}" ]]; then
 fi
 
 # Download director CA Cert
-lpass show --note bosh-concourse-upgrader-cpi-pipeline \
+lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["bosh_ca_cert"]' \
   > /tmp/ca_cert.pem
 
 # Download jumpbox SSH key
-lpass show --note bosh-concourse-upgrader-cpi-pipeline \
+lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["jumpbox_ssh_key"]' \
   > /tmp/vcap.pem
 chmod 600 /tmp/vcap.pem
 
 # Download director username and password
-eval $(lpass show --note bosh-concourse-upgrader-cpi-pipeline \
+eval $(lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts "BOSH_ENVIRONMENT=#{data["bosh_environment"]}"; puts "BOSH_CLIENT=#{data["bosh_client"]}"; puts "BOSH_CLIENT_SECRET=#{data["bosh_client_secret"]}"')
 
 cat > /tmp/bosh.env <<EOF
