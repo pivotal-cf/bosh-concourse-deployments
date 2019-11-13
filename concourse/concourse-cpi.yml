@@ -25,7 +25,7 @@ instance_groups:
 - name: concourse_cpi
   instances: 1
   vm_type: concourse_cpi
-  persistent_disk_pool: caddy-ssd
+  persistent_disk_type: caddy-ssd
   stemcell: default
   azs: [us1]
   networks:
