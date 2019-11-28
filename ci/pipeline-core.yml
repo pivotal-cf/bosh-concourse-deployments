@@ -102,6 +102,32 @@ jobs:
               params:
                 file: updated-worker-state/worker-state.json
 
+  - name: update-openstack-queens-worker
+    serial: true
+    plan:
+      - do:
+        - in_parallel:
+          - get: concourse
+          - get: deployments-src
+          - get: bosh-cli
+          - get: openstack-worker-state
+          - get: bosh-cpi-release
+            resource: bosh-openstack-cpi-release
+          - get: stemcell
+            resource: openstack-xenial-stemcell
+        - in_parallel:
+          - task: update-openstack-worker
+            file: deployments-src/ci/tasks/deploy-worker.yml
+            input_mapping:
+              worker-state: openstack-worker-state
+            params:
+              WORKER_SECRETS: {{openstack-worker-secrets}}
+              ENVIRONMENT_NAME: openstack
+            ensure:
+              put: openstack-worker-state
+              params:
+                file: updated-worker-state/worker-state.json
+
 resource_types:
   - name: terraform
     type: docker-image
@@ -187,3 +213,17 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-vsphere-esxi-ubuntu-xenial-go_agent
+  - name: bosh-openstack-cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry-incubator/bosh-openstack-cpi-release
+  - name: openstack-xenial-stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-openstack-kvm-ubuntu-xenial-go_agent
+  - name: openstack-worker-state
+    type: gcs-resource
+    source:
+      bucket: {{deployments_core_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: worker/openstack-worker-state.json
