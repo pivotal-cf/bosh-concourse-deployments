@@ -27,6 +27,10 @@ networks:
   subnets:
   - cloud_properties:
       net_id: ((openstack_net_id))
+    dns: [8.8.8.8]
+    gateway: 10.0.1.1
+    range: 10.0.1.0/24
+    static: [((openstack_worker_ip))]
 
 instance_groups:
 - name: worker
