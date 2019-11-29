@@ -54,7 +54,7 @@ cloud_provider:
   template:
     name: openstack_cpi
     release: bosh-openstack-cpi
-  mbus: "https://mbus:((openstack_worker_mbus_password))@((openstack_worker_ip)):6868"
+  mbus: "https://mbus:((openstack_worker_mbus_password))@((openstack_worker_external_ip)):6868"
   properties:
     openstack:
       api_key: ((openstack_password))
@@ -66,6 +66,7 @@ cloud_provider:
       project: ((openstack_project))
       region: ((openstack_region))
       username: ((openstack_username))
+      net_id: ((openstack_net_id))
     agent:
       mbus: "https://mbus:((openstack_worker_mbus_password))@0.0.0.0:6868"
     blobstore:
@@ -84,5 +85,5 @@ variables:
   type: certificate
   options:
     ca: default_ca
-    common_name: ((openstack_worker_ip))
-    alternative_names: [((openstack_worker_ip))]
+    common_name: ((openstack_worker_external_ip))
+    alternative_names: [((openstack_worker_external_ip))]
