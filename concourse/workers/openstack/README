@@ -1,0 +1,15 @@
+Due to the Pivotal Openstack environment being inaccessible from the internet and our GCP upgrader, a director has been bbl'd up in the Openstack environment, and a worker deployed from this director.
+
+The director will hopefully be helpful in testing Openstack specifics if needed.
+
+The worker.yml included is for a deployed worker (not create-env).
+
+github.com/cloudfoundry/bosh-bbl-ci-envs holds the openstack env artifacts.
+
+```
+cd bosh-bbl-ci-envs/openstack # .envrc loads bbl env
+lpass login
+bosh -d concourse-worker bosh-concourse-deployments/concourse/workers/openstack/worker.yml -l <(lpass show --note "bosh-concourse-deployments openstack external worker")
+```
+
+Assumes that the concourse release is uploaded to the director. It should be the same version as what the upgrader will use.

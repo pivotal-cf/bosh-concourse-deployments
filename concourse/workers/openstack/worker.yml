@@ -1,89 +1,40 @@
 ---
-name: ((worker_name))
+name: concourse-worker
 
 releases:
-- name: bosh-openstack-cpi
-  url: file://((bosh_cpi_release_path))
 - name: concourse
-  url: file://((concourse_release_path))
+  version: latest
 
-resource_pools:
-- name: vms
-  network: private
-  env:
-    bosh:
-      authorized_keys:
-      - ((ssh_authorized_public_key))
-      mbus:
-        cert: ((mbus_bootstrap_ssl))
-  stemcell:
-    url: file://((stemcell_path))
-  cloud_properties:
-    ((resource_pool_properties))
-
-networks:
-- name: private
-  type: manual
-  subnets:
-  - cloud_properties:
-      net_id: ((openstack_net_id))
-    dns: [8.8.8.8]
-    gateway: 10.0.1.1
-    range: 10.0.1.0/24
-    static: [((openstack_worker_ip))]
+stemcells:
+- alias: xenial
+  os: ubuntu-xenial
+  version: latest
 
 instance_groups:
 - name: worker
   instances: 1
-  resource_pool: vms
+  azs: [z1, z2, z3]
+  vm_type: large
+  stemcell: xenial
   networks:
-    - {name: private, static_ips: [((openstack_worker_ip))]}
+  - name: default
+    default: [dns, gateway]
+  - name: public
+    static_ips: [10.196.3.90]
   jobs:
   - name: worker
     release: concourse
     properties:
+      log_level: debug
       tags: ((worker_tags))
-      garden:
-        allow_host_access: true
       worker_gateway:
+        hosts: ["((bosh_core_concourse_tsa_host))"]
+        host_public_key: ((bosh_core_concourse_tsa_host_key.public_key))
         worker_key: ((worker_key))
-        hosts: ((concourse_tsa_host))
-        host_public_key: ((tsa_host_key.public_key))
 
-cloud_provider:
-  template:
-    name: openstack_cpi
-    release: bosh-openstack-cpi
-  mbus: "https://mbus:((openstack_worker_mbus_password))@((openstack_worker_external_ip)):6868"
-  properties:
-    openstack:
-      api_key: ((openstack_password))
-      auth_url: ((openstack_auth_url))
-      default_key_name: ((openstack_default_key_name))
-      default_security_groups: ((openstack_default_security_groups))
-      domain: ((openstack_domain))
-      human_readable_vm_names: true
-      project: ((openstack_project))
-      region: ((openstack_region))
-      username: ((openstack_username))
-      net_id: ((openstack_net_id))
-    agent:
-      mbus: "https://mbus:((openstack_worker_mbus_password))@0.0.0.0:6868"
-    blobstore:
-      provider: local
-      path: /var/vcap/micro_bosh/data/cache
-    ntp: [0.pool.ntp.org, 1.pool.ntp.org]
-
-variables:
-- name: default_ca
-  type: certificate
-  options:
-    is_ca: true
-    common_name: ca
-
-- name: mbus_bootstrap_ssl
-  type: certificate
-  options:
-    ca: default_ca
-    common_name: ((openstack_worker_external_ip))
-    alternative_names: [((openstack_worker_external_ip))]
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: false
+  canary_watch_time: 1000-60000
+  update_watch_time: 1000-60000
