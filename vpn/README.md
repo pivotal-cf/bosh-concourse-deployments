@@ -14,6 +14,13 @@ Authentication to the VPN is handled via SSOCA/GitHub through the same GitHub te
 - Ubuntu/Debian and RHEL/CentOS/Fedora: Follow the instructions [here](https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos)
 - Windows: Download and install from this [page](https://openvpn.net/index.php/open-source/downloads.html)
 
+On macOS, you might not see openvpn in `/usr/local/sbin` if that directory hasn't been created. To get openvpn linked correctly:
+```
+sudo mkdir /usr/local/sbin
+sudo chown -R `whoami`:admin /usr/local/sbin
+brew link openvpn
+```
+
 ### ssoca
 
 Download, verify, and install the `ssoca` client from [vpn-bosh.ci.cf-app.com](https://vpn-bosh.ci.cf-app.com).
