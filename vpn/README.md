@@ -27,10 +27,9 @@ Download, verify, and install the `ssoca` client from [vpn-bosh.ci.cf-app.com](h
 
 Alternatively, with [Homebrew](https://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)...
 
-    ```
-    brew install dpb587/tap/ssoca
-    ```
-
+ ```
+ brew install dpb587/tap/ssoca
+ ```
 
 ## Connecting to Concourse through the VPN
 
