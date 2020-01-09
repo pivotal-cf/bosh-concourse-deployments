@@ -42,9 +42,9 @@ bosh login
 EOF
 
 # Copy creds to jumpbox
-scp -i /tmp/vcap.pem /tmp/vcap.pem /tmp/ca_cert.pem /tmp/bosh.env jumpbox@"${jumpbox_ip}":
+scp -i /tmp/vcap.pem /tmp/vcap.pem /tmp/ca_cert.pem /tmp/bosh.env bosh-cpi@"${jumpbox_ip}":
 
 echo "Remember to type in 'exec bash' and '. bosh.env'"
-ssh -i /tmp/vcap.pem jumpbox@"${jumpbox_ip}"
+ssh -i /tmp/vcap.pem bosh-cpi@"${jumpbox_ip}"
 
 rm /tmp/ca_cert.pem /tmp/vcap.pem /tmp/bosh.env
