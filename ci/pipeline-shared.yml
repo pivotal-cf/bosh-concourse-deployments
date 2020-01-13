@@ -154,8 +154,6 @@ jobs:
     serial_groups: [deploy, deploy-asia]
     plan:
       - in_parallel:
-        - get: every-2-hours
-          trigger: true
         - get: deployments-src
       - task: delete-firewall-rules
         file: deployments-src/ci/tasks/delete-firewall-rules.yml
@@ -256,7 +254,3 @@ resources:
     source:
       uri: https://github.com/dpb587/ssoca-bosh-release.git
       branch: master
-  - name: every-2-hours
-    type: time
-    source:
-      interval: 2h

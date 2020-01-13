@@ -171,6 +171,12 @@ After deploying the worker, authenticate with Concourse and confirm worker has r
 1. Log into Concourse: `fly -t cpi login -c https://bosh-cpi.ci.cf-app.com -n digitalocean`
 1. Confirm worker has registered: `fly -t cpi workers`
 
+### Updating Trusted CIDRs for access (workers and humans)
+
+1. Ensure lastpass note is updated with the CIDRs. Look in the `bosh-concourse-upgrader-cpi-pipeline` note for the CIDRs and their sources.
+1. Run `configure-shared` to pick up any lastpass note changes
+1. Start a `re-terraform` job in the shared environment pipeline to refresh the firewall rules.
+
 ### Troubleshooting
 
 Refer to the _Troubleshooting_ document under [docs/](`docs/`).
