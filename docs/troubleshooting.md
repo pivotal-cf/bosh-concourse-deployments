@@ -2,11 +2,11 @@
 To enable debugging with the `bosh` cli, perform the following steps:
 
 1. Open up the ssh port to our jumpbox for 30 minutes by triggering the
-   [concourse/open-ssh-for-30m](https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/concourse/jobs/open-ssh-for-30m) job.
+   [concourse/open-ssh-for-30m](https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/shared-environment/jobs/open-ssh-for-30m/) job.
 1. Wait for confirmation that the SSH port is open.
 1. Use the `connect-bosh.sh` (or `connect-bosh-core.sh`) script to establish a connection and start the tunnel.
    * If you see `Operation timed out`, it means that we need to fire up
-   our [concourse/open-ssh-for-30m](https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/concourse/jobs/open-ssh-for-30m) Concourse job to allow us to ssh-in again.
+   our [concourse/open-ssh-for-30m](https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/shared-environment/jobs/open-ssh-for-30m/) Concourse job to allow us to ssh-in again.
 1. You should now be targeted and can use `bosh` commands like normal.
 
 
@@ -22,7 +22,7 @@ lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
   > /tmp/ca_cert.pem
 ```
 1. Open up ssh to the jumpbox for 30 minutes by kicking off the
-   Concourse job: https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/concourse/jobs/open-ssh-for-30m.
+   Concourse job: https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/shared-environment/jobs/open-ssh-for-30m/.
 1. Examine the output of the _wait-for-ssh_ task to determine the IP
    address of the jumpbox:
 
