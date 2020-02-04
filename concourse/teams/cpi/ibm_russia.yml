@@ -1,4 +1,0 @@
-roles:
-- name: owner
-  github:
-    teams: ["cloudfoundry:cf-bosh-ibm-russia"]
