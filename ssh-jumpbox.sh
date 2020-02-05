@@ -30,9 +30,6 @@ export BOSH_ENVIRONMENT=$BOSH_ENVIRONMENT
 export BOSH_CA_CERT=\$HOME/ca_cert.pem
 export BOSH_CLIENT=$BOSH_CLIENT
 export BOSH_CLIENT_SECRET=$BOSH_CLIENT_SECRET
-export BOSH_GW_USER=jumpbox
-export BOSH_GW_HOST=$BOSH_ENVIRONMENT
-export BOSH_GW_PRIVATE_KEY=\$HOME/director_jumpbox.pem
 bosh login
 EOF
 
