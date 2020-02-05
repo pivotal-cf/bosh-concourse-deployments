@@ -10,6 +10,7 @@ fi
 note="$(lpass show --note --sync=now "bosh-concourse-deployments gcp bosh-core")"
 echo "$note" | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["bosh_ca_cert"]' > /tmp/ca_cert.pem
 echo "$note"| ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["jumpbox_ssh_key"]' > /tmp/jumpbox.pem
+echo "$note"| ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["director_ssh_key"]' > /tmp/director_jumpbox.pem
 chmod 600 /tmp/jumpbox.pem
 
 # Download director username and password
@@ -31,15 +32,15 @@ export BOSH_CLIENT=$BOSH_CLIENT
 export BOSH_CLIENT_SECRET=$BOSH_CLIENT_SECRET
 export BOSH_GW_USER=jumpbox
 export BOSH_GW_HOST=$BOSH_ENVIRONMENT
-export BOSH_GW_PRIVATE_KEY=\$HOME/jumpbox.pem
+export BOSH_GW_PRIVATE_KEY=\$HOME/director_jumpbox.pem
 bosh login
 EOF
 
 # Copy creds to jumpbox
-scp -i /tmp/jumpbox.pem /tmp/jumpbox.pem /tmp/ca_cert.pem /tmp/bosh.env bosh-core@"${jumpbox_ip}":
+scp -i /tmp/jumpbox.pem /tmp/ca_cert.pem /tmp/bosh.env /tmp/director_jumpbox.pem bosh-core@"${jumpbox_ip}":
 
 echo "Remember to type in 'exec bash' and '. bosh.env'"
 # user found in bosh-concourse-deployments gcp bosh-core note, `jumpbox_ssh_user`
 ssh -i /tmp/jumpbox.pem bosh-core@"${jumpbox_ip}"
 
-rm /tmp/ca_cert.pem /tmp/jumpbox.pem /tmp/bosh.env
+rm /tmp/ca_cert.pem /tmp/jumpbox.pem /tmp/bosh.env /tmp/director_jumpbox.pem
