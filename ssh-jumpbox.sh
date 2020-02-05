@@ -7,20 +7,14 @@ if [[ -z "${jumpbox_ip}" ]]; then
   exit 1
 fi
 
-# Download director CA Cert
-lpass show --note bosh-concourse-deployments gcp bosh-core \
-  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["bosh_ca_cert"]' \
-  > /tmp/ca_cert.pem
-
-# Download jumpbox SSH key
-lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
-  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["jumpbox_ssh_key"]' \
-  > /tmp/vcap.pem
-chmod 600 /tmp/vcap.pem
+note="$(lpass show --note --sync=now "bosh-concourse-deployments gcp bosh-core")"
+echo "$note" | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["bosh_ca_cert"]' > /tmp/ca_cert.pem
+echo "$note"| ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["jumpbox_ssh_key"]' > /tmp/jumpbox.pem
+chmod 600 /tmp/jumpbox.pem
 
 # Download director username and password
-eval $(lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
-  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts "BOSH_ENVIRONMENT=#{data["bosh_environment"]}"; puts "BOSH_CLIENT=#{data["bosh_client"]}"; puts "BOSH_CLIENT_SECRET=#{data["bosh_client_secret"]}"')
+eval $(echo "$note" \
+  | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts "BOSH_ENVIRONMENT=#{data["bosh_environment"]}"; puts "BOSH_CLIENT=#{data["bosh_client_admin"]}"; puts "BOSH_CLIENT_SECRET=#{data["bosh_client_secret_admin"]}"')
 
 cat > /tmp/bosh.env <<EOF
 if [[ ! -x \$HOME/bosh ]]; then
@@ -37,15 +31,15 @@ export BOSH_CLIENT=$BOSH_CLIENT
 export BOSH_CLIENT_SECRET=$BOSH_CLIENT_SECRET
 export BOSH_GW_USER=jumpbox
 export BOSH_GW_HOST=$BOSH_ENVIRONMENT
-export BOSH_GW_PRIVATE_KEY=\$HOME/vcap.pem
+export BOSH_GW_PRIVATE_KEY=\$HOME/jumpbox.pem
 bosh login
 EOF
 
 # Copy creds to jumpbox
-scp -i /tmp/vcap.pem /tmp/vcap.pem /tmp/ca_cert.pem /tmp/bosh.env bosh-cpi@"${jumpbox_ip}":
+scp -i /tmp/jumpbox.pem /tmp/jumpbox.pem /tmp/ca_cert.pem /tmp/bosh.env bosh-core@"${jumpbox_ip}":
 
 echo "Remember to type in 'exec bash' and '. bosh.env'"
-# user found in bosh-concourse-upgrader-cpi-pipeline-director note, `jumpbox_ssh_user`
-ssh -i /tmp/vcap.pem bosh@"${jumpbox_ip}"
+# user found in bosh-concourse-deployments gcp bosh-core note, `jumpbox_ssh_user`
+ssh -i /tmp/jumpbox.pem bosh-core@"${jumpbox_ip}"
 
-rm /tmp/ca_cert.pem /tmp/vcap.pem /tmp/bosh.env
+rm /tmp/ca_cert.pem /tmp/jumpbox.pem /tmp/bosh.env

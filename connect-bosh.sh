@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-lpass_note="$( set -eu ; lpass show --note bosh-concourse-upgrader-cpi-pipeline-director )"
+lpass_note="$( set -eu ; lpass show --note --sync=now "bosh-concourse-deployments gcp bosh-core" )"
 
 creds() {
   local path=${1?'Path is required.'}
@@ -21,18 +21,19 @@ trap cleanup EXIT
 # director CA Cert
 creds bosh_ca_cert > "$tmp_dir/ca_cert.pem"
 # jumpbox SSH key
-creds jumpbox_ssh_key > "$tmp_dir/vcap.pem"
-chmod 600 "$tmp_dir/vcap.pem"
+creds jumpbox_ssh_key > "$tmp_dir/jumpbox.pem"
+chmod 600 "$tmp_dir/jumpbox.pem"
 # director client and client secret
-export BOSH_CLIENT="$( creds bosh_client )"
-export BOSH_CLIENT_SECRET="$( creds bosh_client_secret )"
+export BOSH_CLIENT="$( creds bosh_client_admin )"
+export BOSH_CLIENT_SECRET="$( creds bosh_client_secret_admin )"
 export BOSH_ENVIRONMENT=10.0.0.6
 export BOSH_CA_CERT="$tmp_dir/ca_cert.pem"
 
 # SSH tunnel through the jumpbox
+echo "Not working? Ensure you've run 'open-ssh-for-30m'"
 ssh \
   -M -S "${tmp_dir}/tunnel-socket" \
-  -i "$tmp_dir/vcap.pem" -fnNT -D 1080 "$jumpbox_user@$jumpbox_host"
+  -i "$tmp_dir/jumpbox.pem" -fnNT -D 1080 "$jumpbox_user@$jumpbox_host"
 export BOSH_ALL_PROXY=socks5://localhost:1080
 
 $SHELL --rcfile <(cat ~/.bashrc - <<'EOF'
