@@ -55,8 +55,8 @@ bosh -n create-env \
   --vars-store "$vars_store" \
   -l <(echo "${BOSH_DIRECTOR_SECRETS}") \
   -l metadata \
-  -v "admin_user=${BOSH_CLIENT}" \
-  -v "admin_password=${BOSH_CLIENT_SECRET}" \
+  -v "admin_user=\"${BOSH_CLIENT}\"" \
+  -v "admin_password=\"${BOSH_CLIENT_SECRET}\"" \
   -v "default_ca={ \"certificate\": \"${BOSH_CA_CERT}\", \"private_key\": \"${BOSH_CA_KEY}\" }" \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
   --state updated-director-state/bosh-state.json \
