@@ -132,7 +132,6 @@ resources:
         gcp_credentials_json: {{gcp_credentials_json}}
         ssh_trusted_cidrs: {{ssh_trusted_cidrs}}
         create_env_trusted_cidrs: {{create_env_trusted_cidrs}}
-        bosh_cpi_web_trusted_cidrs: {{bosh_cpi_web_trusted_cidrs}}
         bosh_core_web_trusted_cidrs: {{bosh_core_web_trusted_cidrs}}
   - name: bosh-cli
     type: s3

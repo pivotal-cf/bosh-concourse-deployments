@@ -1,8 +1,13 @@
 #!/bin/bash
 
+if [[ $(lpass status -q; echo $?) != 0 ]]; then
+  echo "Login with lpass first"
+  exit 1
+fi
+
 fly -t upgrader sp \
   -p shared-environment \
   -c "$REPO_DIR/ci/pipeline-shared.yml" \
-  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core") \
-  -l <(lpass show --note bosh-concourse-upgrader-cpi-pipeline-director) \
-  -l <( lpass show --note bosh-concourse-upgrader-vpn )
+  -l <(lpass show --sync=now --note "bosh-concourse-deployments gcp bosh-core") \
+  -l <(lpass show --sync=now --note bosh-concourse-upgrader-cpi-pipeline-director) \
+  -l <( lpass show --sync=now --note bosh-concourse-upgrader-vpn )
