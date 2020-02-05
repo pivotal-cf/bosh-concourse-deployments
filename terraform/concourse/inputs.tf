@@ -14,11 +14,6 @@ variable "create_env_trusted_cidrs" {
   type = string
 }
 
-# bosh_cpi_web_trusted_cidrs will be deprecated when the VPN is fully setup
-variable "bosh_cpi_web_trusted_cidrs" {
-  type = string
-}
-
 variable "bosh_core_web_trusted_cidrs" {
   type = string
 }
