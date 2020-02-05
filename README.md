@@ -173,7 +173,7 @@ After deploying the worker, authenticate with Concourse and confirm worker has r
 
 ### Updating Trusted CIDRs for access (workers and humans)
 
-1. Ensure lastpass note is updated with the CIDRs. Look in the `bosh-concourse-upgrader-cpi-pipeline` note for the CIDRs and their sources.
+1. Ensure lastpass note is updated with the CIDRs. Look in the `bosh-concourse-deployments gcp bosh-core` note for the CIDRs and their sources.
 1. Run `configure-shared` to pick up any lastpass note changes
 1. Start a `re-terraform` job in the shared environment pipeline to refresh the firewall rules.
 

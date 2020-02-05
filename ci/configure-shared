@@ -3,6 +3,6 @@
 fly -t upgrader sp \
   -p shared-environment \
   -c "$REPO_DIR/ci/pipeline-shared.yml" \
-  -l <(lpass show --note bosh-concourse-upgrader-cpi-pipeline) \
+  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core") \
   -l <(lpass show --note bosh-concourse-upgrader-cpi-pipeline-director) \
   -l <( lpass show --note bosh-concourse-upgrader-vpn )

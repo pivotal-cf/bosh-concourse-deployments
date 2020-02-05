@@ -93,17 +93,6 @@ output "director_internal_tag" {
   value = module.director.internal_tag
 }
 
-# Concourse BOSH CPI outputs
-output "bosh_cpi" {
-  value = {
-    external_ip = module.concourse.external_ip
-    atc_tag     = module.concourse.atc_tag
-    db_tag      = module.concourse.db_tag
-    target_pool = module.concourse.target_pool
-    worker_tag  = module.concourse.worker_tag
-  }
-}
-
 # Concourse BOSH core outputs
 output "bosh_core" {
   value = {

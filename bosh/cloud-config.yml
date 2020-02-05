@@ -7,48 +7,6 @@ azs:
     zone: ((asia.zone))
 
 vm_types:
-# BOSH CPI team VM types
-# Used by Concourse ATC and TSA VM
-- name: concourse_cpi
-  cloud_properties:
-    cpu: 1
-    ram: 2_560
-    root_disk_size_gb: 20
-    root_disk_type: pd-ssd
-    tags:
-      - ((bosh_cpi.atc_tag))
-      - ((nat_traffic_tag))
-    target_pool: ((bosh_cpi.target_pool))
-# Used by Concourse database VM
-- name: concourse_cpi_database
-  cloud_properties:
-    cpu: 1
-    ram: 2_560
-    root_disk_size_gb: 20
-    root_disk_type: pd-ssd
-    tags:
-      - ((bosh_cpi.db_tag))
-      - ((nat_traffic_tag))
-# Concourse Worker VM types
-- name: concourse_worker_8_24
-  cloud_properties:
-    cpu: 8
-    ram: 24_576
-    root_disk_size_gb: 164
-    root_disk_type: pd-ssd
-    tags:
-      - ((nat_traffic_tag))
-      - ((bosh_cpi.worker_tag))
-- name: concourse_worker_2_8
-  cloud_properties:
-    cpu: 2
-    ram: 8_192
-    root_disk_size_gb: 164
-    root_disk_type: pd-ssd
-    tags:
-      - ((nat_traffic_tag))
-      - ((bosh_cpi.worker_tag))
-
 # BOSH Core team VM types
 # Used by Concourse ATC and TSA VM
 - name: concourse_core

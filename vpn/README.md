@@ -2,7 +2,7 @@
 
 Concourse teams are mapped one to one to particular GitHub teams. For example: The `google_cpi` team on Concourse has an equivalent GitHub team that will allow only members of that GitHub team to authenticate on Concourse.
 
-The [BOSH CPI](https://bosh-cpi.ci.cf-app.com) and [BOSH Core](https://main.bosh-ci.cf-app.com/) Concourse instances are firewalled and can only be accessed via the BOSH Concourse VPN.
+The [BOSH Core](https://main.bosh-ci.cf-app.com/) Concourse instance is firewalled and can only be accessed via the BOSH Concourse VPN.
 
 Authentication to the VPN is handled via SSOCA/GitHub through the same GitHub teams that are used to authenticate to Concourse.
 
