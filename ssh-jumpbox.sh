@@ -8,7 +8,7 @@ if [[ -z "${jumpbox_ip}" ]]; then
 fi
 
 # Download director CA Cert
-lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
+lpass show --note bosh-concourse-deployments gcp bosh-core \
   | ruby -r yaml -e 'data = YAML::load(STDIN.read); puts data["bosh_ca_cert"]' \
   > /tmp/ca_cert.pem
 
@@ -24,7 +24,7 @@ eval $(lpass show --note bosh-concourse-upgrader-cpi-pipeline-director \
 
 cat > /tmp/bosh.env <<EOF
 if [[ ! -x \$HOME/bosh ]]; then
-  wget -O \$HOME/bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.26-linux-amd64
+  wget -O \$HOME/bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-6.2.0-linux-amd64
   chmod +x \$HOME/bosh
 fi
 
@@ -45,6 +45,7 @@ EOF
 scp -i /tmp/vcap.pem /tmp/vcap.pem /tmp/ca_cert.pem /tmp/bosh.env bosh-cpi@"${jumpbox_ip}":
 
 echo "Remember to type in 'exec bash' and '. bosh.env'"
-ssh -i /tmp/vcap.pem bosh-cpi@"${jumpbox_ip}"
+# user found in bosh-concourse-upgrader-cpi-pipeline-director note, `jumpbox_ssh_user`
+ssh -i /tmp/vcap.pem bosh@"${jumpbox_ip}"
 
 rm /tmp/ca_cert.pem /tmp/vcap.pem /tmp/bosh.env
