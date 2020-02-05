@@ -88,7 +88,7 @@ worker_ops_path="$( create_worker_ops_file "$CONCOURSE_TEAMS" )"
 
 pushd deployments-src > /dev/null
   echo "Deploying Concourse..."
-  bosh -n --tty deploy \
+  bosh -n --fix --tty deploy \
     -l <(echo "${CONCOURSE_SECRETS}") \
     -v concourse_external_url=${CONCOURSE_EXTERNAL_URL} \
     -v concourse_basic_auth_username=${CONCOURSE_BASIC_AUTH_USERNAME} \
