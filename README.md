@@ -102,8 +102,10 @@ If you have deployed optional external workers you must follow a slightly modifi
 
 Thanks to the distributed model of the CF Foundation many teams from many
 companies can share this CI environment to run builds against their CPIs.
-Currently we have created a credentials to allow the Openstack CPI team to
-deploy and use an external worker in one of their Openstack environments.
+At the time of this writing, the CPI-only concourse is now destroyed, with the
+majority of active CPIs building in the 'main' bosh concourse. External worker
+setup is currently used for the Openstack CPI, as the director/worker lies
+within a protected egress-only openstack env.
 
 #### Creating a team on the ATC (Concourse Administrator)
 
