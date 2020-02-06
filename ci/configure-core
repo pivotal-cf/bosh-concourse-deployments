@@ -1,9 +1,6 @@
 #!/bin/bash
 
-if [[ $(lpass status -q; echo $?) != 0 ]]; then
-  echo "Login with lpass first"
-  exit 1
-fi
+lpass ls > /dev/null
 
 fly -t upgrader sp \
   -p concourse-core \
