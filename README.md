@@ -85,6 +85,19 @@ main Concourse deployment.
 1. Manually trigger `concourse/update-cloud-config` job.
 1. Manually trigger `concourse/update-concourse` job.
 
+**Warning** if completely repaving concourse and this results in an IP change
+for the outbound requests from the VPC, then there are a few places that use
+this IP address to break open holes for database or ssh connectivity.
+
+At the time of this writing, two places were updated as a result of repaving:
+
+1. Address for terraformed database instances present in main bosh pipeline.
+1. 'Bosh lite' security group for bosh-agent integration tests for remote SSH
+
+Removing the need for hardcoding would be ideal, but likely a lot of work. The
+address should not change often, only when VPC-destructive concourse maintenance
+occurs.
+
 #### Running Pipelines with Optional External Workers
 
 If you have deployed optional external workers you must follow a slightly modified order:
