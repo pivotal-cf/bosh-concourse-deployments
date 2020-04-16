@@ -7,6 +7,8 @@ To enable debugging with the `bosh` cli, perform the following steps:
 1. Use the `connect-bosh.sh` (or `connect-bosh-core.sh`) script to establish a connection and start the tunnel.
    * If you see `Operation timed out`, it means that we need to fire up
    our [concourse/open-ssh-for-30m](https://bosh-upgrader.ci.cf-app.com/teams/main/pipelines/shared-environment/jobs/open-ssh-for-30m/) Concourse job to allow us to ssh-in again.
+   * `ssh-jumpbox <ip>` will also work and may be a better maintained script
+   * Note: If you're running this from a non-bosh computer you need to ssh or tunnel through a trusted ip - the sf and toronto bosh computers should be fine - see `jumpbox_trusted_cidrs` in the lpass note `bosh-concourse-deployments gcp bosh-core`
 1. You should now be targeted and can use `bosh` commands like normal.
 
 
