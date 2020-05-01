@@ -281,7 +281,7 @@ instance_groups:
         password: "((windows_administrator_password))"
   - name: enable_ssh
     release: windows-utilities
-  - name: golang-windows
+  - name: golang-1-windows
     release: windows-tools
   - name: ginkgo
     release: windows-tools
