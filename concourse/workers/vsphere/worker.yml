@@ -48,6 +48,8 @@ instance_groups:
           worker_key: ((worker_key))
           hosts: ((concourse_tsa_hostname))
           host_public_key: ((tsa_host_key.public_key))
+        baggageclaim:
+          driver: overlay
 
 cloud_provider:
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
