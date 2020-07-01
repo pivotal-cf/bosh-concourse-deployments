@@ -1,0 +1,19 @@
+---
+jobs:
+- name: create-nimbus-testbed
+  plan:
+  - do:
+    - in_parallel:
+      - get: deployments-src
+    - task: testbed-deploy
+      file: deployments-src/ci/tasks/deploy-nimbus-testbed.yml
+      params:
+        TESTBED_NAME: bosh-main-ci
+        USER: rkoster # TODO change to service account
+
+resources:
+  - name: deployments-src
+    type: git
+    source:
+      uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
+      branch: master
