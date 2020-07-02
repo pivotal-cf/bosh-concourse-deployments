@@ -4,4 +4,4 @@ nimbus-testbeddeploy \
   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
   --context general:nsx \
-  --resultsDir=./updated-nimbus-testbed-state
+  --outputPath=updated-nimbus-testbed-state
