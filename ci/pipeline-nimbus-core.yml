@@ -10,6 +10,10 @@ jobs:
       params:
         TESTBED_NAME: bosh-main-ci
         USER: rkoster # TODO change to service account
+      ensure:
+        put: testbed-info
+        params:
+          file: nimbus-testbed-info/testbedInfo.json
 
 resources:
   - name: deployments-src
@@ -17,3 +21,10 @@ resources:
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
       branch: master
+
+  - name: testbed-info
+    type: gcs-resource
+    source:
+      bucket: {{deployments_core_bucket_name}}
+      json_key: {{gcp_credentials_json}}
+      versioned_file: nimbus/testbed-info.json

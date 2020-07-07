@@ -10,7 +10,7 @@ inputs:
 - name: deployments-src
 
 outputs:
-- name: updated-nimbus-testbed-state
+- name: nimbus-testbed-info
 
 params:
   USER: ""
