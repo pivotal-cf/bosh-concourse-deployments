@@ -3,5 +3,6 @@
 nimbus-testbeddeploy \
   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
-  --context general:nsx \
-  --outputPath=nimbus-testbed-info
+  --context general:nsx
+
+cp /tmp/nimbus-*/*/testbedInfo.json ./nimbus-testbed-info/

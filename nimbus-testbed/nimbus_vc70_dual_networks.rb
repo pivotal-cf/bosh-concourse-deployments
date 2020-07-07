@@ -1,8 +1,8 @@
 require 'rbvmomi'
 
 oneGB = 1 * 1000 * 1000 # in KB
-dcName = 'vcaqDC'
-clusterName = 'cluster0'
+dcName = 'private'
+clusterName = 'private'
 
 $testbed = Proc.new do
   {
