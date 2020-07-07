@@ -1,5 +1,5 @@
 #!/bin/bash
 
-fly -t exp sp \
-  -p bosh-nimbus-core \
+fly -t runway@bosh-core set-pipeline \
+  -p bosh-core \
   -c "$REPO_DIR/ci/pipeline-nimbus-core.yml"
