@@ -38,11 +38,11 @@ $testbed = Proc.new do
         "type" => "vcva",
         "customBuild" => "ob-15952498",
         "dcName" => [dcName],
-        "enableDrs" => true,
         "clusters" => [
           {
             "name" => clusterName,
-            "dc" => dcName
+            "dc" => dcName,
+            "enableDrs" => true
           }
         ]
       }
