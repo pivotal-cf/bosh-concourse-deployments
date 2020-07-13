@@ -1,0 +1,4 @@
+#!/bin/bash
+
+nimbus-ctl --lease ${DAYS} \
+           --testbed ${TESTBED_NAME}
