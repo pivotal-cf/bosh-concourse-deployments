@@ -1,4 +1,4 @@
 #!/bin/bash
 
 nimbus-ctl --lease ${DAYS} \
-           --testbed ${TESTBED_NAME}
+           --testbed extend-lease ${TESTBED_NAME}
