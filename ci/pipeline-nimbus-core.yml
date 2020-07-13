@@ -1,5 +1,18 @@
 ---
 jobs:
+- name: renew-lease-nimbus-testbed
+  plan:
+  - do:
+    - in_parallel:
+      - get: deployments-src
+      - get: every-day
+        trigger: true
+    - task: extend-lease
+      file: deployments-src/ci/tasks/extend-lease-nimbus-testbed.yml
+      params:
+        TESTBED_NAME: bosh-main-ci
+        USER: rkoster # TODO change to service account
+
 - name: create-nimbus-testbed
   plan:
   - do:
@@ -20,7 +33,10 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
-      branch: master
+- name: every-day
+  type: time
+  source:
+    interval: 24h
 
   - name: testbed-info
     type: gcs-resource
