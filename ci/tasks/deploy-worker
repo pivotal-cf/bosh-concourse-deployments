@@ -11,6 +11,17 @@ source deployments-src/ci/utils
 source /etc/profile.d/chruby.sh
 chruby ruby
 
+if [ -d testbed-info ]; then
+    # - vcenter_resource_pool
+    export WORKER_SECRETS=$(echo -e "$WORKER_SECRETS$(
+      bosh int <(jq '.vc[0] | {
+        vcenter_address: .ip,
+        vcenter_user: .vimUsername,
+        vcenter_password: .vimPassword
+      }' testbed-info/testbed-info.json)
+    )")
+fi
+
 cp worker-state/*.json updated-worker-state/worker-state.json
 
 echo "Updating WORKER..."

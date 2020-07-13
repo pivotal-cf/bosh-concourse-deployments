@@ -13,6 +13,8 @@ inputs:
   - name: concourse
   - name: worker-state
   - name: stemcell
+  - name: testbed-info
+    optional: true
 
 outputs:
   - name: updated-worker-state
