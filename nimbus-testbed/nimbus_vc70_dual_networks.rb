@@ -65,6 +65,25 @@ $testbed = Proc.new do
 
       VIM = RbVmomi::VIM
 
+      spec = {
+        :cpuAllocation => {
+          :limit => -1,
+          :expandableReservation => true,
+          :reservation => 0,
+          :shares => {:level => :normal, :shares => 0}
+        },
+        :memoryAllocation => {
+          :limit => -1,
+          :expandableReservation => true,
+          :reservation => 0,
+          :shares => {:level => :normal, :shares => 0}
+        },
+      }
+      cr.resourcePool.CreateResourcePool(
+        :name => "vdc-rp",
+        :spec => spec
+      )
+
       case cr
       when VIM::ClusterComputeResource
         hosts = cr.host
