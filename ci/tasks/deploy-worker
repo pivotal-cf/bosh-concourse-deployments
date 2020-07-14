@@ -20,6 +20,14 @@ if [ -d testbed-info ]; then
         vcenter_password: .vimPassword
       }' testbed-info/testbed-info.json)
     )")
+
+    nsips_url="$(jq -r '.network[0].gateway' testbed-info/testbed-info.json):4827/nsips"
+    export WORKER_SECRETS=$(echo -e "${WORKER_SECRETS}\n$(
+      bosh int <(curl ${nsips_url} | jq '. | {
+        vcenter_public_worker_ip: .ip,
+        vcenter_public_gateway: .gateway
+      }')
+    )")
 fi
 
 cp worker-state/*.json updated-worker-state/worker-state.json
