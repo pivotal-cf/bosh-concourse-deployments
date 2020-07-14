@@ -46,6 +46,7 @@ instance_groups:
     networks:
       - name: public
         static_ips: [((vcenter_public_worker_ip))]
+        default: [addressable]
       - name: private
         static_ips: [((vcenter_worker_ip))]
         default: [dns, gateway]
