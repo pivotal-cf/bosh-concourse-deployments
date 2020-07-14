@@ -12,6 +12,7 @@ resource_pools:
     network: private
     env:
       bosh:
+        password: ((bosh_password))
         authorized_keys:
         - ((ssh_authorized_public_key))
         mbus:
