@@ -4,4 +4,4 @@ fly -t runway@bosh-core set-pipeline \
   -p bosh-core \
   -c "$REPO_DIR/ci/pipeline-nimbus-core.yml" \
   -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core") \
-  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core external workers")
+  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core external nimbus workers")
