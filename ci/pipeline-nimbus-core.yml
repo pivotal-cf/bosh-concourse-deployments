@@ -24,7 +24,7 @@ jobs:
         TESTBED_NAME: bosh-main-ci
         USER: rkoster # TODO change to service account
       ensure:
-      - do:
+        do:
         - put: testbed-info
           params:
             file: nimbus-testbed-info/testbedInfo.json
