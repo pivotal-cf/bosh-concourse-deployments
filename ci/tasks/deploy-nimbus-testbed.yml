@@ -11,6 +11,7 @@ inputs:
 
 outputs:
 - name: nimbus-testbed-info
+- name: worker-state
 
 params:
   USER: ""

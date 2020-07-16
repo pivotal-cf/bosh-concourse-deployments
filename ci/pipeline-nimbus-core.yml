@@ -24,9 +24,16 @@ jobs:
         TESTBED_NAME: bosh-main-ci
         USER: rkoster # TODO change to service account
       ensure:
-        put: testbed-info
-        params:
-          file: nimbus-testbed-info/testbedInfo.json
+      - do:
+        - put: testbed-info
+          params:
+            file: nimbus-testbed-info/testbedInfo.json
+        - put: vsphere-v7.0-worker-state-1
+          params:
+            file: worker-state/clean-env
+        - put: vsphere-v7.0-worker-state-2
+          params:
+            file: worker-state/clean-env
 
 - name: update-vsphere-v7.0-worker
   serial: true
