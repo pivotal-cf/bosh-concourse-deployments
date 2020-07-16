@@ -6,7 +6,7 @@ nimbus-testbeddeploy \
   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
   --lease 7 \
-  --enableIPV6 \
+  --enableIPV6 dual \
   --ip6AddressType slaac \
   --context general:nsx
 
