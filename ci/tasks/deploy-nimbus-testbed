@@ -2,11 +2,12 @@
 
 nimbus-ctl --testbed kill ${TESTBED_NAME} || true
 
-export NIMBUS_IPV6=dual
 nimbus-testbeddeploy \
   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
   --lease 7 \
+  --enableIPV6 \
+  --ip6AddressType slaac \
   --context general:nsx
 
 cp /tmp/nimbus-*/*/testbedInfo.json ./nimbus-testbed-info/
