@@ -53,7 +53,7 @@ $testbed = Proc.new do
     "postBoot" => Proc.new do |runId, testbedSpec, vmList, catApi, logDir|
       vc = vmList['vc'].first
       vim = RbVmomi::VIM.connect(
-        host: vc.ip,
+        host: vc.ip4,
         user: vc.testbedInfo['vimUsername'],
         password: vc.testbedInfo['vimPassword'],
         insecure: true
