@@ -7,7 +7,7 @@ nimbus-testbeddeploy \
   --runName ${TESTBED_NAME} \
   --lease 7 \
   --enableIPV6 dual \
-  --ip6AddressType slaac \
+  # --ip6AddressType slaac \
   --context general:nsx
 
 cp /tmp/nimbus-*/*/testbedInfo.json ./nimbus-testbed-info/
