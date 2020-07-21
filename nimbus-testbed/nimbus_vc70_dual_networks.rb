@@ -19,7 +19,7 @@ $testbed = Proc.new do
       {
         "name" => "esx.#{idx}",
         "nics" => 2, # 2 NICs
-        "network" => ["public", "nsx::net.0"],
+        "networks" => ["public", "nsx::net.0"],
         "vc" => "vc.0",
         "customBuild" => "ob-15843807",
         "dc" => dcName,
@@ -28,7 +28,7 @@ $testbed = Proc.new do
         "cpus" => 32, # 32 vCPUs
         "memory" => 98000, # 98GB memory
         "fullClone" => true,
-        "disk" => [ 10 * 1000 * oneGB ], # 10 TB Disk
+        "disks" => [ 10 * 1000 * oneGB ], # 10 TB Disk
       }
     end,
 
