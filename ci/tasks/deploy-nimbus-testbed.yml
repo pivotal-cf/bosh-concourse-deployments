@@ -15,6 +15,7 @@ outputs:
 
 params:
   USER: ""
+  SSHPASS: '' # needs to be in single quotes due to special characters
   TESTBED_NAME: ""
 
 run:

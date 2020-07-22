@@ -1,15 +1,46 @@
 #!/bin/bash
+set -x
 
 nimbus-ctl --testbed kill ${TESTBED_NAME} || true
 
-nimbus-testbeddeploy \
-  --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
-  --runName ${TESTBED_NAME} \
-  --lease 7 \
-  --enableIPV6 dual \
-  --ip6AddressType slaac \
-  --context general:nsx
+# nimbus-testbeddeploy \
+#   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
+#   --runName ${TESTBED_NAME} \
+#   --lease 7 \
+#   --enableIPV6 dual \
+#   --ip6AddressType slaac \
+#   --context general:nsx
 
-cp /tmp/nimbus-*/*/testbedInfo.json ./nimbus-testbed-info/
+# cp /tmp/nimbus-*/*/testbedInfo.json ./nimbus-testbed-info/
+
+# echo "{}" > ./worker-state/clean-env
+
+# script below is needed because ipv6 gateway is not correctly setup in concourse/container
+
+
+# use this worker for all nimbus commands stuff etc.
+# we need sshpass to supply password, problems are display of password in concourse log
+# https://concourse-ci.org/creds-redacting.html
+# if credentials are fetched from a credentialmanager(credhub) it will be already redacted
+yum install -y -q sshpass
+
+ssh_opts='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+
+sshpass -v -e ssh ${ssh_opts} ${USER}@nimbus-gateway.eng.vmware.com "mkdir -p /tmp/${USER}"
+
+# need to transfer deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb
+# or a git clone.....
+sshpass -v -e scp ${ssh_opts} deployments-src/nimbus-testbed/* ${USER}@nimbus-gateway.eng.vmware.com:/tmp/${USER}/
+
+sshpass -e ssh ${ssh_opts} ${USER}@nimbus-gateway.eng.vmware.com "nimbus-testbeddeploy \
+                                                    --testbedSpecRubyFile /tmp/${USER}/nimbus_vc70_dual_networks.rb \
+                                                    --runName ${TESTBED_NAME} \
+                                                    --lease 7 \
+                                                    --enableIPV6 dual \
+                                                    --ip6AddressType slaac \
+                                                    --context general:nsx"
+
+# # retrieve testbedinfojson
+sshpass -e scp ${ssh_opts} ${USER}@nimbus-gateway.eng.vmware.com:/tmp/nimbus-test-${USER}/*/testbedInfo.json ./nimbus-testbed-info/
 
 echo "{}" > ./worker-state/clean-env
