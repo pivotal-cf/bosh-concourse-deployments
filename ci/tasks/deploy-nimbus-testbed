@@ -2,7 +2,11 @@
 
 nimbus-ctl --testbed kill ${TESTBED_NAME} || true
 
+WORKER_NAME=${TESTBED_NAME}-worker
+nimbus-worker-deploy ${WORKER_NAME} --result worker.json
+
 nimbus-testbeddeploy \
+  --deployedDynamicWorkerName ${TESTBED_NAME}-worker \
   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
   --lease 7 \
