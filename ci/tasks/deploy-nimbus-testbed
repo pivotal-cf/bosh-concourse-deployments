@@ -21,7 +21,7 @@ sshpass -v -e ssh ${ssh_opts} ${WORKER_USER}@${WORKER_IP} "USER=${USER} /mts/git
   --ip6AddressType slaac \
   --context general:nsx"
 
-sshpass -e scp ${ssh_opts} ${USER}@${WORKER_IP}:/tmp/nimbus-test-${USER}/*/testbedInfo.json ./nimbus-testbed-info/
+sshpass -e scp ${ssh_opts} ${WORKER_USER}@${WORKER_IP}:/tmp/nimbus-test-${USER}/*/testbedInfo.json ./nimbus-testbed-info/
 
 echo "{}" > ./worker-state/clean-env
 
