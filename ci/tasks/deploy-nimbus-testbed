@@ -7,14 +7,14 @@ nimbus-ctl --testbed kill ${TESTBED_NAME} || true
 WORKER_NAME=${TESTBED_NAME}-worker
 nimbus-worker-deploy ${WORKER_NAME} --result worker.json
 WORKER_IP=$(jq -r '.ip' worker.json)
-USER=$(jq -r '.username' worker.json)
+WORKER_USER=$(jq -r '.username' worker.json)
 export SSHPASS=$(jq -r '.password' worker.json)
 
 ssh_opts='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-sshpass -v -e ssh ${ssh_opts} ${USER}@${WORKER_IP} "mkdir -p /tmp/${USER}"
-sshpass -v -e scp ${ssh_opts} deployments-src/nimbus-testbed/* ${USER}@${WORKER_IP}:/tmp/${USER}/
-sshpass -v -e ssh ${ssh_opts} ${USER}@${WORKER_IP} "/mts/git/bin/nimbus-testbeddeploy \
-  --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
+sshpass -v -e ssh ${ssh_opts} ${WORKER_USER}@${WORKER_IP} "mkdir -p /tmp/${USER}"
+sshpass -v -e scp ${ssh_opts} deployments-src/nimbus-testbed/* ${WORKER_USER}@${WORKER_IP}:/tmp/${USER}/
+sshpass -v -e ssh ${ssh_opts} ${WORKER_USER}@${WORKER_IP} "USER=${USER} /mts/git/bin/nimbus-testbeddeploy \
+  --testbedSpecRubyFile --testbedSpecRubyFile /tmp/${USER}/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
   --lease 7 \
   --enableIPV6 dual \
