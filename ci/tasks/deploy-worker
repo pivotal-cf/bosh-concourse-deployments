@@ -21,13 +21,15 @@ if [ -d testbed-info ]; then
       }' testbed-info/testbed-info.json)
     )")
 
-    nsips_url="$(jq -r '.network[0].gateway' testbed-info/testbed-info.json):4827/nsips"
+    public_ip=$(curl "$(jq -r '.network[0].gateway' testbed-info/testbed-info.json):4827/nsips")
+    net=$(echo "${public_ip}" | jq -r '"\(.ip)/\(.netmask)"')
+    subnet=$(ruby -e "require 'ipaddr'; ip = IPAddr.new('${net}'); puts \"#{ip}/#{ip.prefix}\"")
     export WORKER_SECRETS=$(echo -e "${WORKER_SECRETS}\n$(
-      bosh int <(curl ${nsips_url} | jq '. | {
+      bosh int <(echo "${public_ip}" | jq '. | {
         vcenter_public_worker_ip: .ip,
         vcenter_public_gateway: .gateway
       }')
-    )")
+    )\nvcenter_public_cidr: ${subnet}")
 fi
 
 cp worker-state/*.json updated-worker-state/worker-state.json
