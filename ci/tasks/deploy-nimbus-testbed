@@ -14,7 +14,7 @@ ssh_opts='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 sshpass -v -e ssh ${ssh_opts} ${WORKER_USER}@${WORKER_IP} "mkdir -p /tmp/${USER}"
 sshpass -v -e scp ${ssh_opts} deployments-src/nimbus-testbed/* ${WORKER_USER}@${WORKER_IP}:/tmp/${USER}/
 sshpass -v -e ssh ${ssh_opts} ${WORKER_USER}@${WORKER_IP} "USER=${USER} /mts/git/bin/nimbus-testbeddeploy \
-  --testbedSpecRubyFile --testbedSpecRubyFile /tmp/${USER}/nimbus_vc70_dual_networks.rb \
+  --testbedSpecRubyFile /tmp/${USER}/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
   --lease 7 \
   --enableIPV6 dual \
