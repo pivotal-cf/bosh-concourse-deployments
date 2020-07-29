@@ -11,29 +11,46 @@ jobs:
       file: deployments-src/ci/tasks/extend-lease-nimbus-testbed.yml
       params:
         TESTBED_NAME: bosh-main-ci
-        USER: rkoster # TODO change to service account
+        USER: ((nimbus-user))
 
 - name: create-nimbus-testbed
   plan:
   - do:
     - in_parallel:
       - get: deployments-src
-    - task: testbed-deploy
-      file: deployments-src/ci/tasks/deploy-nimbus-testbed.yml
+    - put: nimbus-worker
       params:
-        TESTBED_NAME: bosh-main-ci
-        USER: rkoster # TODO change to service account
+        template: default
+        output: nimbus-worker
+        run:
+          path: bash
+          args:
+            - -exc
+            - |
+              export USER=((nimbus-user))
+              export TESTBED_NAME=bosh-main-ci
+              /mts/git/bin/nimbus-ctl --testbed kill ${TESTBED_NAME} || true
+              /mts/git/bin/nimbus-testbeddeploy \
+                  --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
+                  --runName ${TESTBED_NAME} \
+                  --lease 7 \
+                  --enableIPV6 dual \
+                  --ip6AddressType slaac \
+                  --context general:nsx \
+                  --nimbusLocation wdc \
+                  --resultsDir nimbus-worker
+              echo "{}" > nimbus-worker/clean-env
       ensure:
         do:
         - put: testbed-info
           params:
-            file: nimbus-testbed-info/testbedInfo.json
+            file: nimbus-worker/testbedInfo.json
         - put: vsphere-v7.0-worker-state-1
           params:
-            file: worker-state/clean-env
+            file: nimbus-worker/clean-env
         - put: vsphere-v7.0-worker-state-2
           params:
-            file: worker-state/clean-env
+            file: nimbus-worker/clean-env
 
 - name: update-vsphere-v7.0-worker
   serial: true
@@ -81,6 +98,12 @@ resource_types:
   source:
     repository: frodenas/gcs-resource
 
+- name: nimbus-worker
+  type: registry-image
+  source:
+    repository: devtools-docker-local.artifactory.eng.vmware.com/vmware/runway/resourcetypes/nimbus-worker-resource
+    tag: latest
+
 resources:
 - name: every-day
   type: time
@@ -127,3 +150,11 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/bosh-vsphere-cpi-release
+- name: nimbus-worker
+  type: nimbus-worker
+  icon: worker
+  source:
+    nimbus_user: ((nimbus-user))
+    # wdc Wenatchee, Washington closest to us-west1 (The Dalles, Oregon) which is where bosh main concourse lives
+    # https://confluence.eng.vmware.com/display/DevToolsDocKB/Nimbus+CIDR
+    nimbus_location: wdc
