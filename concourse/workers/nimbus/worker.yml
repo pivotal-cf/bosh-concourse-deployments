@@ -3,9 +3,13 @@ name: ((worker_name))
 
 releases:
   - name: bosh-vsphere-cpi
-    url: file://((bosh_cpi_release_path))
+    url: ((bosh_vsphere_cpi_url))
+    version: ((bosh_vsphere_cpi_version))
+    sha1: ((bosh_vsphere_cpi_sha1))
   - name: concourse
-    url: file://((concourse_release_path))
+    url: ((concourse_url))
+    version: ((concourse_version))
+    sha1: ((concourse_sha1))
 
 resource_pools:
   - name: vms
@@ -18,7 +22,8 @@ resource_pools:
         mbus:
           cert: ((mbus_bootstrap_ssl))
     stemcell:
-      url: file://((stemcell_path))
+      url: ((stemcell_url))
+      sha1: ((stemcell_sha1))
     cloud_properties:
       ((resource_pool_properties))
 

@@ -30,9 +30,56 @@ if [ -d testbed-info ]; then
         vcenter_public_gateway: .gateway
       }')
     )\nvcenter_public_cidr: ${subnet}")
+
+    export WORKER_SECRETS=$(echo -e "${WORKER_SECRETS}\n$(echo "
+      bosh_vsphere_cpi_url: $(cat bosh-cpi-release/url)
+      bosh_vsphere_cpi_version: $(cat bosh-cpi-release/version)
+      bosh_vsphere_cpi_sha1: $(cat bosh-cpi-release/sha1)
+      concourse_url: $(cat concourse/url)
+      concourse_version: $(cat concourse/version)
+      concourse_sha1: $(cat concourse/sha1)
+      stemcell_url: $(cat stemcell/url)
+      stemcell_sha1: $(cat stemcell/sha1)
+    " | awk '{$1=$1};1')")
+
 fi
 
 cp worker-state/*.json updated-worker-state/worker-state.json
+
+apt-get update && apt-get install -y sshuttle sshpass
+export SSHPASS='ca$hc0w' # gw is a worker which defaults to worker/ca$hc0w
+gateway="$(jq -r '.network[0].gateway' testbed-info/testbed-info.json)"
+
+# Setup sshuttle using TPROXY for ipv6 support
+# https://sshuttle.readthedocs.io/en/stable/tproxy.html
+ip route add local default dev lo table 100
+ip rule add fwmark 1 lookup 100
+ip -6 route add local default dev lo table 100
+ip -6 rule add fwmark 1 lookup 100
+
+ssh-keygen -b 1024 -t rsa -f ~/.ssh/id_rsa -q -N ""
+cat > ~/.ssh/config <<EOF
+Host *
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+EOF
+
+sshpass -v -e scp ~/.ssh/id_rsa.pub worker@${gateway}:~/.ssh/authorized_keys
+
+sshpass -e \
+        sshuttle -e 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' \
+        --method=tproxy -r worker@${gateway} '::/0'
+
+# Setup an ipv6 over ipv4 tunnel to the testbed gateway
+# https://www.tldp.org/HOWTO/Linux+IPv6-HOWTO/ch09s04.html
+ipv4=$(ip addr show scope global | grep inet | xargs | cut -d' ' -f2 | cut -d'/' -f1)
+prefix="$(printf '2002:%02x%02x:%02x%02x::1' $(echo $ipv4 | tr '.' ' '))"
+gateway="$(jq -r '.network[0].gateway' testbed-info/testbed-info.json)"
+
+ip tunnel add tun6to4 mode sit ttl 0 remote any local ${ipv4}
+ip link set dev tun6to4 up
+ip -6 addr add ${prefix}/16 dev tun6to4
+ip -6 route add default via ::${gateway} dev tun6to4 metric 1
 
 echo "Updating WORKER..."
 bosh -n create-env \
