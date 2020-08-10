@@ -16,7 +16,7 @@ fi
 
 if [ -d testbed-info ]; then
     # - vcenter_resource_pool
-    export WORKER_SECRETS=$(echo -e "$WORKER_SECRETS$(
+    export WORKER_SECRETS=$(echo -e "$WORKER_SECRETS\n$(
       bosh int <(jq '.vc[0] | {
         vcenter_address: .ip4,
         vcenter_user: .vimUsername,
@@ -35,7 +35,7 @@ if [ -d testbed-info ]; then
     export WORKER_SECRETS=$(echo -e "${WORKER_SECRETS}\n$(
       bosh int <(echo "${public_ip}" | jq '. | {
         vcenter_public_worker_ip: .ip,
-        vcenter_public_gateway: .gatewayn
+        vcenter_public_gateway: .gateway
       }')
     )\nvcenter_public_cidr: ${subnet}")
 
