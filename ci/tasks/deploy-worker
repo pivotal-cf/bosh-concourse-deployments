@@ -8,8 +8,11 @@ set -eu
 
 set +u
 source deployments-src/ci/utils
-source /etc/profile.d/chruby.sh
-chruby ruby
+
+if [ -f /etc/profile.d/chruby.sh ]; then
+    source /etc/profile.d/chruby.sh
+    chruby ruby
+fi
 
 if [ -d testbed-info ]; then
     # - vcenter_resource_pool
@@ -27,7 +30,7 @@ if [ -d testbed-info ]; then
     export WORKER_SECRETS=$(echo -e "${WORKER_SECRETS}\n$(
       bosh int <(echo "${public_ip}" | jq '. | {
         vcenter_public_worker_ip: .ip,
-        vcenter_public_gateway: .gateway
+        vcenter_public_gateway: .gatewayn
       }')
     )\nvcenter_public_cidr: ${subnet}")
 
