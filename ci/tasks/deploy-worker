@@ -26,7 +26,12 @@ if [ -d testbed-info ]; then
 
     public_ip=$(curl "$(jq -r '.network[0].gateway' testbed-info/testbed-info.json):4827/nsips")
     net=$(echo "${public_ip}" | jq -r '"\(.ip)/\(.netmask)"')
-    subnet=$(ruby -e "require 'ipaddr'; ip = IPAddr.new('${net}'); puts \"#{ip}/#{ip.prefix}\"")
+    # ubuntu gives us ruby 2.3.1 which does not have the prefix method on ip
+    # us solution from here https://stackoverflow.com/questions/1825928/netmask-to-cidr-in-ruby
+    subnet=$(ruby -e "
+      require 'ipaddr'; ip = IPAddr.new('${net}');
+      puts \"#{ip}/#{ip.instance_variable_get(:@mask_addr).to_i.to_s(2).count('1')}\"
+    ")
     export WORKER_SECRETS=$(echo -e "${WORKER_SECRETS}\n$(
       bosh int <(echo "${public_ip}" | jq '. | {
         vcenter_public_worker_ip: .ip,
