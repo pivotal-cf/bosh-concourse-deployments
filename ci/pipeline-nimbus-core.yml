@@ -58,6 +58,7 @@ jobs:
     - do:
       - in_parallel:
         - get: concourse
+          params: { tarball: false }
         - get: deployments-src
         - get: bosh-cli
         - get: testbed-info
@@ -66,31 +67,66 @@ jobs:
         - get: vsphere-v7.0-worker-state-2
         - get: bosh-cpi-release
           resource: bosh-vsphere-cpi-release
+          params: { tarball: false }
         - get: stemcell
           resource: vsphere-xenial-stemcell
+          params: { tarball: false }
+        - get: vsphere-v70-worker-secrets-1
+        - get: vsphere-v70-worker-secrets-2
       - in_parallel:
-        - task: update-vsphere-v7.0-worker-1
-          file: deployments-src/ci/tasks/deploy-worker.yml
-          input_mapping:
-            worker-state: vsphere-v7.0-worker-state-1
-          params:
-            WORKER_SECRETS: ((vsphere-v70-worker-secrets-1))
-            ENVIRONMENT_NAME: nimbus
+        - put: update-vsphere-v7.0-worker-1
+          resource: nimbus-worker
           ensure:
             put: vsphere-v7.0-worker-state-1
             params:
-              file: updated-worker-state/worker-state.json
-        - task: update-vsphere-v7.0-worker-2
-          file: deployments-src/ci/tasks/deploy-worker.yml
-          input_mapping:
-            worker-state: vsphere-v7.0-worker-state-2
+              file: update-vsphere-v7.0-worker-1/worker-state.json
           params:
-            WORKER_SECRETS: ((vsphere-v70-worker-secrets-2))
-            ENVIRONMENT_NAME: nimbus
+            template: concourse-worker
+            output: updated-worker-state
+            run:
+              path: bash
+              args:
+                - -exc
+                - |
+                    sudo ./deployments-src/ci/utils
+                    ln -s vsphere-v7.0-worker-state-1 worker-state
+                    sudo -s bash -x << EOF
+                    export WORKER_SECRETS="$(bosh int vsphere-v70-worker-secrets-2/secrets.yml)"
+                    export ENVIRONMENT_NAME=nimbus
+                    apt-get update
+                    apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
+                         openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev \
+                         libyaml-dev libsqlite3-dev sqlite3 jq libcurl4-gnutls-dev
+
+                    bash -x deployments-src/ci/tasks/deploy-worker 2>&1
+                    EOF
+
+        - put: update-vsphere-v7.0-worker-2
+          resource: nimbus-worker
           ensure:
             put: vsphere-v7.0-worker-state-2
             params:
-              file: updated-worker-state/worker-state.json
+              file: update-vsphere-v7.0-worker-2/worker-state.json
+          params:
+            template: concourse-worker
+            output: updated-worker-state
+            run:
+              path: bash
+              args:
+                - -exc
+                - |
+                    sudo ./deployments-src/ci/utils
+                    ln -s vsphere-v7.0-worker-state-2 worker-state
+                    sudo -s bash -lx << EOF
+                    export WORKER_SECRETS="$(bosh int vsphere-v70-worker-secrets-2/secrets.yml)"
+                    export ENVIRONMENT_NAME=nimbus
+                    apt-get update
+                    apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
+                         openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev \
+                         libyaml-dev libsqlite3-dev sqlite3 jq libcurl4-gnutls-dev
+
+                    bash -x deployments-src/ci/tasks/deploy-worker 2>&1
+                    EOF
 
 resource_types:
 - name: gcs-resource
@@ -104,16 +140,36 @@ resource_types:
     repository: devtools-docker-local.artifactory.eng.vmware.com/vmware/runway/resourcetypes/nimbus-worker-resource
     tag: latest
 
+- name: file
+  type: docker-image
+  source:
+    repository: aequitas/concourse-file-resource
+    tag: latest
+
 resources:
 - name: every-day
   type: time
   source:
     interval: 24h
+
+- name: vsphere-v70-worker-secrets-1
+  type: file
+  source:
+    filename: secrets.yml
+    content: ((vsphere-v70-worker-secrets-1))
+
+- name: vsphere-v70-worker-secrets-2
+  type: file
+  source:
+    filename: secrets.yml
+    content: ((vsphere-v70-worker-secrets-2))
+
 - name: deployments-src
   type: git
   source:
     uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
     branch: master
+
 - name: testbed-info
   type: gcs-resource
   source:
