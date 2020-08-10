@@ -13,6 +13,7 @@ params:
   USER: ""
   DAYS: 7
   TESTBED_NAME: ""
+  NIMBUS_LOCATION: "sc"
 
 run:
   path: deployments-src/ci/tasks/extend-lease-nimbus-testbed

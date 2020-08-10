@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! command -v runway &> /dev/null
+if ! command -v runctl &> /dev/null
 then
     echo "please install the runway cli first:"
     echo "https://gitlab.eng.vmware.com/devtools/runway/cli/runctl/tree/master#installation"

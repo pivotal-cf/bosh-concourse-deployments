@@ -2,6 +2,7 @@
 
 fly -t runway@bosh-core set-pipeline \
   -p bosh-core \
+  -v nimbus-location=wdc \
   -c "$REPO_DIR/ci/pipeline-nimbus-core.yml" \
   -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core") \
   -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core external nimbus workers")
