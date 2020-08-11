@@ -91,16 +91,14 @@ jobs:
                 - |
                     sudo ./deployments-src/ci/utils
                     ln -s vsphere-v7.0-worker-state-1 worker-state
-                    sudo -s bash -x << EOF
                     export WORKER_SECRETS="$(bosh int vsphere-v70-worker-secrets-2/secrets.yml)"
                     export ENVIRONMENT_NAME=nimbus
-                    apt-get update
-                    apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
+                    sudo apt-get update
+                    sudo apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
                          openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev \
                          libyaml-dev libsqlite3-dev sqlite3 jq libcurl4-gnutls-dev
+                    sudo ./deployments-src/ci/tasks/deploy-worker
 
-                    bash -x deployments-src/ci/tasks/deploy-worker 2>&1
-                    EOF
 
         - put: update-vsphere-v7.0-worker-2
           resource: nimbus-worker
@@ -118,16 +116,13 @@ jobs:
                 - |
                     sudo ./deployments-src/ci/utils
                     ln -s vsphere-v7.0-worker-state-2 worker-state
-                    sudo -s bash -lx << EOF
                     export WORKER_SECRETS="$(bosh int vsphere-v70-worker-secrets-2/secrets.yml)"
                     export ENVIRONMENT_NAME=nimbus
-                    apt-get update
-                    apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
+                    sudo apt-get update
+                    sudo apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
                          openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev \
                          libyaml-dev libsqlite3-dev sqlite3 jq libcurl4-gnutls-dev
-
-                    bash -x deployments-src/ci/tasks/deploy-worker 2>&1
-                    EOF
+                    sudo ./deployments-src/ci/tasks/deploy-worker
 
 resource_types:
 - name: gcs-resource

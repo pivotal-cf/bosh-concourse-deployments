@@ -55,7 +55,7 @@ fi
 cp worker-state/*.json updated-worker-state/worker-state.json
 
 echo "Updating WORKER..."
-bosh -n create-env \
+bosh --tty -n create-env \
   --state updated-worker-state/worker-state.json \
   -v concourse_release_path="$( realpath $PWD/concourse/*.tgz )" \
   -v bosh_cpi_release_path="$( realpath $PWD/bosh-cpi-release/*.tgz )" \
