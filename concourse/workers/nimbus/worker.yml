@@ -3,17 +3,9 @@ name: ((worker_name))
 
 releases:
   - name: bosh-vsphere-cpi
-    url: ((bosh_vsphere_cpi_url))
-    version: ((bosh_vsphere_cpi_version))
-    sha1: ((bosh_vsphere_cpi_sha1))
+    url: file://((bosh_cpi_release_path))
   - name: concourse
-    url: ((concourse_url))
-    version: ((concourse_version))
-    sha1: ((concourse_sha1))
-  - name: os-conf
-    version: 22.0.0
-    url: https://bosh.io/d/github.com/cloudfoundry/os-conf-release?v=22.0.0
-    sha1: 6946056ad69ae378cb89c9ef76daf66370a7dc6a
+    url: file://((concourse_release_path))
 
 resource_pools:
   - name: vms
@@ -26,8 +18,7 @@ resource_pools:
         mbus:
           cert: ((mbus_bootstrap_ssl))
     stemcell:
-      url: ((stemcell_url))
-      sha1: ((stemcell_sha1))
+      url: file://((stemcell_path))
     cloud_properties:
       ((resource_pool_properties))
 
@@ -60,22 +51,6 @@ instance_groups:
       - name: private
         static_ips: [((vcenter_worker_ip))]
     jobs:
-    - name: pre-start-script
-      release: os-conf
-      properties:
-        script: |-
-          #!/bin/bash
-          # bash implementation of: https://github.com/cloudfoundry/bosh-agent/blob/master/platform/net/kernel_ipv6.go#L36
-          # we only need to enable ipv6 in kernel an let slaac handle ipv6 address assignment
-
-          grubConfPath="/boot/grub/grub.cfg"
-          grubIPv6DisableOpt="ipv6.disable=1"
-
-          if grep -q "${grubIPv6DisableOpt}" "${grubConfPath}"; then
-              sed -i "s/${grubIPv6DisableOpt}//g" "${grubConfPath}"
-              echo "Rebooting to enable IPv6 in kernel"
-              shutdown -r now
-          fi
     - name: worker
       release: concourse
       properties:

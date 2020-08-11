@@ -19,39 +19,23 @@ jobs:
   - do:
     - in_parallel:
       - get: deployments-src
-    - put: nimbus-worker
+    - task: testbed-deploy
+      file: deployments-src/ci/tasks/deploy-nimbus-testbed.yml
       params:
-        template: default
-        output: nimbus-worker
-        run:
-          path: bash
-          args:
-            - -ec
-            - |
-              export USER=((nimbus-user))
-              export TESTBED_NAME=bosh-main-ci
-              /mts/git/bin/nimbus-ctl --testbed kill ${TESTBED_NAME} || true
-              /mts/git/bin/nimbus-testbeddeploy \
-                  --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
-                  --runName ${TESTBED_NAME} \
-                  --lease 7 \
-                  --enableIPV6 dual \
-                  --ip6AddressType slaac \
-                  --context general:nsx \
-                  --nimbusLocation ((nimbus-location)) \
-                  --resultsDir nimbus-worker
-              echo "{}" > nimbus-worker/clean-env
+        TESTBED_NAME: bosh-main-ci
+        USER: ((nimbus-user)) # TODO change to service account
+        NIMBUS_LOCATION: ((nimbus-location))
       ensure:
         do:
         - put: testbed-info
           params:
-            file: nimbus-worker/testbedInfo.json
+            file: nimbus-testbed-info/testbedInfo.json
         - put: vsphere-v7.0-worker-state-1
           params:
-            file: nimbus-worker/clean-env
+            file: worker-state/clean-env
         - put: vsphere-v7.0-worker-state-2
           params:
-            file: nimbus-worker/clean-env
+            file: worker-state/clean-env
 
 - name: update-vsphere-v7.0-worker
   serial: true
@@ -59,7 +43,6 @@ jobs:
     - do:
       - in_parallel:
         - get: concourse
-          params: { tarball: false }
         - get: deployments-src
         - get: bosh-cli
         - get: testbed-info
@@ -68,60 +51,31 @@ jobs:
         - get: vsphere-v7.0-worker-state-2
         - get: bosh-cpi-release
           resource: bosh-vsphere-cpi-release
-          params: { tarball: false }
         - get: stemcell
           resource: vsphere-xenial-stemcell
-          params: { tarball: false }
-        - get: vsphere-v70-worker-secrets-1
-        - get: vsphere-v70-worker-secrets-2
       - in_parallel:
-        - put: update-vsphere-v7.0-worker-1
-          resource: nimbus-worker
+        - task: update-vsphere-v7.0-worker-1
+          file: deployments-src/ci/tasks/deploy-worker.yml
+          input_mapping:
+            worker-state: vsphere-v7.0-worker-state-1
+          params:
+            WORKER_SECRETS: ((vsphere-v70-worker-secrets-1))
+            ENVIRONMENT_NAME: nimbus
           ensure:
             put: vsphere-v7.0-worker-state-1
             params:
-              file: update-vsphere-v7.0-worker-1/worker-state.json
+              file: updated-worker-state/worker-state.json
+        - task: update-vsphere-v7.0-worker-2
+          file: deployments-src/ci/tasks/deploy-worker.yml
+          input_mapping:
+            worker-state: vsphere-v7.0-worker-state-2
           params:
-            template: concourse-worker
-            output: updated-worker-state
-            run:
-              path: bash
-              args:
-                - -ec
-                - |
-                    sudo apt-get update
-                    sudo apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
-                         openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev \
-                         libyaml-dev libsqlite3-dev sqlite3 jq libcurl4-gnutls-dev
-                    sudo ./deployments-src/ci/utils
-                    ln -s vsphere-v7.0-worker-state-1 worker-state
-                    export WORKER_SECRETS="$(bosh int vsphere-v70-worker-secrets-2/secrets.yml)"
-                    export ENVIRONMENT_NAME=nimbus
-                    sudo -E ./deployments-src/ci/tasks/deploy-worker
-
-        - put: update-vsphere-v7.0-worker-2
-          resource: nimbus-worker
+            WORKER_SECRETS: ((vsphere-v70-worker-secrets-2))
+            ENVIRONMENT_NAME: nimbus
           ensure:
             put: vsphere-v7.0-worker-state-2
             params:
-              file: update-vsphere-v7.0-worker-2/worker-state.json
-          params:
-            template: concourse-worker
-            output: updated-worker-state
-            run:
-              path: bash
-              args:
-                - -ec
-                - |
-                    sudo apt-get update
-                    sudo apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev \
-                         openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev \
-                         libyaml-dev libsqlite3-dev sqlite3 jq libcurl4-gnutls-dev
-                    sudo ./deployments-src/ci/utils
-                    ln -s vsphere-v7.0-worker-state-2 worker-state
-                    export WORKER_SECRETS="$(bosh int vsphere-v70-worker-secrets-2/secrets.yml)"
-                    export ENVIRONMENT_NAME=nimbus
-                    sudo -E ./deployments-src/ci/tasks/deploy-worker
+              file: updated-worker-state/worker-state.json
 
 resource_types:
 - name: gcs-resource
@@ -129,42 +83,16 @@ resource_types:
   source:
     repository: frodenas/gcs-resource
 
-- name: nimbus-worker
-  type: registry-image
-  source:
-    repository: devtools-docker-local.artifactory.eng.vmware.com/vmware/runway/resourcetypes/nimbus-worker-resource
-    tag: latest
-
-- name: file
-  type: docker-image
-  source:
-    repository: aequitas/concourse-file-resource
-    tag: latest
-
 resources:
 - name: every-day
   type: time
   source:
     interval: 24h
-
-- name: vsphere-v70-worker-secrets-1
-  type: file
-  source:
-    filename: secrets.yml
-    content: ((vsphere-v70-worker-secrets-1))
-
-- name: vsphere-v70-worker-secrets-2
-  type: file
-  source:
-    filename: secrets.yml
-    content: ((vsphere-v70-worker-secrets-2))
-
 - name: deployments-src
   type: git
   source:
     uri: https://github.com/pivotal-cf/bosh-concourse-deployments.git
     branch: master
-
 - name: testbed-info
   type: gcs-resource
   source:
@@ -201,11 +129,3 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/bosh-vsphere-cpi-release
-- name: nimbus-worker
-  type: nimbus-worker
-  icon: worker
-  source:
-    nimbus_user: ((nimbus-user))
-    # wdc Wenatchee, Washington closest to us-west1 (The Dalles, Oregon) which is where bosh main concourse lives
-    # https://confluence.eng.vmware.com/display/DevToolsDocKB/Nimbus+CIDR
-    nimbus_location: ((nimbus-location))

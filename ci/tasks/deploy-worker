@@ -18,7 +18,7 @@ if [ -d testbed-info ]; then
     # - vcenter_resource_pool
     export WORKER_SECRETS=$(echo -e "$WORKER_SECRETS\n$(
       bosh int <(jq '.vc[0] | {
-        vcenter_address: .ip4,
+        vcenter_address: .ip,
         vcenter_user: .vimUsername,
         vcenter_password: .vimPassword
       }' testbed-info/testbed-info.json)

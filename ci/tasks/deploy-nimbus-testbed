@@ -1,28 +1,13 @@
 #!/bin/bash
 
-yum install -y -q sshpass jq
-
 nimbus-ctl --testbed kill ${TESTBED_NAME} || true
 
-WORKER_NAME=${TESTBED_NAME}-worker
-nimbus-worker-deploy ${WORKER_NAME} --result worker.json
-WORKER_IP=$(jq -r '.ip' worker.json)
-WORKER_USER=$(jq -r '.username' worker.json)
-export SSHPASS=$(jq -r '.password' worker.json)
-
-ssh_opts='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-sshpass -v -e ssh ${ssh_opts} ${WORKER_USER}@${WORKER_IP} "mkdir -p /tmp/${USER}"
-sshpass -v -e scp ${ssh_opts} deployments-src/nimbus-testbed/* ${WORKER_USER}@${WORKER_IP}:/tmp/${USER}/
-sshpass -v -e ssh ${ssh_opts} ${WORKER_USER}@${WORKER_IP} "USER=${USER} /mts/git/bin/nimbus-testbeddeploy \
-  --testbedSpecRubyFile /tmp/${USER}/nimbus_vc70_dual_networks.rb \
+nimbus-testbeddeploy \
+  --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
   --lease 7 \
-  --enableIPV6 dual \
-  --ip6AddressType slaac \
-  --context general:nsx"
+  --context general:nsx
 
-sshpass -e scp ${ssh_opts} ${WORKER_USER}@${WORKER_IP}:/tmp/nimbus-test-${USER}/*/testbedInfo.json ./nimbus-testbed-info/
+cp /tmp/nimbus-*/*/testbedInfo.json ./nimbus-testbed-info/
 
 echo "{}" > ./worker-state/clean-env
-
-nimbus-ctl kill ${WORKER_NAME} || true
