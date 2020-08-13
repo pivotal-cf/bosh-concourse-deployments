@@ -80,7 +80,11 @@ $testbed = Proc.new do
         },
       }
       cr.resourcePool.CreateResourcePool(
-        :name => "vdc-rp",
+        :name => "concourseWorkers",
+        :spec => spec
+      )
+      cr.resourcePool.CreateResourcePool(
+        :name => "testVMs",
         :spec => spec
       )
 
