@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: devtools-docker-local.artifactory.eng.vmware.com/vmware/nimbus/nimbus-worker
+
+params:
+  USER: ""
+  TESTBED_NAME: ""
+
+run:
+  path: deployments-src/ci/tasks/cleanup-nimbus-testbed

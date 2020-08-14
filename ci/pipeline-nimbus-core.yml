@@ -19,6 +19,12 @@ jobs:
   - do:
     - in_parallel:
       - get: deployments-src
+    - task: testbed-cleanup
+      file: deployments-src/ci/tasks/cleanup-nimbus-testbed.yml
+      params:
+        TESTBED_NAME: bosh-main-ci
+        USER: ((nimbus-user)) # TODO change to service account
+        NIMBUS_LOCATION: ((nimbus-location))
     - task: testbed-deploy
       file: deployments-src/ci/tasks/deploy-nimbus-testbed.yml
       params:

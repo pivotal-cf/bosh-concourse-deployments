@@ -1,0 +1,4 @@
+#!/bin/bash
+
+nimbus-ctl --testbed kill ${TESTBED_NAME} || true
+
