@@ -31,11 +31,9 @@ jobs:
         TESTBED_NAME: bosh-main-ci
         USER: ((nimbus-user)) # TODO change to service account
         NIMBUS_LOCATION: ((nimbus-location))
-      ensure:
-        do:
-          - put: vsphere-v7.0-worker-state-1
-            params:
-              file: worker-state/clean-env
+    - put: vsphere-v7.0-worker-state-1
+      params:
+        file: worker-state/clean-env
     - put: testbed-info
       params:
         file: nimbus-testbed-info/testbedInfo.json
