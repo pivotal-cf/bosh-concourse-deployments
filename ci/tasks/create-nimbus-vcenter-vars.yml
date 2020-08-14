@@ -16,4 +16,4 @@ params:
   VCENTER_PASSWORD:
 
 run:
-  path: deployments-src/ci/tasks/create-nimbus-vsphere-vars
+  path: deployments-src/ci/tasks/create-nimbus-vcenter-vars

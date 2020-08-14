@@ -31,8 +31,8 @@ jobs:
         TESTBED_NAME: bosh-main-ci
         USER: ((nimbus-user)) # TODO change to service account
         NIMBUS_LOCATION: ((nimbus-location))
-    - task: create-nimbus-vsphere-vars
-      file: deployments-src/ci/tasks/create-nimbus-vsphere-vars.yml
+    - task: create-nimbus-vcenter-vars
+      file: deployments-src/ci/tasks/create-nimbus-vcenter-vars.yml
       params:
         VCENTER_PASSWORD: ((vcenter-password))
       ensure:
@@ -40,7 +40,7 @@ jobs:
         - put: testbed-info
           params:
             file: nimbus-testbed-info/testbedInfo.json
-        - put: nimbus-vsphere-vars
+        - put: nimbus-vcenter-vars
           params:
             file: nimbus-vcenter-vars/nimbus-vcenter-vars.yml
         - put: vsphere-v7.0-worker-state-1
