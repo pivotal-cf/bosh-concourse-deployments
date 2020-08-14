@@ -6,6 +6,9 @@ image_resource:
   source:
     repository: devtools-docker-local.artifactory.eng.vmware.com/vmware/nimbus/nimbus-worker
 
+inputs:
+  - name: deployments-src
+
 params:
   USER: ""
   TESTBED_NAME: ""
