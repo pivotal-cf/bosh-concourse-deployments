@@ -25,10 +25,12 @@ $testbed = Proc.new do
         "dc" => dcName,
         "clusterName" => clusterName,
         "style" => "fullInstall",
-        "cpus" => 32, # 32 vCPUs
-        "memory" => 98000, # 98GB memory
+        "cpus" => 10, # to match releng-dev size used in hack-nimbus
+        'cpuReservation' => 6000,  # in Mhz
+        'memory' => 64 * 1024, # in MB
+        'memoryReservation' => 24 * 1024, # in MB
         "fullClone" => true,
-        "disks" => [ 10 * 1000 * oneGB ], # 10 TB Disk
+        "disks" => [ 5 * 1000 * oneGB ], # 5 TB Disk, directors and concourse workers take ~120GB each
       }
     end,
 
