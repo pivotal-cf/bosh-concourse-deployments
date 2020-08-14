@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -eu
+set -euo
 
-export VCENTER_IP=$(jq ".vc[0].ip" nimbus-testbed-info/testbed-info.json -r)
+export VCENTER_IP=$(jq ".vc[0].ip" nimbus-testbed-info/testbedInfo.json -r)
 
 cat > nimbus-vcenter-vars/nimbus-vcenter-vars.yml <<EOF
 vcenter_cluster: private
