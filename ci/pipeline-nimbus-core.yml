@@ -31,11 +31,18 @@ jobs:
         TESTBED_NAME: bosh-main-ci
         USER: ((nimbus-user)) # TODO change to service account
         NIMBUS_LOCATION: ((nimbus-location))
+    - task: create-nimbus-vsphere-vars
+      file: deployments-src/ci/tasks/create-nimbus-vsphere-vars.yml
+      params:
+        VCENTER_PASSWORD: ((vcenter-password))
       ensure:
         do:
         - put: testbed-info
           params:
             file: nimbus-testbed-info/testbedInfo.json
+        - put: nimbus-vsphere-vars
+          params:
+            file: nimbus-vcenter-vars/nimbus-vcenter-vars.yml
         - put: vsphere-v7.0-worker-state-1
           params:
             file: worker-state/clean-env
@@ -90,6 +97,12 @@ resources:
     bucket: ((deployments_core_bucket_name))
     json_key: ((gcp_credentials_json))
     versioned_file: nimbus/testbed-info.json
+- name: nimbus-vcenter-vars
+  type: gcs-resource
+  source:
+    bucket: ((deployments_core_bucket_name))
+    json_key: ((gcp_credentials_json))
+    versioned_file: nimbus-vcenter-vars.yml
 
 - name: vsphere-v7.0-worker-state-1
   type: gcs-resource

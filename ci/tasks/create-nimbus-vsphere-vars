@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -eu
+
+export VCENTER_IP=$(jq ".vc[0].ip" nimbus-testbed-info/testbed-info.json -r)
+
+cat > nimbus-vcenter-vars/nimbus-vcenter-vars.yml <<EOF
+vcenter_cluster: private
+vcenter_dc: private
+vcenter_disks: BOSH-CORE-STEMCELL-SMOKE-DISKS
+vcenter_ds: local-0
+vcenter_ip: "$VCENTER_IP"
+vcenter_password: "$VCENTER_PASSWORD"
+vcenter_rp: testVMs
+vcenter_templates: BOSH-CORE-STEMCELL-SMOKE-TEMPLATES
+vcenter_user: administrator@vsphere.local
+vcenter_vms: BOSH-CORE-STEMCELL-SMOKE-VMS
+internal_ntp: "[10.188.26.119, 10.166.1.120]"
+internal_dns: "[10.142.7.1, 10.132.7.1]"
+EOF
