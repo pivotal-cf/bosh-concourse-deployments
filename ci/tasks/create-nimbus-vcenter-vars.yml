@@ -8,6 +8,7 @@ image_resource:
 
 inputs:
   - name: nimbus-testbed-info
+  - name: deployments-src
 
 outputs:
   - name: nimbus-vcenter-vars

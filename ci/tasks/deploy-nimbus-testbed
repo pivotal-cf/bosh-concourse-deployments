@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash -e
+
+echo "{}" > ./worker-state/clean-env
 
 nimbus-testbeddeploy \
   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
@@ -7,5 +9,3 @@ nimbus-testbeddeploy \
   --context general:nsx
 
 cp /tmp/nimbus-*/*/testbedInfo.json ./nimbus-testbed-info/
-
-echo "{}" > ./worker-state/clean-env
