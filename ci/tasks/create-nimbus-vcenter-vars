@@ -15,6 +15,10 @@ vcenter_rp: testVMs
 vcenter_templates: BOSH-CORE-STEMCELL-SMOKE-TEMPLATES
 vcenter_user: administrator@vsphere.local
 vcenter_vms: BOSH-CORE-STEMCELL-SMOKE-VMS
-internal_ntp: "[10.188.26.119, 10.166.1.120]"
-internal_dns: "[10.142.7.1, 10.132.7.1]"
+internal_ntp:
+- 10.188.26.119
+- 10.166.1.120
+internal_dns:
+- 10.142.7.1
+- 10.132.7.1
 EOF
