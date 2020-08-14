@@ -2,14 +2,14 @@
 
 set -euo
 
-export VCENTER_IP=$(jq ".vc[0].ip" nimbus-testbed-info/testbedInfo.json -r)
+export VCENTER_HOST=$(jq ".vc[0].systemPNID" nimbus-testbed-info/testbedInfo.json -r)
 
 cat > nimbus-vcenter-vars/nimbus-vcenter-vars.yml <<EOF
 vcenter_cluster: private
 vcenter_dc: private
 vcenter_disks: BOSH-CORE-STEMCELL-SMOKE-DISKS
 vcenter_ds: local-0
-vcenter_ip: "$VCENTER_IP"
+vcenter_ip: "$VCENTER_HOST"
 vcenter_password: "$VCENTER_PASSWORD"
 vcenter_rp: testVMs
 vcenter_templates: BOSH-CORE-STEMCELL-SMOKE-TEMPLATES
