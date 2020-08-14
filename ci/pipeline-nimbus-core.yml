@@ -33,9 +33,6 @@ jobs:
         - put: vsphere-v7.0-worker-state-1
           params:
             file: worker-state/clean-env
-        - put: vsphere-v7.0-worker-state-2
-          params:
-            file: worker-state/clean-env
 
 - name: update-vsphere-v7.0-worker
   serial: true
@@ -48,7 +45,6 @@ jobs:
         - get: testbed-info
           trigger: true
         - get: vsphere-v7.0-worker-state-1
-        - get: vsphere-v7.0-worker-state-2
         - get: bosh-cpi-release
           resource: bosh-vsphere-cpi-release
         - get: stemcell
@@ -63,17 +59,6 @@ jobs:
             ENVIRONMENT_NAME: nimbus
           ensure:
             put: vsphere-v7.0-worker-state-1
-            params:
-              file: updated-worker-state/worker-state.json
-        - task: update-vsphere-v7.0-worker-2
-          file: deployments-src/ci/tasks/deploy-worker.yml
-          input_mapping:
-            worker-state: vsphere-v7.0-worker-state-2
-          params:
-            WORKER_SECRETS: ((vsphere-v70-worker-secrets-2))
-            ENVIRONMENT_NAME: nimbus
-          ensure:
-            put: vsphere-v7.0-worker-state-2
             params:
               file: updated-worker-state/worker-state.json
 
@@ -106,12 +91,6 @@ resources:
     bucket: ((deployments_core_bucket_name))
     json_key: ((gcp_credentials_json))
     versioned_file: worker/vsphere-v7.0-worker-state-1.json
-- name: vsphere-v7.0-worker-state-2
-  type: gcs-resource
-  source:
-    bucket: ((deployments_core_bucket_name))
-    json_key: ((gcp_credentials_json))
-    versioned_file: worker/vsphere-v7.0-worker-state-2.json
 - name: bosh-cli
   type: s3
   source:
