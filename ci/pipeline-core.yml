@@ -64,44 +64,6 @@ jobs:
         vars:
           allow_ssh_access_to_jumpbox: 0
 
-  - name: update-vsphere-v6.5-worker
-    serial: true
-    plan:
-      - do:
-        - in_parallel:
-          - get: concourse
-          - get: deployments-src
-          - get: bosh-cli
-          - get: vsphere-v6.5-worker-state-1
-          - get: vsphere-v6.5-worker-state-2
-          - get: bosh-cpi-release
-            resource: bosh-vsphere-cpi-release
-          - get: stemcell
-            resource: vsphere-xenial-stemcell
-        - in_parallel:
-          - task: update-vsphere-v6.5-worker-1
-            file: deployments-src/ci/tasks/deploy-worker.yml
-            input_mapping:
-              worker-state: vsphere-v6.5-worker-state-1
-            params:
-              WORKER_SECRETS: {{vsphere-v65-worker-secrets-1}}
-              ENVIRONMENT_NAME: vsphere
-            ensure:
-              put: vsphere-v6.5-worker-state-1
-              params:
-                file: updated-worker-state/worker-state.json
-          - task: update-vsphere-v6.5-worker-2
-            file: deployments-src/ci/tasks/deploy-worker.yml
-            input_mapping:
-              worker-state: vsphere-v6.5-worker-state-2
-            params:
-              WORKER_SECRETS: {{vsphere-v65-worker-secrets-2}}
-              ENVIRONMENT_NAME: vsphere
-            ensure:
-              put: vsphere-v6.5-worker-state-2
-              params:
-                file: updated-worker-state/worker-state.json
-
 resource_types:
   - name: terraform
     type: docker-image
@@ -166,23 +128,3 @@ resources:
     type: bosh-io-stemcell
     source:
       name: bosh-google-kvm-windows2016-go_agent
-  - name: vsphere-v6.5-worker-state-1
-    type: gcs-resource
-    source:
-      bucket: {{deployments_core_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: worker/vsphere-v6.5-worker-state-1.json
-  - name: vsphere-v6.5-worker-state-2
-    type: gcs-resource
-    source:
-      bucket: {{deployments_core_bucket_name}}
-      json_key: {{gcp_credentials_json}}
-      versioned_file: worker/vsphere-v6.5-worker-state-2.json
-  - name: bosh-vsphere-cpi-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
-  - name: vsphere-xenial-stemcell
-    type: bosh-io-stemcell
-    source:
-      name: bosh-vsphere-esxi-ubuntu-xenial-go_agent
