@@ -53,7 +53,7 @@ resource "google_compute_firewall" "jumpbox-ssh" {
     ports    = ["22"]
   }
 
-  source_ranges = split(",", var.trusted_cidrs)
+  source_ranges = ["0.0.0.0/0"]
   target_tags   = ["${var.network}-jumpbox"]
 }
 
