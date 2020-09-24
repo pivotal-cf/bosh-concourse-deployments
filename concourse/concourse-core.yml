@@ -242,24 +242,6 @@ instance_groups:
       - fly-integration
       - bosh-integration-6
 
-- name: worker-dns-performance
-  instances: 1
-  vm_type: concourse_core_worker_8_16
-  stemcell: default
-  azs: [us1]
-  networks:
-    - name: concourse
-  jobs:
-  - name: worker
-    release: concourse
-    properties:
-      worker_gateway:
-        worker_key: ((worker_key))
-      garden:
-        allow_host_access: true
-      tags:
-      - dns-performance
-
 - name: worker-windows
   instances: 1
   stemcell: windows
