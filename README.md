@@ -6,6 +6,8 @@ This repo holds the Concourse Pipelines, Jobs, and Tasks to setup a Concourse en
 * SSH traffic disabled by default: The SSH port is opened automatically by Concourse tasks to perform deployments and closed after.
 * VMs configured with no public IPs: Only natbox and jumpbox have external IPs.
 
+In affect what this will deploy is an upgrader concourse which managages a second concourse. It will provide jobs to create workers, update the director and concourse version and provide some access security to the second concourse. The upgrader concourse can be deployed on Nimbus (/ci/configure-nimbus-core) or on a seperate IAAS (/ci/configure-core and /ci/configure-shared)
+
 ## Bootstrapping a Concourse Environment
 
 ### Deploy Upgrader Concourse
