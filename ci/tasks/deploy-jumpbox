@@ -25,6 +25,16 @@ generate_jumpbox_users_ops_file() {
     })
   '
 }
+generate_jumpbox_nats_port_ops_file() {
+echo "
+- type: replace
+  path: /cloud_provider/mbus
+  value: https://mbus:((mbus_bootstrap_password))@((external_ip)):443
+- type: replace
+  path: /cloud_provider/properties/agent/mbus
+  value: https://mbus:((mbus_bootstrap_password))@((internal_ip)):443
+"
+}
 
 remove_terraform_prefix terraform/metadata jumpbox_ > metadata
 
@@ -37,6 +47,7 @@ BOSH_LOG_LEVEL=debug bosh -n create-env \
   -o deployments-src/jumpbox/custom-type-ops.yml \
   -o deployments-src/jumpbox/remove-users-ops.yml \
   -o <( generate_jumpbox_users_ops_file ) \
+  -o  <( generate_jumpbox_nats_port_ops_file ) \
   -l metadata \
   -v "gcp_credentials_json='${GOOGLE_CREDENTIALS}'" \
   -v "trusted_cidrs='${TRUSTED_CIDRS}'" \
