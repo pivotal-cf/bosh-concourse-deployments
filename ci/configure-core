@@ -1,9 +1,21 @@
 #!/bin/bash
 
-lpass ls > /dev/null
+FLY="${FLY_CLI:-fly}"
 
-fly -t upgrader sp \
+until lpass status;do
+  LPASS_DISABLE_PINENTRY=1 lpass ls a
+  sleep 1
+done
+
+until "$FLY" -t "${CONCOURSE_TARGET:-runway@bosh-core}" status;do
+  "$FLY" -t "${CONCOURSE_TARGET:-runway@bosh-core}" login
+  sleep 1
+done
+
+REPO_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+"$FLY" -t "${CONCOURSE_TARGET:-runway@bosh-core}" set-pipeline \
   -p concourse-core \
-  -c "$REPO_DIR/ci/pipeline-core.yml" \
-  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core") \
-  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core external workers")
+  -c "$REPO_DIR/pipeline-core.yml" \
+  -l <( lpass show --note "bosh-concourse-deployments gcp bosh-core" ) \
+  -l <( lpass show --note "bosh-concourse-deployments gcp bosh-core external workers" )

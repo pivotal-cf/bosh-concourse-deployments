@@ -1,8 +1,22 @@
 #!/bin/bash
 
-fly -t runway@bosh-core set-pipeline \
+FLY="${FLY_CLI:-fly}"
+
+until lpass status;do
+  LPASS_DISABLE_PINENTRY=1 lpass ls a
+  sleep 1
+done
+
+until "$FLY" -t "${CONCOURSE_TARGET:-runway@bosh-core}" status;do
+  "$FLY" -t "${CONCOURSE_TARGET:-runway@bosh-core}" login
+  sleep 1
+done
+
+REPO_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+"$FLY" -t "${CONCOURSE_TARGET:-runway@bosh-core}" set-pipeline \
   -p bosh-core \
   -v nimbus-location=wdc \
-  -c "$REPO_DIR/ci/pipeline-nimbus-core.yml" \
-  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core") \
-  -l <(lpass show --note "bosh-concourse-deployments gcp bosh-core external nimbus workers")
+  -c "$REPO_DIR/pipeline-nimbus-core.yml" \
+  -l <( lpass show --note "bosh-concourse-deployments gcp bosh-core" ) \
+  -l <( lpass show --note "bosh-concourse-deployments gcp bosh-core external nimbus workers" )
