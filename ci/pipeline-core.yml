@@ -68,11 +68,11 @@ resource_types:
   - name: terraform
     type: docker-image
     source:
-      repository: ljfranklin/terraform-resource
+      repository: harbor-repo.vmware.com/dockerhub-proxy-cache/ljfranklin/terraform-resource
   - name: gcs-resource
     type: docker-image
     source:
-      repository: frodenas/gcs-resource
+      repository: harbor-repo.vmware.com/dockerhub-proxy-cache/frodenas/gcs-resource
 
 resources:
   - name: deployments-src

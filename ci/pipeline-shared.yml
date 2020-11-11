@@ -168,11 +168,11 @@ resource_types:
   - name: terraform
     type: docker-image
     source:
-      repository: ljfranklin/terraform-resource
+      repository: harbor-repo.vmware.com/dockerhub-proxy-cache/ljfranklin/terraform-resource
   - name: gcs-resource
     type: docker-image
     source:
-      repository: frodenas/gcs-resource
+      repository: harbor-repo.vmware.com/dockerhub-proxy-cache/frodenas/gcs-resource
 
 resources:
   - name: deployments-src
@@ -193,12 +193,20 @@ resources:
   - name: terraform
     type: terraform
     source:
-      storage:
+      migrated_from_storage:
         bucket: {{deployments_bucket_name}}
         bucket_path: terraform/
         access_key_id: {{storage_access_key}}
         secret_access_key: {{storage_secret_key}}
         endpoint: https://storage.googleapis.com
+      backend_type: gcs
+      backend_config:
+        bucket: {{deployments_bucket_name}}
+        prefix: terraform/
+        credentials:
+        access_key_id: {{storage_access_key}}
+        secret_access_key: {{storage_secret_key}}
+
       vars:
         project_id: {{project_id}}
         gcp_credentials_json: {{gcp_credentials_json}}
