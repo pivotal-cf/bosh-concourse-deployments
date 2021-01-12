@@ -23,13 +23,13 @@ jobs:
       file: deployments-src/ci/tasks/cleanup-nimbus-testbed.yml
       params:
         TESTBED_NAME: bosh-main-ci
-        USER: ((nimbus-user)) # TODO change to service account
+        USER: ((nimbus-user))
         NIMBUS_LOCATION: ((nimbus-location))
     - task: testbed-deploy
       file: deployments-src/ci/tasks/deploy-nimbus-testbed.yml
       params:
         TESTBED_NAME: bosh-main-ci
-        USER: ((nimbus-user)) # TODO change to service account
+        USER: ((nimbus-user))
         NIMBUS_LOCATION: ((nimbus-location))
     - put: vsphere-v7.0-worker-state-1
       params:
