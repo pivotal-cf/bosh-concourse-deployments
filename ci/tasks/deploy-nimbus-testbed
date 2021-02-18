@@ -2,6 +2,9 @@
 
 echo "{}" > ./worker-state/clean-env
 
+sed '/AdmissionControlQuota/d' /mts/git/nimbus/lib/nimbus/admission_control.rb > /tmp/admission_control.rb
+mv -f /tmp/admission_control.rb /mts/git/nimbus/lib/nimbus/admission_control.rb
+
 nimbus-testbeddeploy \
   --testbedSpecRubyFile deployments-src/nimbus-testbed/nimbus_vc70_dual_networks.rb \
   --runName ${TESTBED_NAME} \
