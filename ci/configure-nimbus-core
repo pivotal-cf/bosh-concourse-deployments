@@ -19,4 +19,5 @@ REPO_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
   -v nimbus-location=wdc \
   -c "$REPO_DIR/pipeline-nimbus-core.yml" \
   -l <( lpass show --note "bosh-concourse-deployments gcp bosh-core" ) \
-  -l <( lpass show --note "bosh-concourse-deployments gcp bosh-core external nimbus workers" )
+  -l <( lpass show --note "bosh-concourse-deployments gcp bosh-core external nimbus workers" ) \
+  -l <( lpass show --note "bosh-cli concourse secrets" )
