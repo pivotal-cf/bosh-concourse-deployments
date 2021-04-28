@@ -21,4 +21,4 @@ fi
 
 echo "Updating namespace"
 # bosh-core namespace has id 719
-runctl ns update --id=719 --access access.json
+runctl ns update --file access.json

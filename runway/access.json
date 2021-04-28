@@ -1,14 +1,26 @@
 {
-    "access": {
-        "owner": {
-            "user": [
-                "mrosecrance",
-                "rkoster",
-                "stevensonda",
-                "dlemos",
-                "krutten",
-                "rmakkelie"
-            ]
-        }
+    "name": "bosh-core",
+    "type": "concourse",
+    "role": {
+	"owner": {
+	    "user": [
+		"mrosecrance",
+		"stevensonda",
+		"jpalermo",
+		"klakin",
+		"bupton",
+		"rubenk",
+		"scoward"
+	    ],
+	    "group": []
+	},
+	"operator": {
+	    "user": [],
+	    "group": []
+	},
+	"viewer": {
+	    "user": [],
+	    "group": []
+	}
     }
 }
